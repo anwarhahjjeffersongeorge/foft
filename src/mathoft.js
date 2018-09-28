@@ -476,7 +476,12 @@ class MathOfT{
   get ofLastT(){
     return this.ofT(this._range[this._range.length-1]);
   }
-  
+
+  /**
+   * get ofAllT - get a Generator that produces ofT for all t in evaluation range
+   *
+   * @return {Generator Function} @yields {Array}  
+   */
   get ofAllT(){
     return function*(){
       for(let t of [...this.t()]){
