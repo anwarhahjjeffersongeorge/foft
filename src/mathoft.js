@@ -255,6 +255,15 @@ class MathOfT{
     return Math.abs((t-this.range[0])/(this.range[1]-this.range[0]));
   }
 
+  /**
+   * ofTNormal - given a Number tNormal between -1 and 1, inclusive,
+   * return the evaluation of this MathOfT on the t corresponding
+   * to the value of t in the evaluation range represented by the
+   * given tNormal
+   * @see ofT
+   * @param  {Number} tNormal [-1,1]
+   * @return {Number, Array.<Number>}
+   */
   ofTNormal(tNormal){
     tNormal = (typeof tNormal === 'number')
       ? ((tNormal > 1) || (tNormal < -1))
@@ -314,6 +323,23 @@ class MathOfT{
   //   }
   // }
 
+  /**
+   * ofT - evaluate all of the terms held by this MathofT for the
+   * given t value.
+   *
+   * When evaluating a Function term, the function can is called with
+   * a bound this containing information about t:
+   * @see tNormalised
+   * @see range
+   * @see derange
+   * @see t0
+   * @see segmentDivisor
+   * It also receives a value i corresponding to the index that this t
+   * might correspond to in an Array of ofT results for the evaluation range.
+   *
+   * @param  {Number} t
+   * @return {(Number|Array.<Number>|Array<Array>)}
+   */
   ofT(t){
     t = (typeof t === 'number')
       ? t
@@ -353,6 +379,20 @@ class MathOfT{
       : result;
   }
 
+
+  /**
+   * ofTOp - Calculate the value of performing an operation _op on the
+   * values returned by calculating this MathOfT instance's terms for
+   * some evaluation value t.
+   *
+   * @see ofT
+   *
+   * @param  {Number} t the t to evaluate
+   * @param  {type} _acc an accumulator value to start with
+   * @see MathOfT.OPS -> base
+   * @param  {type} [_op=this.opcode]  an opcode to perform
+   * @return {Number, Array.<Number>, Array.<Array>}
+   */
   ofTOp(t, _acc, _op){
     _op = (_op in MathOfT.OPS)
       ? MathOfT.OPS[_op]
@@ -416,12 +456,27 @@ class MathOfT{
     }
   }
 
+  /**
+   * get ofFirstT - return the ofT for the first t in the evaluation range
+   *
+   * @see t0
+   * @see ofT
+   * @return {Number, Array.<Number>, Array.<Array>}
+   */
   get ofFirstT(){
-    return this.ofT(this._range[0]);
+    return this.ofT(this.t0);
   }
+  /**
+   * get ofLastT - return the ofT for the final t in the evaluation range
+   *
+   * @see range
+   * @see ofT
+   * @return {Number, Array.<Number>, Array.<Array>}
+   */
   get ofLastT(){
     return this.ofT(this._range[this._range.length-1]);
   }
+  
   get ofAllT(){
     return function*(){
       for(let t of [...this.t()]){
