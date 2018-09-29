@@ -46,7 +46,7 @@ class MathOfT{
       }
     }
 
-    //each interval in the range can be divided up
+    // define the division of the evaluation range
     const segmentDivisor = params.segmentDivisor || 10;
     if(typeof segmentDivisor !== 'number') throw new TypeError('segmentDivisor should be number');
     this.__segmentDivisor = segmentDivisor;
@@ -54,6 +54,8 @@ class MathOfT{
     let rangeoverride = (typeof params.rangeoverride === 'boolean')
       ? params.rangeoverride
       : false;
+
+    // create an evaluation range
     let range = (rangeoverride)
       ? [0, this.__segmentDivisor]
       : params.range || [0,1];
@@ -71,7 +73,8 @@ class MathOfT{
         : null;
     }
 
-    // each
+    // this MathOfT can use these terms
+    // define terms
     let terms = params.terms || [(t)=>t];
     terms = (typeof terms === 'function')
       ? [terms]
@@ -81,9 +84,7 @@ class MathOfT{
     }
     this._terms = [];
 
-    /**
-     *
-     */
+
     for(let termIndex in terms){
       const term = terms[termIndex];
       // console.log(term);``
@@ -343,6 +344,7 @@ class MathOfT{
       ? this.tthis
       : {
         "t":{
+          t,
           tNormal: this.tNormalised(t),
           tNormalRemaining: 1- this.tNormalised(t),
           trange: this.range,
@@ -474,7 +476,7 @@ class MathOfT{
   /**
    * get ofAllT - get a Generator that produces ofT for all t in evaluation range
    *
-   * @return {Generator Function} @yields {Array}  
+   * @return {Generator Function} @yields {Array}
    */
   get ofAllT(){
     return function*(){
