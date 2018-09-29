@@ -474,10 +474,10 @@ class MathOfT{
   }
 
   /**
-   * get ofAllT - get a Generator that produces ofT for all t in evaluation range
+   * get ofAllT - get a Generator that yields Array of
+   * all Array=[t, this.ofT(t)] for t in evaluation range
    *
-   * @return {Generator}
-   * @yields {Array}
+   * @return {Generator} yielding Array in form [t, this.ofT(t)]
    */
   get ofAllT(){
     return function*(){
@@ -489,6 +489,12 @@ class MathOfT{
       }
     }
   }
+
+  /**
+   * get - Symbol.iterator get a Generator that yields Array of
+   *    all this.ofT(t) for t in evaluation range
+   * @return {Generator} Generator function yielding this.ofT(t)   
+   */
   get [Symbol.iterator](){
     return function*(){
       yield* [...this.t()].map((t,i)=>this.ofT(t));
