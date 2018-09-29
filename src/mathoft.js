@@ -474,9 +474,9 @@ class MathOfT{
   }
 
   /**
-   * get ofAllT - get a Generator that yields Array of
+   * get ofAllT - get a Generator that yields
    * all Array=[t, this.ofT(t)] for t in evaluation range
-   *
+   * @see ofT
    * @return {Generator} yielding Array in form [t, this.ofT(t)]
    */
   get ofAllT(){
@@ -491,32 +491,61 @@ class MathOfT{
   }
 
   /**
-   * get - Symbol.iterator get a Generator that yields Array of
+   * get - Symbol.iterator get a Generator that yields
    *    all this.ofT(t) for t in evaluation range
-   * @return {Generator} Generator function yielding this.ofT(t)   
+   * @see ofT
+   * @return {Generator} Generator function yielding this.ofT(t)
    */
   get [Symbol.iterator](){
     return function*(){
       yield* [...this.t()].map((t,i)=>this.ofT(t));
     }
   }
+
+  /**
+   * get ofAllTOp - get a Generator that yields all
+   * this.ofTOp(_t, _acc, _op) for _t in evaluation range,
+   * _acc, _op provided by user
+   *
+   * @see ofAllTOp
+   * @return {Generator}  description
+   */
   get ofAllTOp(){
     return function*(_acc, _op){
       yield* [...this.t()].map((_t,i)=>this.ofTOp(_t,_acc,_op))
     }
   }
 
+  /**
+   * mapTOp - apply the Array.map native function to the elements of
+   * this.ofAllTOp() with the given callback function and this argument
+   * @see Array.map
+   * @see ofAllTOp
+   * @param  {Function} [callback] callback to apply
+   * @param  {Object} [thisArg]  this argument
+   * @return {Array}         map result
+   */
   mapTOp(callback, thisArg){
     if(!(callback instanceof Function)) throw new TypeError('map needs Function callback');
     return [...this.ofAllTOp()].map(callback, thisArg);
   }
 
+
+  /**
+   * map - apply the Array.map native function to the elements yielded by
+   * this[Symbol.iterator] with the given callback function and this argument
+   *    *
+   * @see get [Symbol.iterator]
+   * @param  {Function} [callback] callback to apply
+   * @param  {Object} [thisArg]  this argument
+   * @return {Array}         map result
+   */
   map(callback, thisArg){
     if(!(callback instanceof Function)) throw new TypeError('map needs Function callback');
     return [...this].map(callback, thisArg);
   }
 }
-
+ 
 Object.defineProperties(MathOfT, {
   R: {
     value: ['x', 'y', 'z'],
