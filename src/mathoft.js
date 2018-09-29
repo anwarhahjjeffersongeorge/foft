@@ -27,7 +27,7 @@ class MathOfT{
    * @param  {(Object|Function|Array)} params
    * @param {(Number|Array.<Number>)} [params.range] Range of two numerical values over which t is evaluated inclusively. If given a single number t0, range is [-t0,t0]
    * @param {Number} [params.segmentDivisor] The number of segments to divide the range into when picking t values for evaluation.
-   * @param {(Function|Array.<Function>|Array.<MathOfT>* * )} [params.terms=[t=>(t)]] A function that accepts a parameter t and returns a result of some operation on t
+   * @param {(Function|Array.<Function>|Array.<MathOfT>)} [params.terms=[]] A function that accepts a parameter t and returns a result of some operation on t
    * @param {boolean} [params.rangeoverride=false] if true, will override any range provided and set range equal to [0, params.segmentDivisor]
    * @throws TypeError
    * @throws ValueError
@@ -256,8 +256,8 @@ class MathOfT{
    * to the value of t in the evaluation range represented by the
    * given tNormal
    * @see ofT
-   * @param  {Number} tNormal [-1,1]
-   * @return {Number, Array.<Number>}
+   * @param  {Number} [tNormal=[-1,1]]
+   * @return {(Number|Array.<Number>)}
    */
   ofTNormal(tNormal){
     tNormal = (typeof tNormal === 'number')
@@ -273,7 +273,7 @@ class MathOfT{
   // ofTRange(trange, numsegment){
   //   trange = (Array.isArray(trange)
   //     && (range.length==2)
-  //     && MathOfT.ARENUMBERS(...trange))
+  //     && hOfT.ARENUMBERS(...trange))
   //     ? trange
   //     : this.range;
   //   trange = trange.map(v => Math.round(v*(this.__segmentDivisor-1)));
@@ -387,7 +387,7 @@ class MathOfT{
    * @param  {type} _acc an accumulator value to start with
    * @see MathOfT.OPS -> base
    * @param  {type} [_op=this.opcode]  an opcode to perform
-   * @return {Number, Array.<Number>, Array.<Array>}
+   * @return {(Number|Array.<Number>|Array.<Array>)}
    */
   ofTOp(t, _acc, _op){
     _op = (_op in MathOfT.OPS)
@@ -457,7 +457,7 @@ class MathOfT{
    *
    * @see t0
    * @see ofT
-   * @return {Number, Array.<Number>, Array.<Array>}
+   * @return {(Number|Array.<Number>|Array.<Array>)}
    */
   get ofFirstT(){
     return this.ofT(this.t0);
@@ -467,7 +467,7 @@ class MathOfT{
    *
    * @see range
    * @see ofT
-   * @return {Number, Array.<Number>, Array.<Array>}
+   * @return {(Number|Array.<Number>|Array.<Array>)}
    */
   get ofLastT(){
     return this.ofT(this._range[this._range.length-1]);
@@ -476,7 +476,8 @@ class MathOfT{
   /**
    * get ofAllT - get a Generator that produces ofT for all t in evaluation range
    *
-   * @return {Generator Function} @yields {Array}
+   * @return {Generator}
+   * @yields {Array}
    */
   get ofAllT(){
     return function*(){
