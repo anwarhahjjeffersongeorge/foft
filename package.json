@@ -17,7 +17,7 @@
     "clean": "rm -rf ./docs ./testlib ./coverage ./lib",
     "predocs": "clear && rm -rf ./docs",
     "docs": "./node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
-    "pretest": "clear && rm -rf ./testlib && mkdir ./testlib && cp src/* ./testlib",
+    "pretest": "clear && rm -rf ./testlib && mkdir ./testlib && cp -r src/* ./testlib",
     "test": "NODE_ENV=test mocha ./testlib/mocha/*.mocha.js",
     "prereport": "clear && rm -rf ./coverage",
     "report": "nyc report ./coverage",
