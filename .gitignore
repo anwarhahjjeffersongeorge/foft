@@ -1,6 +1,6 @@
 .ftp*
 node_modules/
-.nyc_output/
-coverage
+nyc_output/
 docs
 lib
+testlib
