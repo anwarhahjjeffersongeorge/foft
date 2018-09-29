@@ -1,2 +1,4 @@
+"use strict";
 // ESM syntax is supported.
-export {}
+import MathOfT from './src/mathoftjs';
+export {MathOfT}
