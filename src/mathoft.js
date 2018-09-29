@@ -106,11 +106,13 @@ class MathOfT{
 
 
   /**
-   * addTerm - add a term to this MathOfT object
+   * addTerm - add a term to the terms of this MathOfT instance
    *
-   * @param  {type} term      description
-   * @param  {type} harmonize description
-   * @return {type}           description
+   * @param  {(function|MathOfT)} term A Function that takes a parameter (t) or
+   *   MathOfT
+   * @param @deprecated {boolean} [harmonize=false] if true, and term is a MathOfT
+   *  instance, this overwrites the range and segmentDivisor of term to make them
+   *  equivalent for the same parameters of this instance.
    */
   addTerm(term, harmonize){
     harmonize = (typeof harmonize === 'boolean') ? harmonize : false;
@@ -119,31 +121,75 @@ class MathOfT{
     } else if (term instanceof MathOfT){
       this.terms.push(term);
       if(harmonize){
-      // term._range = this._range; // IMPORTANT
-      // term.__segmentDivisor = this.__segmentDivisor;
+      term._range = this._range; // IMPORTANT
+      term.__segmentDivisor = this.__segmentDivisor;
       }
     }
   }
+
+  /**
+   * get segmentDivisor The number of segments (number of t evaluation points -1)
+   *   in this MathOfT
+   *
+   * @return {Number}
+   */
   get segmentDivisor(){
     return this.__segmentDivisor;
   }
+
   get dt(){
     return this.drange/this.__segmentDivisor;
   }
+
+  /**
+   * get range - the evaluation range is the minimum and maximum values for t
+   *
+   * @return {Array.<Number>}
+   */
   get range(){
     return this._range;
   }
+
+  /**
+   * get t0 - the first value of t in the evaluation range
+   * @return {Number}
+   */
   get t0(){
     return this.range[0];
   }
+
+  /**
+   * get opcode - a MathOfT can have an opcode as defined in
+   * MathOfT.OPS. These codes represent mathematical operations
+   * between Numbers and other types. They are useful for performing
+   * said operations when the Function or MathOfT in the terms
+   * Array
+   *
+   * @see MathOfT.OPS
+   * @see terms
+   * @return {string} @see MathOfT.OPS
+   */
   get opcode(){
     return this._opcode;
   }
+
+  /**
+   * set opcode - set the opcode to one of the opcodes
+   *  defined in MathOfT.OPS
+   *
+   * @param  {string} opcode @see MathOfT.OPS
+   */
   set opcode(opcode){
     if(MathOfT.ISOP(opcode)){
       this._opcode = opcode;
     }
   }
+
+  /**
+   * get drange - the delta between the values of the evaluation range
+   *
+   * @return {type}  description
+   */
   get drange(){
     let rangesum = 0;
     for(let rangeIndex in this._range){
@@ -154,6 +200,12 @@ class MathOfT{
     }
     return rangesum;
   }
+  /**
+   * get dabsrange - the absolute value of the delta
+   * between the values of the evaluation range
+   *
+   * @return {type}  description
+   */
   get dabsrange(){
     let rangesum = 0;
     for(let rangeIndex in this._range){
@@ -164,7 +216,18 @@ class MathOfT{
     }
     return rangesum;
   }
+
+  /**
+   * get t - get a Generator
+   *
+   * @return {Generator}  Generator Function that produces
+   * linearly distributed values of t in range inclusive
+   * based on segmentDivisor
+   */
   get t(){
+    /**
+     * @yields {Number} segmentDivisor+1 values of t in range (inclusive)
+     */
     return function*(){
       for(let tindex = 0;
         tindex <= this.__segmentDivisor;
@@ -174,10 +237,27 @@ class MathOfT{
     }
   }
 
+
+  /**
+   * tNormalised - given a Number t, return a normalized
+   * representation of how far along t is in the evaluation
+   * range of this MathOfT
+   * @param  {Number} t
+   * @return {Number} between 0 and 1 , inclusive
+   */
   tNormalised(t){
     return Math.abs((t-this.range[0])/(this.range[1]-this.range[0]));
   }
 
+  /**
+   * ofTNormal - given a Number tNormal between -1 and 1, inclusive,
+   * return the evaluation of this MathOfT on the t corresponding
+   * to the value of t in the evaluation range represented by the
+   * given tNormal
+   * @see ofT
+   * @param  {Number} tNormal [-1,1]
+   * @return {Number, Array.<Number>}
+   */
   ofTNormal(tNormal){
     tNormal = (typeof tNormal === 'number')
       ? ((tNormal > 1) || (tNormal < -1))
@@ -237,6 +317,23 @@ class MathOfT{
   //   }
   // }
 
+  /**
+   * ofT - evaluate all of the terms held by this MathofT for the
+   * given t value.
+   *
+   * When evaluating a Function term, the function can is called with
+   * a bound this containing information about t:
+   * @see tNormalised
+   * @see range
+   * @see derange
+   * @see t0
+   * @see segmentDivisor
+   * It also receives a value i corresponding to the index that this t
+   * might correspond to in an Array of ofT results for the evaluation range.
+   *
+   * @param  {Number} t
+   * @return {(Number|Array.<Number>|Array<Array>)}
+   */
   ofT(t){
     t = (typeof t === 'number')
       ? t
@@ -276,6 +373,20 @@ class MathOfT{
       : result;
   }
 
+
+  /**
+   * ofTOp - Calculate the value of performing an operation _op on the
+   * values returned by calculating this MathOfT instance's terms for
+   * some evaluation value t.
+   *
+   * @see ofT
+   *
+   * @param  {Number} t the t to evaluate
+   * @param  {type} _acc an accumulator value to start with
+   * @see MathOfT.OPS -> base
+   * @param  {type} [_op=this.opcode]  an opcode to perform
+   * @return {Number, Array.<Number>, Array.<Array>}
+   */
   ofTOp(t, _acc, _op){
     _op = (_op in MathOfT.OPS)
       ? MathOfT.OPS[_op]
@@ -339,12 +450,32 @@ class MathOfT{
     }
   }
 
+  /**
+   * get ofFirstT - return the ofT for the first t in the evaluation range
+   *
+   * @see t0
+   * @see ofT
+   * @return {Number, Array.<Number>, Array.<Array>}
+   */
   get ofFirstT(){
-    return this.ofT(this._range[0]);
+    return this.ofT(this.t0);
   }
+  /**
+   * get ofLastT - return the ofT for the final t in the evaluation range
+   *
+   * @see range
+   * @see ofT
+   * @return {Number, Array.<Number>, Array.<Array>}
+   */
   get ofLastT(){
     return this.ofT(this._range[this._range.length-1]);
   }
+
+  /**
+   * get ofAllT - get a Generator that produces ofT for all t in evaluation range
+   *
+   * @return {Generator Function} @yields {Array}  
+   */
   get ofAllT(){
     return function*(){
       for(let t of [...this.t()]){
