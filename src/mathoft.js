@@ -24,10 +24,10 @@ class MathOfT{
   /**
    * constructor - create a MathOfT instance that evaluates its Function terms
    *    when given some parameter "t".
-   * @param  {(Object|function|Array)} params
-   * @param {(number|number[])} [params.range] Range of two numerical values over which t is evaluated inclusively. If given a single number t0, range is [-t0,t0]
-   * @param {number} [params.segmentDivisor] The number of segments to divide the range into when picking t values for evaluation.
-   * @param {(function|function[])} [params.terms=[t=>(t)]] A function that accepts a parameter t and returns a result of some operation on t
+   * @param  {(Object|Function|Array)} params
+   * @param {(Number|Array.<Number>)} [params.range] Range of two numerical values over which t is evaluated inclusively. If given a single number t0, range is [-t0,t0]
+   * @param {Number} [params.segmentDivisor] The number of segments to divide the range into when picking t values for evaluation.
+   * @param {(Function|Array.<Function>|Array.<MathOfT>* * )} [params.terms=[t=>(t)]] A function that accepts a parameter t and returns a result of some operation on t
    * @param {boolean} [params.rangeoverride=false] if true, will override any range provided and set range equal to [0, params.segmentDivisor]
    * @throws TypeError
    * @throws ValueError
@@ -69,12 +69,6 @@ class MathOfT{
       this._range[rangeIndex]  = (typeof range[rangeIndex] === 'number')
         ? range[rangeIndex]
         : null;
-      // console.log(this._range[rangeIndex])
-      // //subdivide
-      // if(rangeIndex > 0){
-      //   this.dt = ( this._range[rangeIndex] - this._range[rangeIndex-1] )
-      //     / this.__segmentDivisor;
-      // }
     }
 
     // each
@@ -110,6 +104,14 @@ class MathOfT{
     return this._terms;
   }
 
+
+  /**
+   * addTerm - add a term to this MathOfT object
+   *
+   * @param  {type} term      description
+   * @param  {type} harmonize description
+   * @return {type}           description
+   */
   addTerm(term, harmonize){
     harmonize = (typeof harmonize === 'boolean') ? harmonize : false;
     if(typeof term === 'function'){
