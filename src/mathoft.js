@@ -220,15 +220,22 @@ class MathOfT{
   }
 
   /**
-  * get t - get a Generator
-  *
-  * @return {Generator}  Generator Function that produces
-  * linearly distributed values of t in range inclusive
-  * based on segmentDivisor
+  * get t - get a Generator yielding segmentDivisor+1 values
+  *  of t in range (inclusive)
+  * @example
+  * // get the default t values for which a MathOfT is
+  * // evaluated
+  * let MoT = new MathOfT({
+  *   range: [0, Math.PI*2],
+  *   segmentDivisor: 22,
+  *   terms: (t) => [sin(t), cos(t)];
+  * });
+  * let t = [...MoT.t()]
+  * @return {Generator}
   */
   get t(){
     /**
-    * @yields {Number} segmentDivisor+1 values of t in range (inclusive)
+    * @yields {Number}
     */
     return function*(){
       for(let tindex = 0;
