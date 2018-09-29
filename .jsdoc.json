@@ -6,7 +6,7 @@
     "source": {
         "include": ["src", "package.json", "README.md"],
         "includePattern": ".js$",
-        "excludePattern": "(node_modules/|docs)"
+        "excludePattern": "(node_modules|docs)"
     },
     "plugins": [
         "plugins/markdown"
@@ -22,7 +22,6 @@
         "destination": "./docs/",
         "encoding": "utf8",
         "private": true,
-        "recurse": true,
-        "template": "./node_modules/tui-jsdoc-template"
+        "recurse": true
     }
 }
