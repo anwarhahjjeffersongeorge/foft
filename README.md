@@ -7,3 +7,11 @@
     - Array of Number,
     - Array of Array of Number, etc.
   2. Some of the properties of the Function and MathOfT term objects (1)
+
+## Testing
+Run `npm test` or `npm run-script test`
+
+
+
+## Generating Documentation
+Run `npm run-script docs`
