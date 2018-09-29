@@ -8,7 +8,6 @@
     "chai": "^4.2.0",
     "chai-arrays": "^2.0.0",
     "chai-as-promised": "^7.1.1",
-    "cross-env": "^5.2.0",
     "esm": "^3.0.84",
     "jsdoc": "^3.5.5",
     "nyc": "^13.0.1"
@@ -20,13 +19,12 @@
     "clean": "rm -rf ./docs ./testlib ./coverage ./lib",
     "predocs": "clear && rm -rf ./docs",
     "docs": "./node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
-    "pretest": "clear && rm -rf ./testlib && BABEL_ENV=test babel src -d ./testlib",
-    "pretest": "clear && cp src ",
-    "test": "cross-env NODE_ENV=test nyc mocha ./testlib/test/*.mocha.js",
+    "pretest": "clear && rm -rf ./testlib && mkdir ./testlib && cp src/* ./testlib",
+    "test": "NODE_ENV=test mocha ./testlib/mocha/*.mocha.js",
     "prereport": "clear && rm -rf ./coverage",
     "report": "nyc report ./coverage",
-    "prebuild": "clear && rm -rf ./lib",
-    "build": "cross-env NODE_ENV=production babel ./src/chakras.js -d ./lib"
+    "prebuild": "clear && rm -rf ./lib && mkdir ./lib",
+    "build": "NODE_ENV=production cp src/* ./lib"
   },
   "repository": {
     "type": "git",
