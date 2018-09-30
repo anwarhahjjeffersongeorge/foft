@@ -556,6 +556,9 @@ class MathOfT{
       return [...this].map(callback, thisArg);
     }
 
+    /**
+     * dimensional labeling
+     */
     static R =  ['x', 'y', 'z'];
     static ARENUMBERS = function(){
       if(arguments.length == 0){
@@ -569,11 +572,10 @@ class MathOfT{
         return result;
       }
     };
-    static OPDICT = () => Object.keys(MathOfT.OPS);
     static ISOP = (codeToParse) => codeToParse in MathOfT.OPDICT;
     static OPPARSE = (codeToParse)=> (MathOfT.ISOP(codeToParse))
       ? codeToParse
-      : MathFunction.OfT.OPDICT[null];
+      : MathOfT.OPDICT[null];
     static OPS =  Object.defineProperties({}, {
       [null]:{
         get: () => {
@@ -655,7 +657,7 @@ class MathOfT{
         set: () => '...'
       }
     });
-
+    static OPDICT = Object.keys(MathOfT.OPS);
   }
 
 
