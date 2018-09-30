@@ -1,3 +1,4 @@
+"use strict";
 /**
 * MathOfT is a class that evaluates the
 * properties of Function or MathOfT objects that
@@ -22,6 +23,8 @@
 * @see MathOfT.ofT
 */
 class MathOfT{
+
+  // static #test=1;//@babel/plugin-proposal-class-properties
   /**
   * constructor - create a MathOfT instance that evaluates its Function terms
   *    when given some parameter "t".
@@ -552,142 +555,110 @@ class MathOfT{
       if(!(callback instanceof Function)) throw new TypeError('map needs Function callback');
       return [...this].map(callback, thisArg);
     }
+
+    static R =  ['x', 'y', 'z'];
+    static ARENUMBERS = function(){
+      if(arguments.length == 0){
+        return false;
+      } else {
+        return [...arguments].every(v => typeof v === 'number' );
+        let result = true;
+        for(let i = 0; i < arguments.length; i++){
+          result = (result && typeof arguments[i] === 'number');
+        }
+        return result;
+      }
+    };
+    static OPDICT = () => Object.keys(MathOfT.OPS);
+    static ISOP = (codeToParse) => codeToParse in MathOfT.OPDICT;
+    static OPPARSE = (codeToParse)=> (MathOfT.ISOP(codeToParse))
+      ? codeToParse
+      : MathFunction.OfT.OPDICT[null];
+    static OPS =  Object.defineProperties({}, {
+      [null]:{
+        get: () => {
+          function res(){
+            return arguments;
+          };
+          res.code = null;
+          res.base = null;
+          return res;
+        },
+        set: () => null
+      },
+      '+':{
+        get: () => {
+          let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
+          ? a + b
+          : NaN;
+          res.code = '+';
+          res.base = 0;
+          return res;
+        },
+        set: () => '+'
+      },
+      '-':{
+        get: () => {
+          let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
+          ? a - b
+          : NaN;
+          res.code = '-';
+          res.base = 0;
+          return res;
+        },
+        set: () => '-'
+      },
+      '*':{
+        get: () => {
+          let res =  (a, b) => (MathOfT.ARENUMBERS(a,b))
+          ? a * b
+          : NaN;
+          res.code = '*';
+          res.base = 1;
+          return res;
+        },
+        set: () => '*'
+      },
+      '/':{
+        get: () => {
+          let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
+          ? a / b
+          : NaN;
+          res.code = '/';
+          res.base = 1;
+          return res;
+        },
+        set: () => '/'
+      },
+      '**':{
+        get: () => {
+          let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
+          ? a ** b
+          : NaN;
+          res.code = '**';
+          res.base = 1;
+          return res;
+        },
+        set: () => '**'
+      },
+      '...':{
+        get: () => {
+          let res = (a, b) => (Array.isArray(a))
+          ? a.concat(b)
+          : Array.isArray(b)
+          ? b.concat(a)
+          : [a,b];
+          res.code = '...';
+          res.base = [];
+          return res;
+        },
+        set: () => '...'
+      }
+    });
+
   }
 
-  Object.defineProperties(MathOfT, {
-    R: {
-      value: ['x', 'y', 'z'],
-      enumerable: true,
-      configurable: false,
-      writable: false
-    },
-    ARENUMBERS: {
-      get: () => {
-        return function(){
-          if(arguments.length == 0){
-            return false;
-          } else {
-            return [...arguments].every(v => typeof v === 'number' );
-            let result = true;
-            for(let i = 0; i < arguments.length; i++){
-              result = (result && typeof arguments[i] === 'number');
-            }
-            return result;
-          }
-        };
-      },
-      set: () => null,
-    },
-    OPDICT:{
-      get: function(){
-        return Object.keys(MathOfT.OPS);
-      },
-      set: ()=>null,
-      configurable: false,
-    },
-    ISOP:{
-      get: ()=> codeToParse => codeToParse in MathOfT.OPDICT,
-      set: ()=>null,
-      configurable: false,
-    },
-    OPPARSE: {
-      get: ()=>{
-        return (codeToParse)=>{
-          return (MathOfT.ISOP(codeToParse))
-          ? codeToParse
-          : MathFunction.OfT.OPDICT[null];
-        };
-      },
-      set: ()=>null,
-      configurable: false,
-    },
-    OPS: {
-      value: Object.defineProperties({}, {
-        [null]:{
-          get: () => {
-            function res(){
-              return arguments;
-            };
-            res.code = null;
-            res.base = null;
-            return res;
-          },
-          set: () => null
-        },
-        '+':{
-          get: () => {
-            let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
-            ? a + b
-            : NaN;
-            res.code = '+';
-            res.base = 0;
-            return res;
-          },
-          set: () => '+'
-        },
-        '-':{
-          get: () => {
-            let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
-            ? a - b
-            : NaN;
-            res.code = '-';
-            res.base = 0;
-            return res;
-          },
-          set: () => '-'
-        },
-        '*':{
-          get: () => {
-            let res =  (a, b) => (MathOfT.ARENUMBERS(a,b))
-            ? a * b
-            : NaN;
-            res.code = '*';
-            res.base = 1;
-            return res;
-          },
-          set: () => '*'
-        },
-        '/':{
-          get: () => {
-            let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
-            ? a / b
-            : NaN;
-            res.code = '/';
-            res.base = 1;
-            return res;
-          },
-          set: () => '/'
-        },
-        '**':{
-          get: () => {
-            let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
-            ? a ** b
-            : NaN;
-            res.code = '**';
-            res.base = 1;
-            return res;
-          },
-          set: () => '**'
-        },
-        '...':{
-          get: () => {
-            let res = (a, b) => (Array.isArray(a))
-            ? a.concat(b)
-            : Array.isArray(b)
-            ? b.concat(a)
-            : [a,b];
-            res.code = '...';
-            res.base = [];
-            return res;
-          },
-          set: () => '...'
-        }
-      }),
-      enumerable: true,
-      configurable: false,
-      writable: false,
-    }
-  })
+
 
   class PieceWiseMathOfTT{
     /**
