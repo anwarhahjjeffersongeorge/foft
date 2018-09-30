@@ -36,12 +36,92 @@ describe('MathOfT', function() {
       it(`Property ${propname} should exist as an ${typename}`, function() {
         MathOfT.should.have.own.property(propname);
         MathOfT[propname].should.be.an(typename);
+        // MathOfT[propname].should.be.frozen;
       });
-
-
     });
 
-  })
+    describe('with the functionalities such that', function() {
+      describe(`MathOfT.ARENUMBERS`,function(){
+        it('returns true when ALL arguments are numbers(including NaN)', function() {
+          MathOfT.ARENUMBERS(Math.random(), Math.random()).should.be.true;
+          MathOfT.ARENUMBERS(0,1,2,3,4,6,7,8,99).should.be.true;
+          MathOfT.ARENUMBERS(0, NaN, 44).should.be.true;
+        });
+        it('returns false when ANY arguments are not numbers', function(){
+          MathOfT.ARENUMBERS('l').should.be.false;
+          MathOfT.ARENUMBERS('55',5).should.be.false;
+          MathOfT.ARENUMBERS(55, 55, 5.4, NaN, '535', 5).should.be.false;
+        });
+        it('returns false when arguments are null', function(){
+          MathOfT.ARENUMBERS().should.be.false;
+        });
+      });
+      describe('MathOfT.OPDICT', function() {
+        // console.log(MathOfT.OPDICT)
+        MathOfT.OPDICT.forEach((key)=>{
+          it(`contains ${key} in MathOfT.OPS`, function(){
+            if(key){ //key can be null
+              MathOfT.OPS.should.have.own.property(key);
+            }
+          });
+        })
+      });
+      describe('Math.OPPARSE', function(){
+         it('should for each')
+      })
+      describe('MathOfT.ISOP', function() {
+        let goodtestcodes = Array.from(MathOfT.OPDICT);
+        goodtestcodes.map((code)=>{
+          it(`returns true when given MathOfT.OPDICT code ${code}`, function() {
+            MathOfT.ISOP(code).should.be.true;
+          });
+        });
+        let numbadcodes = 10, badtestcodes=[];
+        for(let n = 0; n < numbadcodes; n++){
+          let badcode;
+          let resetbadcode = () => badcode = String.fromCharCode(
+            Math.floor(255*Math.random));
+          resetbadcode();
+          while (MathOfT.OPDICT.includes(badcode.charCodeAt(0))) {
+            resetbadcode();
+          }
+          badtestcodes[n] = badcode;
+        }
+        // console.info(badtestcodes.length)
+        badtestcodes.forEach((code)=>{
+          it(`returns false when given random code ${code}`, function() {
+            MathOfT.ISOP(code).should.be.false;
+          });
+        });
+      });
+      describe('MathOfT.OPS', function() {
+        let opskeys=[null, '+', '-', '*', '/', '**']
+        opskeys.forEach((key)=>{
+          let testTarget = MathOfT.OPS[key];
+          // console.log(testTarget)
+          describe(`contains property ${key}`, function() {
+            it(`which is a function that`, function() {
+              testTarget.should.be.a('function');
+            });
+            if(key){ //null key
+              it(`has own property base (number)`, function() {
+                testTarget.should.be.a('function');
+                testTarget.should.have.own.property('base');
+                testTarget['base'].should.be.a('number');
+              });
+              it(`has own property code(string) `, function() {
+                testTarget.should.be.a('function');
+                testTarget.should.have.own.property('code');
+                testTarget['code'].should.be.a('string');
+              });
+            }
+          });
+
+        });
+      });
+    });
+
+  });
 });
 //TODO browser tests
 describe('browser Functionality', function() {
