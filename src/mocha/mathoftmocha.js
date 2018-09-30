@@ -1,3 +1,4 @@
+"use strict";
 /**
 * Test suite for ../mathoft.js
 */
@@ -13,19 +14,16 @@ var expect = chai.expect;
 var assert = chai.assert;
 //
 import * as MathOfT from '../index.js';
-// describe('Array', function() {
-//   describe('#indexOf()', function() {
-//     it('should return -1 when the value is not present', function() {
-//       assert.equal([1,2,3].indexOf(4), -1);
-//     });
-//   });
-// });
+
+//
+
 
 //TODO MathOFT tests
 describe('MathOfT', function() {
-  it('should be a Object', function() {
+  it('should be an Object', function() {
     MathOfT.should.be.an('Object')
   });
+  it('should have certain immutable class properties')
 });
 //TODO browser tests
 describe('browser Functionality', function() {
