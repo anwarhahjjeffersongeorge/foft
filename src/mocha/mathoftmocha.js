@@ -13,15 +13,25 @@ var expect = chai.expect;
 var assert = chai.assert;
 //
 import * as MathOfT from '../index.js';
-// var assert = require('assert');
-describe('Array', function() {
-  describe('#indexOf()', function() {
-    it('should return -1 when the value is not present', function() {
-      assert.equal([1,2,3].indexOf(4), -1);
-    });
+// describe('Array', function() {
+//   describe('#indexOf()', function() {
+//     it('should return -1 when the value is not present', function() {
+//       assert.equal([1,2,3].indexOf(4), -1);
+//     });
+//   });
+// });
+
+//TODO MathOFT tests
+describe('MathOfT', function() {
+  it('should be a Object', function() {
+    MathOfT.should.be.an('Object')
   });
 });
-
-
 //TODO browser tests
+describe('browser Functionality', function() {
+  // body...
+});
 //TODO nodejs tests
+describe('nodejs Functionality', function() {
+  // body...
+});
