@@ -35,7 +35,5 @@
   "keywords": [],
   "author": "Anwar Hahj Jefferson-George <anwarhahjjeffersongeorge@gmail.com>",
   "license": "ISC",
-  "dependencies": {
-    "fsevents": "^1.2.4"
-  }
+  "dependencies": {}
 }
