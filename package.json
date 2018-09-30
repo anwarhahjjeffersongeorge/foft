@@ -2,8 +2,8 @@
   "name": "mathoftjs",
   "version": "1.0.0",
   "description": "Evaluation of math terms over specified ranges.",
-  "main": "index.js",
-  "module": "main.js",
+  "main": "lib/index.js",
+  "module": "lib/main.js",
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
@@ -19,15 +19,15 @@
     "nyc": "^13.0.1"
   },
   "scripts": {
-    "clean": "rm -rf ./docs ./testlib ./coverage ./lib",
-    "predocs": "clear && rm -rf ./docs",
+    "clean": "rm -rf docs test coverage",
+    "predocs": "clear && rm -rf docs",
     "docs": "npx jsdoc --configure .jsdoc.json --verbose",
-    "pretest": "clear && rm -rf ./testlib && mkdir ./testlib && cp -r src/* ./testlib",
-    "test": "NODE_ENV=test npx mocha --require @babel/register ./testlib/mocha/*.mocha.js",
+    "pretest": "clear && rm -rf test",
+    "test": "npx mocha --debug --require @babel/register --require esm ./test/mocha/mathoftmocha.js",
     "prereport": "clear && rm -rf ./coverage && mkdir ./coverage",
     "report": "npx nyc report ./coverage",
-    "prebuild": "clear && rm -rf ./lib && mkdir ./lib",
-    "build": "NODE_ENV=production npx babel ./lib"
+    "prebuild": "clear && rm -rf lib",
+    "build": "npx babel src -d lib"
   },
   "repository": {
     "type": "git",

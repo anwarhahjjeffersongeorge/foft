@@ -12,7 +12,7 @@ var should = chai.should();
 var expect = chai.expect;
 var assert = chai.assert;
 //
-import * as MathOfT from '../mathoft.js';
+import * as MathOfT from '../index.js';
 // var assert = require('assert');
 describe('Array', function() {
   describe('#indexOf()', function() {
