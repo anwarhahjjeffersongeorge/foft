@@ -1,4 +1,4 @@
 .ftp*
-node_modules/
-nyc_output/
-test/
+node_modules/*
+nyc_output/*
+test/*
