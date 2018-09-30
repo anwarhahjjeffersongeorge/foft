@@ -1,6 +1,4 @@
 {
   "presets": ["@babel/env"],
-  "plugins": [
-    "module:@babel/helper-module-imports"
-  ]
+  "plugins": []
 }
