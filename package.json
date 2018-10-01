@@ -10,8 +10,6 @@
     "docs": "npx jsdoc --configure .jsdoc.json --verbose",
     "pretest": "clear && rm -rf test && npx babel src --out-dir test",
     "test": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text mocha ./test/mocha/mathoftmocha.js",
-    "prereport": "clear && rm -rf ./coverage && mkdir ./coverage",
-    "report": "npx nyc report ./coverage",
     "prebuild": "clear && rm -rf lib",
     "build": "npx cross-env NODE_ENV=production babel src --out-dir lib --ignore \"src/mocha/\""
   },
