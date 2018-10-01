@@ -52,7 +52,9 @@ class MathOfT{
 
     // define the division of the evaluation range
     const segmentDivisor = params.segmentDivisor || 10;
-    if(typeof segmentDivisor !== 'number') throw new TypeError('segmentDivisor should be number');
+    if(typeof segmentDivisor !== 'number' || Number.isNaN(segmentDivisor)){
+      throw new TypeError('segmentDivisor should be non-NaN number');
+    }
     this.__segmentDivisor = segmentDivisor;
 
     let rangeoverride = (typeof params.rangeoverride === 'boolean')
@@ -68,7 +70,7 @@ class MathOfT{
     : range;
     if(!Array.isArray(range)) throw new TypeError('range should be array');
     if(range.length!==2) throw new ValueError('range should have two elements')
-    if(!(typeof range[0]==='number' && typeof range[1]==='number')) throw new TypeError('range values should be numbers')
+    if(!MathOfT.ARENUMBERS(...range)) throw new TypeError('range values should be numbers')
     this._range = Array(range.length);
 
     for(let rangeIndex in range){

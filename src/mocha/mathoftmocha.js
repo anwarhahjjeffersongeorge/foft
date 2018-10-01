@@ -206,7 +206,11 @@ describe('MathOfT', function() {
         testObj.range.should.be.array();
         testObj.range.should.be.equalTo(testArray);
       });
-      it('should accept Object as parameter and use it to set named elements', function() {
+
+
+    });
+    describe('accepts an object as single parameter', function() {
+      it('should use object keys to set appropriate named properties', function() {
         let testParamsObj = {
           terms: [(t)=>Math.sin(t)/5, (t)=>Math.cos(3*t)/7, (t)=>Math.sin(5*t)/9],
           segmentDivisor: 15,
@@ -223,9 +227,30 @@ describe('MathOfT', function() {
         testParamsObj.terms[1](testVal).should.equal(testObj.terms[1](testVal))
         testParamsObj.terms[2](testVal).should.equal(testObj.terms[2](testVal))
       });
+      describe('key: segmentDivisor', function() {
+        it('should use default (fail gracefully) when provided NaNsegment divisor', function() {
+          let testParamsObj = {
+            terms: [(t)=>Math.sin(t)/5, (t)=>Math.cos(3*t)/7, (t)=>Math.sin(5*t)/9],
+            segmentDivisor: NaN,
+            range: [0, -Math.PI]
+          };
+          let testObj;
+          let testObjFunc = ()=>testObj= new MathOfT(testParamsObj);
+          expect(testObjFunc).to.not.throw(TypeError);
+          testObj.segmentDivisor.should.equal(10);
+        });
+        it('should error when provided non-number segment divisor', function() {
+          let testParamsObj = {
+            terms: [(t)=>Math.sin(t)/5, (t)=>Math.cos(3*t)/7, (t)=>Math.sin(5*t)/9],
+            segmentDivisor: 'y',
+            range: [0, -Math.PI]
+          };
+          let testObjFunc = ()=>new MathOfT(testParamsObj);
+          expect(testObjFunc).to.throw(TypeError);
+        });
+      });
 
     });
-
   });
 
   describe('object produced by constructor new MathOfT()', function(){
