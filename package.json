@@ -9,11 +9,11 @@
     "predocs": "clear && rm -rf docs",
     "docs": "npx jsdoc --configure .jsdoc.json --verbose",
     "pretest": "clear && rm -rf test && npx babel src --out-dir test",
-    "test": "npx nyc mocha --require @babel/register --require esm ./test/mocha/mathoftmocha.js",
+    "test": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text mocha ./test/mocha/mathoftmocha.js",
     "prereport": "clear && rm -rf ./coverage && mkdir ./coverage",
     "report": "npx nyc report ./coverage",
     "prebuild": "clear && rm -rf lib",
-    "build": "npx babel src --out-dir lib --ignore \"src/mocha/\""
+    "build": "npx cross-env NODE_ENV=production babel src --out-dir lib --ignore \"src/mocha/\""
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,15 @@
   "keywords": [],
   "author": "Anwar Hahj Jefferson-George <anwarhahjjeffersongeorge@gmail.com>",
   "license": "ISC",
+  "nyc": {
+    "exclude":[
+      "coverage/**",
+      "**/node_modules/**"
+    ],
+    "sourceMap": false,
+    "instrument": false,
+    "reporter": "html"
+  },
   "dependencies": {
     "@babel/polyfill": "^7.0.0"
   },
@@ -31,6 +40,7 @@
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
+    "babel-plugin-istanbul": "^5.0.1",
     "chai": "^4.2.0",
     "chai-arrays": "^2.0.0",
     "chai-as-promised": "^7.1.1",
