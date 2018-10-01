@@ -1,6 +1,6 @@
 "use strict";
 /**
-* MathOfT is a class that evaluates the
+* @class MathOfT is a class that evaluates the
 * properties of Function or MathOfT objects that
 * generally receive and return objects of type
 *  - Number

@@ -188,6 +188,34 @@ describe('MathOfT', function() {
     });
 
   });
+  describe('object produced by constructor new MathOfT()', function(){
+    let testObj = new MathOfT();
+    it('should be an instance of MathOfT', function() {
+      testObj.should.be.instanceof(MathOfT);
+    });
+    describe('should start with default instance members', function(){
+      it('range Array: [0,1]', function(){
+        testObj.range.should.be.array();
+        testObj.range.should.be.ofSize(2);
+        testObj.range.should.be.equalTo([0,1]);
+      });
+      it('segmentDivisor number: of 10', function(){
+        testObj.segmentDivisor.should.be.a('number');
+        testObj.segmentDivisor.should.equal(10);
+      });
+      it('terms Array: [x => x]', function(){
+        testObj.terms.should.be.array();
+        testObj.terms.should.be.ofSize(1);
+        let testFunc = testObj[0], testVal = Math.random();
+        testFunc.should.be.a('function');
+        console.log(testFunc(23))
+        testFunc(testVal).should.equal(testVal);
+      });
+    });
+
+  });
+
+
 });
 //TODO browser tests
 describe('browser Functionality', function() {
