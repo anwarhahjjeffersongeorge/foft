@@ -67,7 +67,25 @@ describe('MathOfT', function() {
         })
       });
       describe('Math.OPPARSE', function(){
-         it('should for each')
+        MathOfT.OPDICT.forEach((key)=>{
+          it(`returns function for ${key} in MathOfT.OPS`, function(){
+            if(key){ //key can be null
+              MathOfT.OPPARSE(key).should.be.a('function');
+            }
+          });
+        });
+        let dummychar = ()=>String.fromCharCode(Math.floor(255*Math.random()));
+        let badcodes = Array(10).fill(dummychar());
+        badcodes.forEach((badcode)=>{
+          it(`returns null function for ${badcode} not in MathOfT.OPS`, function(){
+            let testargs = [Math.random(), Math.random()]
+            let testTarget = MathOfT.OPPARSE(badcode);
+            testTarget.should.be.a('function');
+            let testResult = testTarget(...testargs)
+            testResult.should.be.an('Array');
+            testResult.should.be.equalTo(testargs);
+          });
+        });
       })
       describe('MathOfT.ISOP', function() {
         let goodtestcodes = Array.from(MathOfT.OPDICT);
@@ -114,6 +132,54 @@ describe('MathOfT', function() {
                 testTarget.should.have.own.property('code');
                 testTarget['code'].should.be.a('string');
               });
+            }
+            switch (key) {
+              case null:
+                it(`should perform null operation on its operands, returning them unchanged in array format`, function(){
+                  let testResult = MathOfT.OPS[key](1,2,3,4)
+                  testResult.should.be.an('array');
+                  testResult.should.be.equalTo([1,2,3,4]);
+                  testResult = MathOfT.OPS[key](1,2,3,NaN);
+                  testResult.should.be.an('array');
+                  testResult[0].should.equal(1);
+                  testResult[1].should.equal(2);
+                  testResult[2].should.equal(3);
+                  //can't use should.be.equalTo because of NaN value (NaN !== NaN)
+                  testResult[3].should.be.NaN;
+                });
+                break;
+              case '+':
+                it(`should perform summation on its number operands`, function(){
+                  MathOfT.OPS[key](1,2,3,4).should.equal(1+2+3+4);
+                  MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
+                });
+                break;
+              case '-':
+                it(`should perform subtraction on its number operands`, function(){
+                  MathOfT.OPS[key](1,2,3,4).should.equal(1-2-3-4);
+                  MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
+                });
+                break;
+              case '*':
+                it(`should perform multiplication on its number operands`, function(){
+                  MathOfT.OPS[key](1,2,3,4).should.equal(1*2*3*4);
+                  MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
+                });
+                break;
+              case '/':
+                it(`should perform division on its number operands`, function(){
+                  MathOfT.OPS[key](1,2,3,4).should.equal(1/2/3/4);
+                  MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
+                });
+                break;
+              case '**':
+                it(`should perform exponentiation on its number operands`, function(){
+                  MathOfT.OPS[key](1,2,3,4).should.equal(1**2**3**4);
+                  MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
+                });
+                break;
+              default:
+
             }
           });
 
