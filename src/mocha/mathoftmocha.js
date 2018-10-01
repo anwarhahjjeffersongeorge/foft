@@ -188,10 +188,21 @@ describe('MathOfT', function() {
     });
 
   });
-  describe('MathOfT constructor', () => {
-    it('accepts a single parameter', () => {
-      MathOfT.constructor.length.should.equal(1);
+  describe('MathOfT constructor', function(){
+    describe('accepts a single parameter', function(){
+      it('should have constructor function length 1 ', () => {
+        MathOfT.constructor.length.should.equal(1);
+      });
+      it('should accept Function as parameter and set it to terms array', function(){
+        let testFunction = (t)=>t*32
+        let testObj = new MathOfT(testFunction);
+        testObj.terms[0].should.be.a('function');
+        let testVal = Math.random();
+        testObj.terms[0](testVal).should.equal(testFunction(testVal));
+      })
+
     });
+
   });
 
   describe('object produced by constructor new MathOfT()', function(){
