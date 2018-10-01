@@ -188,7 +188,6 @@ describe('MathOfT', function() {
     });
 
   });
-<<<<<<< HEAD
   describe('object produced by constructor new MathOfT()', function(){
     let testObj = new MathOfT();
     it('should be an instance of MathOfT', function() {
@@ -212,21 +211,11 @@ describe('MathOfT', function() {
         console.log(testFunc(23))
         testFunc(testVal).should.equal(testVal);
       });
-=======
-
-  describe('constructor new MathOfT()', () => {
-    let testConstructor = (params) => new MathOfT(params);
-    describe('parameters', () => {
-      //constructor.length.should.equal(1)
->>>>>>> 9832d3d9134608c94c6877d318f07e080c0ac000
     });
 
   });
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 9832d3d9134608c94c6877d318f07e080c0ac000
 });
 //TODO browser tests
 describe('browser Functionality', function() {
