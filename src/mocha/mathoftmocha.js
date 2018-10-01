@@ -206,9 +206,8 @@ describe('MathOfT', function() {
       it('terms Array: [x => x]', function(){
         testObj.terms.should.be.array();
         testObj.terms.should.be.ofSize(1);
-        let testFunc = testObj[0], testVal = Math.random();
+        let testFunc = testObj.terms[0], testVal = Math.random();
         testFunc.should.be.a('function');
-        console.log(testFunc(23))
         testFunc(testVal).should.equal(testVal);
       });
     });
