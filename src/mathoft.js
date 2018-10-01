@@ -563,23 +563,53 @@ class MathOfT{
       return false;
     } else {
       return [...arguments].every(v => typeof v === 'number' );
-      // let result = true;
-      // for(let i = 0; i < arguments.length; i++){
-      //   result = (result && typeof arguments[i] === 'number');
-      // }
-      // return result;
     }
   };
+
+  /**
+   * @static OPDICT - an array of the ops that MathOfT class  can recognize
+   */
   static OPDICT = [null, '+', '-', '*', '/', '**'];
-  static ISOP = (codeToParse) => MathOfT.OPDICT.includes(codeToParse);
-  static OPPARSE = (codeToParse)=> (MathOfT.ISOP(codeToParse))
-  ? codeToParse
-  : MathOfT.OPDICT[null];
+
+  /**
+   * @static ISOP - given a string codeToParse, return true when code is found
+   *  in MathOfT.OPDICT
+   * @see MathOfT.OPDICT
+   * @param  {string} codeToParse
+   * @return {boolean}
+   */
+  static ISOP(codeToParse){
+     return MathOfT.OPDICT.includes(codeToParse)
+  }
+
+  /**
+   * @static OPPARSE - given a string codeToParse, return
+   * the corresponding operation function from MathOfT.OPS
+   *
+   * @see MathOfT.OPS
+   * @param  {string} codeToParse
+   * @return {function} MathOfT.OPS function corresponding to op
+   */
+  static OPPARSE(codeToParse){
+    return (MathOfT.ISOP(codeToParse))
+          ? MathOfT.OPS[codeToParse]
+          : MathOfT.OPS[null];
+  }
+
+  /**
+   * @static OPS - an object containing operations, or ops, that
+   * perform mathematical functions corresponding to their keys
+   *
+   * @see MathOfT.ISOP
+   * @see MathOfT.OPDICT
+   * @see MathOfT.OPPARSE
+   * @see MathOfT.ARENUMBERS
+   */
   static OPS =  Object.defineProperties({}, {
     [null]:{
       get: () => {
         function res(){
-          return arguments;
+          return [...arguments];
         };
         res.code = null;
         res.base = null;
@@ -589,55 +619,93 @@ class MathOfT{
     },
     '+':{
       get: () => {
-        let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
-        ? a + b
-        : NaN;
+        let base = 0;
+        function res(){
+          return (MathOfT.ARENUMBERS(...arguments))
+            ? [...arguments].reduce((acc, c,i )=>{
+              return (i==0)
+                ? c
+                : acc+c
+            })
+            : NaN;
+        }
         res.code = '+';
-        res.base = 0;
+        res.base = base;
         return res;
       },
       set: () => '+'
     },
     '-':{
       get: () => {
-        let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
-        ? a - b
-        : NaN;
+        let base=0;
+        function res(){
+          return (MathOfT.ARENUMBERS(...arguments))
+            ? [...arguments].reduce((acc, c, i)=>{
+              return (i==0)
+                ? c
+                : acc-c;
+            }, base)
+            : NaN;
+        }
+        // let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
+        // ? a - b
+        // : NaN;
         res.code = '-';
-        res.base = 0;
+        res.base = base;
         return res;
       },
       set: () => '-'
     },
     '*':{
       get: () => {
-        let res =  (a, b) => (MathOfT.ARENUMBERS(a,b))
-        ? a * b
-        : NaN;
+        let base=1;
+        function res(){
+          return (MathOfT.ARENUMBERS(...arguments))
+            ? [...arguments].reduce((acc, c, i)=>{
+              return (i==0)
+                ? c
+                : acc*c;
+            }, base)
+            : NaN;
+        }
         res.code = '*';
-        res.base = 1;
+        res.base = base;
         return res;
       },
       set: () => '*'
     },
     '/':{
       get: () => {
-        let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
-        ? a / b
-        : NaN;
+        let base=1;
+        function res(){
+          return (MathOfT.ARENUMBERS(...arguments))
+            ? [...arguments].reduce((acc, c, i)=>{
+              return (i==0)
+                ? c
+                : acc/c;
+            }, base)
+            : NaN;
+        }
         res.code = '/';
-        res.base = 1;
+        res.base = base;
         return res;
       },
       set: () => '/'
     },
     '**':{
       get: () => {
-        let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
-        ? a ** b
-        : NaN;
+        let base=1;
+        function res(){
+          return (MathOfT.ARENUMBERS(...arguments))
+            ? [...arguments].reduce((acc, c, i)=>{
+              return (i==0)
+                ? c
+                : acc**c;
+            }, base)
+            : NaN;
+        }
         res.code = '**';
-        res.base = 1;
+        res.base = base;
         return res;
       },
       set: () => '**'
