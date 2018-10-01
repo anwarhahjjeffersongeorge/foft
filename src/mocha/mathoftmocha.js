@@ -100,10 +100,6 @@ describe('MathOfT', function() {
           let resetbadcode = () => badcode = String.fromCharCode(
             Math.floor(255*Math.random));
           resetbadcode();
-<<<<<<< HEAD
-=======
-          badcode = '/';
->>>>>>> d092087f162b770bac1d3174ce690bd9fcfacb38
           while (MathOfT.OPDICT.includes(badcode)){
             resetbadcode();
           }
@@ -192,22 +188,28 @@ describe('MathOfT', function() {
     });
 
   });
+  describe('MathOfT constructor', () => {
+    it('accepts a single parameter', () => {
+      MathOfT.constructor.length.should.equal(1);
+    });
+  });
+
   describe('object produced by constructor new MathOfT()', function(){
     let testObj = new MathOfT();
     it('should be an instance of MathOfT', function() {
       testObj.should.be.instanceof(MathOfT);
     });
     describe('should start with default instance members', function(){
-      it('range Array: [0,1]', function(){
+      it('range (Array): [0,1]', function(){
         testObj.range.should.be.array();
         testObj.range.should.be.ofSize(2);
         testObj.range.should.be.equalTo([0,1]);
       });
-      it('segmentDivisor number: of 10', function(){
+      it('segmentDivisor (number): 10', function(){
         testObj.segmentDivisor.should.be.a('number');
         testObj.segmentDivisor.should.equal(10);
       });
-      it('terms Array: [x => x]', function(){
+      it('terms (Array): [ x => x ]', function(){
         testObj.terms.should.be.array();
         testObj.terms.should.be.ofSize(1);
         let testFunc = testObj.terms[0], testVal = Math.random();
