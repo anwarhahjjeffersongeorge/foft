@@ -199,7 +199,30 @@ describe('MathOfT', function() {
         testObj.terms[0].should.be.a('function');
         let testVal = Math.random();
         testObj.terms[0](testVal).should.equal(testFunction(testVal));
-      })
+      });
+      it('should accept Array.<Number> as paramter and set it to range array ', function() {
+        let testArray = [0,44]
+        let testObj = new MathOfT(testArray);
+        testObj.range.should.be.array();
+        testObj.range.should.be.equalTo(testArray);
+      });
+      it('should accept Object as parameter and use it to set named elements', function() {
+        let testParamsObj = {
+          terms: [(t)=>Math.sin(t)/5, (t)=>Math.cos(3*t)/7, (t)=>Math.sin(5*t)/9],
+          segmentDivisor: 15,
+          range: [0, -Math.PI]
+        }
+        let testObj = new MathOfT(testParamsObj);
+        testObj.range.should.be.array();
+        testObj.range.should.be.equalTo(testParamsObj.range);
+        testObj.segmentDivisor.should.equal(testParamsObj.segmentDivisor);
+        testObj.terms.should.be.array();
+        testObj.terms.should.be.ofSize(testParamsObj.terms.length);
+        let testVal = Math.random();
+        testParamsObj.terms[0](testVal).should.equal(testObj.terms[0](testVal))
+        testParamsObj.terms[1](testVal).should.equal(testObj.terms[1](testVal))
+        testParamsObj.terms[2](testVal).should.equal(testObj.terms[2](testVal))
+      });
 
     });
 
