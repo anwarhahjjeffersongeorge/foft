@@ -179,7 +179,7 @@ describe('MathOfT', function() {
                 });
                 break;
               default:
-
+                break;
             }
           });
 
