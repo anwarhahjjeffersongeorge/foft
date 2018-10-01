@@ -100,6 +100,10 @@ describe('MathOfT', function() {
           let resetbadcode = () => badcode = String.fromCharCode(
             Math.floor(255*Math.random));
           resetbadcode();
+<<<<<<< HEAD
+=======
+          badcode = '/';
+>>>>>>> d092087f162b770bac1d3174ce690bd9fcfacb38
           while (MathOfT.OPDICT.includes(badcode)){
             resetbadcode();
           }
