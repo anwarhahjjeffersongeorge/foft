@@ -8,12 +8,12 @@
     "clean": "rm -rf docs test coverage",
     "predocs": "clear && rm -rf docs",
     "docs": "npx jsdoc --configure .jsdoc.json --verbose",
-    "pretest": "clear && rm -rf test && npx babel src -out-dir test",
-    "test": "npx mocha --require @babel/register --require esm ./test/mocha/mathoftmocha.js",
+    "pretest": "clear && rm -rf test && npx babel src --out-dir test",
+    "test": "npx nyc mocha --require @babel/register --require esm ./test/mocha/mathoftmocha.js",
     "prereport": "clear && rm -rf ./coverage && mkdir ./coverage",
     "report": "npx nyc report ./coverage",
     "prebuild": "clear && rm -rf lib",
-    "build": "npx babel src --out-dir lib --ignore \"src/mocha\""
+    "build": "npx babel src --out-dir lib --ignore \"src/mocha/\""
   },
   "repository": {
     "type": "git",

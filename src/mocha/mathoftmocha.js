@@ -188,6 +188,15 @@ describe('MathOfT', function() {
     });
 
   });
+
+  describe('constructor new MathOfT()', () => {
+    let testConstructor = (params) => new MathOfT(params);
+    describe('parameters', () => {
+      //constructor.length.should.equal(1)
+    });
+
+  });
+
 });
 //TODO browser tests
 describe('browser Functionality', function() {
