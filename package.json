@@ -4,6 +4,27 @@
   "description": "Evaluation of math terms over specified ranges.",
   "main": "lib/index.js",
   "module": "lib/main.js",
+  "scripts": {
+    "clean": "rm -rf docs test coverage",
+    "predocs": "clear && rm -rf docs",
+    "docs": "npx jsdoc --configure .jsdoc.json --verbose",
+    "pretest": "clear && rm -rf test && npx babel src -out-dir test",
+    "test": "npx mocha --require @babel/register --require esm ./test/mocha/mathoftmocha.js",
+    "prereport": "clear && rm -rf ./coverage && mkdir ./coverage",
+    "report": "npx nyc report ./coverage",
+    "prebuild": "clear && rm -rf lib",
+    "build": "npx babel src --out-dir lib --ignore \"src/mocha\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "pi@raspberrypi:/home/pi/GIT/mathoftjs"
+  },
+  "keywords": [],
+  "author": "Anwar Hahj Jefferson-George <anwarhahjjeffersongeorge@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0"
+  },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
@@ -17,24 +38,5 @@
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0",
     "nyc": "^13.0.1"
-  },
-  "scripts": {
-    "clean": "rm -rf docs test coverage",
-    "predocs": "clear && rm -rf docs",
-    "docs": "npx jsdoc --configure .jsdoc.json --verbose",
-    "pretest": "clear && rm -rf test && npx babel src -d test",
-    "test": "npx mocha --require @babel/register --require esm ./test/mocha/mathoftmocha.js",
-    "prereport": "clear && rm -rf ./coverage && mkdir ./coverage",
-    "report": "npx nyc report ./coverage",
-    "prebuild": "clear && rm -rf lib",
-    "build": "npx babel src -d lib"
-  },
-  "repository": {
-    "type": "git",
-    "url": "pi@raspberrypi:/home/pi/GIT/mathoftjs"
-  },
-  "keywords": [],
-  "author": "Anwar Hahj Jefferson-George <anwarhahjjeffersongeorge@gmail.com>",
-  "license": "ISC",
-  "dependencies": {}
+  }
 }
