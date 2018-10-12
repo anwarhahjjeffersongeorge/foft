@@ -51,7 +51,7 @@ class MathOfT{
     }
 
     // define the division of the evaluation range
-    const segmentDivisor = params.segmentDivisor || 10;
+    const segmentDivisor = params.segmentDivisor || MathOfT.DEFAULT_SEGMENT_DIVISOR;
     if(typeof segmentDivisor !== 'number' || Number.isNaN(segmentDivisor)){
       throw new TypeError('segmentDivisor should be non-NaN number');
     }
@@ -64,7 +64,7 @@ class MathOfT{
     // create an evaluation range
     let range = (rangeoverride)
     ? [0, this.__segmentDivisor]
-    : params.range || [0,1];
+    : params.range || MathOfT.DEFAULT_RANGE;
     range = (typeof range === 'number')
     ? [-range, range]
     : range;
@@ -726,6 +726,21 @@ class MathOfT{
       set: () => '...'
     }
   });
+
+  /**
+   * @static DEFAULT_SEGMENT_DIVISOR By default, MathOfT instances divide into
+   * this many segments
+   * @type {Number}
+   * @default 10
+   */
+  static DEFAULT_SEGMENT_DIVISOR = 10;
+  /**
+   * @static DEFAULT_RANGE By default, MathOfT instances divide into
+   * this many segments
+   * @type {Array.<Number>}
+   * @default [0,1]
+   */
+  static DEFAULT_RANGE = [0,1];
 
 }
 

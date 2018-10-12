@@ -29,14 +29,16 @@ describe('MathOfT', function() {
       OPDICT: 'Array',
       ISOP: 'function',
       OPPARSE: 'function',
-      OPS: 'Object'
+      OPS: 'Object',
+      DEFAULT_SEGMENT_DIVISOR: 'Number',
+      DEFAULT_RANGE: 'Array',
     };
     Object.keys(staticpropsandtypes).forEach((propname)=>{
       let typename = staticpropsandtypes[propname];
       it(`Property ${propname} should exist as an ${typename}`, function() {
         MathOfT.should.have.own.property(propname);
         MathOfT[propname].should.be.an(typename);
-        // MathOfT[propname].should.be.frozen;
+        
       });
     });
 
@@ -264,9 +266,9 @@ describe('MathOfT', function() {
         testObj.range.should.be.ofSize(2);
         testObj.range.should.be.equalTo([0,1]);
       });
-      it('segmentDivisor (number): 10', function(){
+      it(`segmentDivisor (number): MathOfT.DEFAULT_SEGMENT_DIVISOR ${MathOfT.DEFAULT_SEGMENT_DIVISOR}` , function(){
         testObj.segmentDivisor.should.be.a('number');
-        testObj.segmentDivisor.should.equal(10);
+        testObj.segmentDivisor.should.equal(MathOfT.DEFAULT_SEGMENT_DIVISOR);
       });
       it('terms (Array): [ x => x ]', function(){
         testObj.terms.should.be.array();
