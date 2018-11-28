@@ -120,8 +120,10 @@ class MathOfT{
   * @param @deprecated {boolean} [harmonize=false] if true, and term is a MathOfT
   *  instance, this overwrites the range and segmentDivisor of term to make them
   *  equivalent for the same parameters of this instance.
+  * @returns {boolean} true if length of terms grew
   */
   addTerm(term, harmonize){
+    let numterms = this.terms.length;
     harmonize = (typeof harmonize === 'boolean') ? harmonize : false;
     if(typeof term === 'function'){
       this.terms.push(term);
@@ -132,6 +134,7 @@ class MathOfT{
         term.__segmentDivisor = this.__segmentDivisor;
       }
     }
+    return numterms==this.terms.length-1;
   }
 
   /**

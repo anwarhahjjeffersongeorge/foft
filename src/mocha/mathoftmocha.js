@@ -38,7 +38,7 @@ describe('MathOfT', function() {
       it(`Property ${propname} should exist as an ${typename}`, function() {
         MathOfT.should.have.own.property(propname);
         MathOfT[propname].should.be.an(typename);
-        
+
       });
     });
 
@@ -100,7 +100,7 @@ describe('MathOfT', function() {
         for(let n = 0; n < numbadcodes; n++){
           let badcode;
           let resetbadcode = () => badcode = String.fromCharCode(
-            Math.floor(255*Math.random));
+            Math.floor(255*Math.random()));
           resetbadcode();
           while (MathOfT.OPDICT.includes(badcode)){
             resetbadcode();
@@ -278,8 +278,75 @@ describe('MathOfT', function() {
         testFunc(testVal).should.equal(testVal);
       });
     });
+  });
+  describe('object produced by constructor new MathOfT(function)', function(){
+    let testFactor = Math.random();
+    let testRangeFunc = d => d*testFactor;
+    let testObj = new MathOfT(testRangeFunc);
+    it('should be an instance of MathOfT', function() {
+      testObj.should.be.instanceof(MathOfT);
+    });
+    describe('should start with range set to given Array', function(){
+      it(`range (Array): [0,1]`, function(){
+        testObj.range.should.be.array();
+        testObj.range.should.be.ofSize(2);
+        testObj.range.should.be.equalTo([0,1]);
+      });
+      it(`segmentDivisor (number): MathOfT.DEFAULT_SEGMENT_DIVISOR ${MathOfT.DEFAULT_SEGMENT_DIVISOR}` , function(){
+        testObj.segmentDivisor.should.be.a('number');
+        testObj.segmentDivisor.should.equal(MathOfT.DEFAULT_SEGMENT_DIVISOR);
+      });
+      it('terms (Array): [function]', function(){
+        testObj.terms.should.be.array();
+        testObj.terms.should.be.ofSize(1);
+        let testFunc = testObj.terms[0], testVal = Math.random();
+        testFunc.should.be.a('function');
+        testFunc(testVal).should.equal(testRangeFunc(testVal));
+      });
+    });
+  });
+  describe('object produced by constructor new MathOfT(Array)', function(){
+    let testRangeArr = [4,2];
+    let testObj = new MathOfT(testRangeArr);
+    it('should be an instance of MathOfT', function() {
+      testObj.should.be.instanceof(MathOfT);
+    });
+    describe('should start with range set to given Array', function(){
+      it(`range (Array): [0,1]`, function(){
+        testObj.range.should.be.array();
+        testObj.range.should.be.ofSize(2);
+        testObj.range.should.be.equalTo(testRangeArr);
+      });
+      it(`segmentDivisor (number): MathOfT.DEFAULT_SEGMENT_DIVISOR ${MathOfT.DEFAULT_SEGMENT_DIVISOR}` , function(){
+        testObj.segmentDivisor.should.be.a('number');
+        testObj.segmentDivisor.should.equal(MathOfT.DEFAULT_SEGMENT_DIVISOR);
+      });
+      it('terms (Array): [ x => x ]', function(){
+        testObj.terms.should.be.array();
+        testObj.terms.should.be.ofSize(1);
+        let testFunc = testObj.terms[0], testVal = Math.random();
+        testFunc.should.be.a('function');
+        testFunc(testVal).should.equal(testVal);
+      });
+    });
+  });
+  describe('MathOfT instance', function(){
+    let testObj = new MathOfT();
+    describe('.addTerm(term)', function(){
+      it('should only add terms of type function or MathOfT', function(){
+        let badobj = {},
+          goodobjA = dd=>dd,
+          goodobjB = new MathOfT();
+        testObj.addTerm(badobj).should.be.false;
+        testObj.addTerm(goodobjA).should.be.true;
+        testObj.addTerm(goodobjB).should.be.true;
+
+      });
+
+    });
 
   });
+
 
 
 });
