@@ -74,9 +74,7 @@ class MathOfT{
     this._range = Array(range.length);
 
     for(let rangeIndex in range){
-      this._range[rangeIndex]  = (typeof range[rangeIndex] === 'number')
-      ? range[rangeIndex]
-      : null;
+      this._range[rangeIndex] = range[rangeIndex];
     }
 
     // this MathOfT can use these terms
@@ -196,9 +194,27 @@ class MathOfT{
   }
 
   /**
+   * get dSubRange - the delta between sub values in the evaluation range
+   * @param {Number} n the starting range index
+   * @param {Number} nn the end range index
+   * @return {Number}  description
+   */
+  dSubrange(n, nn){
+    if(!MathOfT.ARENUMBERS(n,nn)){
+       throw new TypeError(`MathOfT.dSubRange only accepts Numbers, given ${arguments}`);
+    }
+
+    let rangesum = 0;
+    for (let i = 0; i < this._range.length; i++) {
+      this._range[i]
+    }
+    return;
+  }
+
+  /**
   * get drange - the delta between the values of the evaluation range
   *
-  * @return {type}  description
+  * @return {Number}  description
   */
   get drange(){
     let rangesum = 0;
@@ -214,7 +230,7 @@ class MathOfT{
   * get dabsrange - the absolute value of the delta
   * between the values of the evaluation range
   *
-  * @return {type}  description
+  * @return {Number}  description
   */
   get dabsrange(){
     let rangesum = 0;
@@ -563,13 +579,38 @@ class MathOfT{
   * dimensional labeling
   */
   static R =  ['x', 'y', 'z'];
+
+
+  /**
+   * @static ARENUMBERS return true IFF one of these conditions are met
+   *   1. The provided arguments are ALL of Number type,
+   *   2. The sole provided argument is an Array whose members are ALL of Number type,
+   *   3. Any provided argument is an Array whose members are
+   *      A. ALL of Number type, or
+   *      B. nested Arrays whose submembers are all number types or Arra
+   *      and ALL other arguments are Number type or Array with ALL members of Number type,
+   *
+   *
+   * @params {} [arguments] figure out whether the arguments are numbers
+   *  an Array thereof
+   * @return {type}  description
+   */
   static ARENUMBERS = function(){
     if(arguments.length == 0){
       return false;
     } else {
-      return [...arguments].every(v => typeof v === 'number' );
+      return [...arguments].every(v => {
+        return Array.isArray(v)
+          ? MathOfT.ARENUMBERS(...v)
+          : typeof v === 'number'
+      });
     }
   };
+
+
+  static INRANGE = function(n, m, mm){
+
+  }
 
   /**
    * @static OPDICT - an array of the ops that MathOfT class  can recognize

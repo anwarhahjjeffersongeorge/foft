@@ -44,19 +44,53 @@ describe('MathOfT', function() {
 
     describe('with the functionalities such that', function() {
       describe(`MathOfT.ARENUMBERS`,function(){
-        it('returns true when ALL arguments are numbers(including NaN)', function() {
+        it('returns true when ALL arguments are numbers(including NaN, Infinity)', function() {
           MathOfT.ARENUMBERS(Math.random(), Math.random()).should.be.true;
           MathOfT.ARENUMBERS(0,1,2,3,4,6,7,8,99).should.be.true;
           MathOfT.ARENUMBERS(0, NaN, 44).should.be.true;
+          MathOfT.ARENUMBERS(0, Infinity, 44).should.be.true;
         });
         it('returns false when ANY arguments are not numbers', function(){
           MathOfT.ARENUMBERS('l').should.be.false;
           MathOfT.ARENUMBERS('55',5).should.be.false;
-          MathOfT.ARENUMBERS(55, 55, 5.4, NaN, '535', 5).should.be.false;
+          MathOfT.ARENUMBERS(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false;
         });
         it('returns false when arguments are null', function(){
           MathOfT.ARENUMBERS().should.be.false;
         });
+        it('returns true when ALL array members are numbers(including NaN, Infinity)',
+          function() {
+          MathOfT.ARENUMBERS([Math.random(), Math.random()]).should.be.true;
+          MathOfT.ARENUMBERS([0,1,2,3,4,6,7,8,99]).should.be.true;
+          MathOfT.ARENUMBERS([0, NaN, 44]).should.be.true;
+          MathOfT.ARENUMBERS([0, Infinity, 44]).should.be.true;
+        });
+        it('returns false when ANY array members are not numbers', function(){
+          MathOfT.ARENUMBERS(['l']).should.be.false;
+          MathOfT.ARENUMBERS(['55',5]).should.be.false;
+          MathOfT.ARENUMBERS([55, 55, 5.4, NaN, Infinity, '535', 5]).should.be.false;
+        });
+        it('returns false for null array', function(){
+          MathOfT.ARENUMBERS([]).should.be.false;
+        });
+        it('returns true for arrays whose nested array members contain submembers that are ALL numbers', function(){
+          MathOfT.ARENUMBERS([1,2,3,[1,34]]).should.be.true;
+          MathOfT.ARENUMBERS([[NaN,Infinity]]).should.be.true;
+        });
+        it('returns false for arrays whose nested array members contain submembers that are NOT ALL numbers', function(){
+          MathOfT.ARENUMBERS([1,2,3,[1,'b', 34]]).should.be.false;
+          MathOfT.ARENUMBERS([[NaN,{},Infinity]]).should.be.false;
+        });
+        it('returns true for mixed args of numbers and arrays whose nested array members contain submembers that are ALL numbers or Number-filled Arrays', function(){
+          MathOfT.ARENUMBERS(1,2,3,[1,34]).should.be.true;
+          MathOfT.ARENUMBERS([NaN,Infinity],2,4).should.be.true;
+        });
+        it('returns false for mixed args of numbers and arrays whose nested array members contain submembers that are NOT ALL numbers or Number-filled Arrays', function(){
+          MathOfT.ARENUMBERS(1,2,3,{},[1,34]).should.be.false;
+          MathOfT.ARENUMBERS(['popo',NaN,Infinity],2,4).should.be.false;
+        });
+
+
       });
       describe('MathOfT.OPDICT', function() {
         // console.log(MathOfT.OPDICT)
