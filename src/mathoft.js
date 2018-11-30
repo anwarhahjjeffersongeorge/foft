@@ -575,11 +575,25 @@ class MathOfT{
     return [...this].map(callback, thisArg);
   }
 
+
+
   /**
-  * dimensional labeling
-  */
+   * @static R - dimensional labeling
+   */
   static R =  ['x', 'y', 'z'];
 
+
+
+  /**
+   * @static ISNUMBER - return true IFF both of the following conditions are met
+   *   1. there was one argument provided, and
+   *   2. the sole provided argument was a number
+   *
+   * @return {boolean}
+   */
+  static ISNUMBER = function(){
+    return (arguments.length == 1) && (typeof arguments[0] === 'number');
+  }
 
   /**
    * @static ARENUMBERS return true IFF one of these conditions are met
@@ -593,7 +607,7 @@ class MathOfT{
    *
    * @params {} [arguments] figure out whether the arguments are numbers
    *  an Array thereof
-   * @return {type}  description
+   * @return {boolean}
    */
   static ARENUMBERS = function(){
     if(arguments.length == 0){
@@ -602,14 +616,55 @@ class MathOfT{
       return [...arguments].every(v => {
         return Array.isArray(v)
           ? MathOfT.ARENUMBERS(...v)
-          : typeof v === 'number'
+          : MathOfT.ISNUMBER(v);
       });
     }
   };
 
 
+  /**
+   * @static INRANGE - determine whether a given number n falls
+   * within any of the follwoing inclusive ranges
+   *    0. [ MathOfT.DEFAULT_RANGE[0], MathOfT.DEFAULT_RANGE[1] ]
+   *    1. [0, m],
+   *    2. [0, m[0]], (when provided unit-length array)
+   *    3. [m[0], m[1]]
+   *    4, [m, mm]
+   *
+   * @param  {Number} n the number to test
+   * @param  {(Number, Array<Number>)} [m] the end of the range starting with 0, or
+   *                                       the Array representing the range [m[0], m[1]]
+   *                                       the begining of range ending in mm, or
+   * @param  {Number} [mm] the optional end of the range
+   * @return {boolean}
+   */
   static INRANGE = function(n, m, mm){
-
+    let test = (a, b, c)=>{
+      console.log(a,b,c)
+      return (a > b)
+        ? a <= c
+        : (a < b)
+          ? a >= c
+          : true; // a == b
+    }
+    if(!(MathOfT.ARENUMBERS(arguments) && MathOfT.ISNUMBER(n))) {
+      return false;
+    } else {
+      if(arguments.length==1){
+        return MathOfT.INRANGE(n, MathOfT.DEFAULT_RANGE);
+      }else if(Array.isArray(m)){
+        console.log(n,m)
+        return ( m.length == 1 )
+          ? test(n, 0, m[0])
+          : test(n, m[0], m[1]);
+      } else if(MathOfT.ISNUMBER(m)){
+        if(!MathOfT.ISNUMBER(mm)){
+          return test(n, 0, m);
+        } else if(!MathOfT.ISNUMBER(mm)){
+          return test(n, m, mm);
+        }
+      }
+    }
   }
 
   /**

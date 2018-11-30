@@ -22,13 +22,15 @@ describe('MathOfT', function() {
     // console.log(MathOfT);
   });
   describe('Has static members of specified types', function(){
-    //these are the static properties in MathOfT
+    //these are the static properties and types that should be in MathOfT
     const staticpropsandtypes={
       R: 'Array',
+      ISNUMBER: 'function',
       ARENUMBERS: 'function',
       OPDICT: 'Array',
       ISOP: 'function',
       OPPARSE: 'function',
+      INRANGE: 'function',
       OPS: 'Object',
       DEFAULT_SEGMENT_DIVISOR: 'Number',
       DEFAULT_RANGE: 'Array',
@@ -43,6 +45,27 @@ describe('MathOfT', function() {
     });
 
     describe('with the functionalities such that', function() {
+      describe(`MathOfT.ISNUMBER`, function(){
+        it('returns true when provided a SINGLE argument of Number type', function(){
+          MathOfT.ISNUMBER(3).should.be.true;
+          MathOfT.ISNUMBER(NaN).should.be.true;
+          MathOfT.ISNUMBER(Infinity).should.be.true;
+          MathOfT.ISNUMBER(Math.random()).should.be.true;
+        })
+        it('returns false when provided argument NOT of Number type', function(){
+          MathOfT.ISNUMBER('3').should.be.false;
+          MathOfT.ISNUMBER(undefined).should.be.false;
+          MathOfT.ISNUMBER(null).should.be.false;
+          MathOfT.ISNUMBER({}).should.be.false;
+          MathOfT.ISNUMBER([]).should.be.false;
+          MathOfT.ISNUMBER(Math.random).should.be.false;
+        });
+        it('returns false when NOT provided a SINGLE argument', function(){
+          MathOfT.ISNUMBER(3,3).should.be.false;
+          MathOfT.ISNUMBER().should.be.false;
+        });
+      })
+
       describe(`MathOfT.ARENUMBERS`,function(){
         it('returns true when ALL arguments are numbers(including NaN, Infinity)', function() {
           MathOfT.ARENUMBERS(Math.random(), Math.random()).should.be.true;
@@ -89,9 +112,21 @@ describe('MathOfT', function() {
           MathOfT.ARENUMBERS(1,2,3,{},[1,34]).should.be.false;
           MathOfT.ARENUMBERS(['popo',NaN,Infinity],2,4).should.be.false;
         });
-
-
       });
+      describe('MathOfT.INRANGE', function(){
+        it('returns false when arguments provided don\'t satisfy MathOfT.ARENUMBERS', function(){
+          MathOfT.INRANGE(3,'a').should.be.false;
+        });
+        it('returns false when FIRST argument provided doesn\'t satisfy MathOfT.ISNUMBER', function(){
+          MathOfT.INRANGE([3]).should.be.false;
+        });
+        it(`returns true when sole argument n falls within MathOfT.DEFAULT_RANGE`, function(){
+          let testval = MathOfT.DEFAULT_RANGE[0] +
+            (MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0])/2;
+          MathOfT.INRANGE(testval).should.be.true;
+        });
+      });
+
       describe('MathOfT.OPDICT', function() {
         // console.log(MathOfT.OPDICT)
         MathOfT.OPDICT.forEach((key)=>{
