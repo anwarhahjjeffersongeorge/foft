@@ -125,6 +125,24 @@ describe('MathOfT', function() {
             (MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0])/2;
           MathOfT.INRANGE(testval).should.be.true;
         });
+        it(`returns false when sole argument n falls outside of MathOfT.DEFAULT_RANGE`, function(){
+          let testval = MathOfT.DEFAULT_RANGE[0] +
+            (MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0])*2;
+          MathOfT.INRANGE(testval).should.be.false;
+        });
+        it(`returns true when n of arguments (n,m) falls within [0, m]`, function(){
+          let testN = Math.random();
+          let testM = testN*2;
+          MathOfT.INRANGE(testN, testM).should.be.true;
+        });
+        it(`returns false when n of arguments (n,m) falls outside of [0, m]`, function(){
+          let testN = Math.random();
+          let testM = testN/2;
+          MathOfT.INRANGE(testN, testM).should.be.false;
+        });
+        it('', function(){
+
+        });
       });
 
       describe('MathOfT.OPDICT', function() {
