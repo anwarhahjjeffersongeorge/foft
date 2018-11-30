@@ -130,12 +130,12 @@ describe('MathOfT', function() {
             (MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0])*2;
           MathOfT.INRANGE(testval).should.be.false;
         });
-        it(`returns true when n of arguments (n,m) falls within [0, m]`, function(){
+        it(`returns true when n of arguments (n,m) with m being a Number falls within [0, m]`, function(){
           let testN = Math.random();
           let testM = testN*2;
           MathOfT.INRANGE(testN, testM).should.be.true;
         });
-        it(`returns false when n of arguments (n,m) falls outside of [0, m]`, function(){
+        it(`returns false when n of arguments (n,m) with m being a Number falls outside of [0, m]`, function(){
           let testN = Math.random();
           let testM = testN/2;
           MathOfT.INRANGE(testN, testM).should.be.false;
