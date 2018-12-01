@@ -140,8 +140,53 @@ describe('MathOfT', function() {
           let testM = testN/2;
           MathOfT.INRANGE(testN, testM).should.be.false;
         });
-        it('', function(){
-
+        it(`returns true when n of arguments (n,m) with m being a unit-length Array falls within [0, m[0]]`, function(){
+          let testN = Math.random();
+          let testM = [testN*2];
+          MathOfT.INRANGE(testN, testM).should.be.true;
+        });
+        it(`returns false when n of arguments (n,m) with m being a unit-length Array falls outside of [0, m[0]]`, function(){
+          let testN = Math.random();
+          let testM = [testN/2];
+          MathOfT.INRANGE(testN, testM).should.be.false;
+        });
+        it(`returns true when n of arguments (n,m) with m being an Array falls within [m[0], m[m.length-1]]`, function(){
+          let testN = Math.random();
+          let testM = [testN/2, testN*2];
+          MathOfT.INRANGE(testN, testM).should.be.true;
+          let testM2 = [testN/2, testN/2, testN*2];
+          MathOfT.INRANGE(testN, testM2).should.be.true;
+        });
+        it(`returns false when n of arguments (n,m) with m being an Array falls outside of [m[0], m[m.length-1]]`, function(){
+          let testN = Math.random();
+          let testM = [testN/2, testN/4];
+          MathOfT.INRANGE(testN, testM).should.be.false;
+          let testM2 = [testN/2, testN*2, testN/4];
+          MathOfT.INRANGE(testN, testM2).should.be.false;
+        });
+        it(`returns true when n of arguments (n,m,mm) falls within [m, mm]`, function(){
+          let testN = Math.random();
+          let testM = testN/2;
+          let testMM = testN*2;
+          MathOfT.INRANGE(testN, testM, testMM).should.be.true;
+        });
+        it(`returns false when n of arguments (n,m,mm) falls outside of [m, mm]`, function(){
+          let testN = Math.random();
+          let testM = testN/2;
+          let testMM =  testN/4;
+          MathOfT.INRANGE(testN, testM, testMM).should.be.false;
+        });
+        it('returns true when n is one of the edge values of the given test range', function(){
+          MathOfT.INRANGE(MathOfT.DEFAULT_RANGE[0]).should.be.true;
+          let testN = Math.random();
+          let testM = Math.random();
+          let testMM = Math.random();
+          MathOfT.INRANGE(testN, testN).should.be.true; //[0, m]
+          MathOfT.INRANGE(testN, [testN]).should.be.true; //[0, m[0]]
+          MathOfT.INRANGE(testN, [testN, testM]).should.be.true; //[m[0], m[1]]
+          MathOfT.INRANGE(testN, [testM, testN]).should.be.true; //[m[0], m[1]]
+          MathOfT.INRANGE(testN, testN, testM).should.be.true; //[m, mm]
+          MathOfT.INRANGE(testN, testM, testN).should.be.true; //[m, mm]
         });
       });
 
@@ -418,7 +463,11 @@ describe('MathOfT', function() {
     });
   });
   describe('MathOfT instance', function(){
-    let testObj = new MathOfT();
+    let testObj;
+    let testRangeArr = [];
+    before(function(){
+      testObj = new MathOfT();
+    });
     describe('.addTerm(term)', function(){
       it('should only add terms of type function or MathOfT', function(){
         let badobj = {},
@@ -427,11 +476,135 @@ describe('MathOfT', function() {
         testObj.addTerm(badobj).should.be.false;
         testObj.addTerm(goodobjA).should.be.true;
         testObj.addTerm(goodobjB).should.be.true;
-
+      });
+    });
+    describe('.drange', function(){
+      before(function(){
+        testRangeArr = [-1, 20, -100];
+        testObj = new MathOfT(testRangeArr);
+      });
+      it('should return the difference between the MathOfT .range\'s first and last elements', function(){
+        testObj.drange.should.equal(testRangeArr[testRangeArr.length-1] - testRangeArr[0]);
+      });
+    });
+    describe('.dabsrange', function(){
+      before(function(){
+        testRangeArr = [-1, 20, -100];
+        testObj = new MathOfT(testRangeArr);
+      });
+      it('should return the absoulte value of the difference between the MathOfT .range\'s first and last elements', function(){
+        testObj.dabsrange.should.equal(Math.abs(testRangeArr[testRangeArr.length-1] - testRangeArr[0]));
+      });
+    });
+    describe('.dSubrange', function(){
+      before(function(){
+        testRangeArr = [-1, 20, -100];
+        testObj = new MathOfT(testRangeArr);
+      });
+      it('should throw TypeError when given non-number arguments', function(){
+        ()=>testObj.dSubrange('b').should.throw(TypeError);
+      });
+      it('should throw RangeError when given non-integer arguments', function(){
+        ()=>testObj.dSubrange(4.5, 0).should.throw(RangeError);
+        ()=>testObj.dSubrange(0, 4.5,).should.throw(RangeError);
+      });
+      it('should when given no parameters return the difference between the 0th-indexed range element and the 1st', function(){
+        testObj.dSubrange().should.equal(testRangeArr[1]-testRangeArr[0])
+      });
+      it('should when given one Integer value n, return the difference between the (n+1)th-indexed range element and the nth', function(){
+        let n = 1;
+        testObj.dSubrange(n).should.equal(testRangeArr[n+1]-testRangeArr[n]);
+      });
+      it('should when given Integer values n and nn, return the difference between the nnth-indexed range element and the nth', function(){
+        let n = 2;
+        let nn = 0;
+        testObj.dSubrange(n,nn).should.equal(testRangeArr[nn]-testRangeArr[n]);
+      });
+      it('should when given out-of-bounds Integer values n and nn, return the difference between the (bound-constrained) nnth-indexed and nth range elements', function(){
+        let n = 12;
+        let nn = 10;
+        testObj.dSubrange(n,nn).should.equal(
+          testRangeArr[nn%testRangeArr.length]
+            - testRangeArr[n%testRangeArr.length]);
+      });
+    });
+    describe(`.subT()`, function(){
+      before(function(){
+        testRangeArr = [
+          Math.random(),
+          Math.random(),
+          Math.random(),
+          Math.random()
+        ];
+        testObj = new MathOfT(testRangeArr);
+      });
+      it('should return a function', function(){
+        testObj.subT().should.be.a('function');
+        testObj.subT(4).should.be.a('function');
+      });
+      it('should return a function that yields appropriate number of properly-range-spanning values starting at the given n index and ending at the n+1th, with n defaulting to 0 and constrained to length of MathOfT instance range', function() {
+        for(let n = 0; n < testRangeArr.length*2; n++){
+          let generator = testObj.subT(n);
+          let yielded = [...generator()];
+          let nn = (n+1);
+          let n1 = n%testRangeArr.length;
+          let nn1 = nn%testRangeArr.length;
+          //first and last values
+          yielded[0].should.equal(testRangeArr[n1])
+          yielded[yielded.length-1]
+            .should.equal(testRangeArr[nn1]);
+          //length
+          yielded.length.should.equal(testObj.numSegments)
+          //check a random value in the sequence
+          let randind = Math.floor(Math.random()*yielded.length);
+          let deltaRange = testRangeArr[nn1]-testRangeArr[n1];
+          let deltaSegment = deltaRange/testObj.segmentDivisor;
+          yielded[randind].should.equal(
+            testRangeArr[n1] + randind*deltaSegment
+          );
+        }
+      });
+      it('should accept second-position boolean (default false) that when true, prevents the generator from yielding the final value as normal', function(){
+        let n = 0;
+        let generator = testObj.subT(n);
+        let yielded = [...generator()];
+        let generator2 = testObj.subT(n,true);
+        let yielded2 = [...generator2()];
+        yielded.length.should.equal(yielded2.length+1, 'length of yielded without last value should be one less than length of yielded with all values');
+        for(let i in yielded2){
+          yielded2[i].should.equal(yielded[i], `each element in yielded without last value should equal corresponding element in yielded with all values `);
+        }
       });
 
     });
+    describe('.t', function(){
+      before(function(){
+        testRangeArr = [
+          Math.random(),
+          Math.random(),
+          Math.random(),
+          Math.random()
+        ];
+        testRangeArr = [0,1,3,-4]
+        testObj = new MathOfT(testRangeArr);
+      });
+      it('should be a function', function(){ //can't seem to test whether it's a generator though
+        testObj.t.should.be.a('function');
+      });
+      it('should return a function that yields appropriate number of properly-range-spanning values across the entire evaluation range of the MathOfT instance', function(){
+        let yielded = [...testObj.t()];
+        //first and last values
+        yielded[0].should.equal(testRangeArr[0])
+        yielded[yielded.length-1]
+          .should.equal(testRangeArr[testRangeArr.length-1]);
+        //length
+        yielded.length.should.equal(
+          (testRangeArr.length-2)*(testObj.numSegments-1)
+          + testObj.numSegments
+        );
+      });
 
+    });
   });
 
 

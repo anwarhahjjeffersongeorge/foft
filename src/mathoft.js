@@ -34,7 +34,6 @@ class MathOfT{
   * @param {(Function|Array.<Function>|Array.<MathOfT>)} [params.terms=[]] A function that accepts a parameter t and returns a result of some operation on t
   * @param {boolean} [params.rangeoverride=false] if true, will override any range provided and set range equal to [0, params.segmentDivisor]
   * @throws TypeError
-  * @throws ValueError
   */
   constructor(params){
     params = params || {};
@@ -69,7 +68,7 @@ class MathOfT{
     ? [-range, range]
     : range;
     if(!Array.isArray(range)) throw new TypeError('range should be array');
-    if(range.length!==2) throw new ValueError('range should have two elements')
+    // if(range.length!==2) throw new RangeError('range should have two elements')
     if(!MathOfT.ARENUMBERS(...range)) throw new TypeError('range values should be numbers')
     this._range = Array(range.length);
 
@@ -136,7 +135,8 @@ class MathOfT{
   }
 
   /**
-  * get segmentDivisor The number of segments (number of t evaluation points -1)
+  * get segmentDivisor The number of segment divisors
+  * (number of t evaluation points -1)
   *   in this MathOfT
   *
   * @return {Number}
@@ -145,6 +145,14 @@ class MathOfT{
     return this.__segmentDivisor;
   }
 
+  /**
+   * get numSegments - The number of actual segments the MathOfT divides the evaluation range into
+   *
+   * @return {Number}
+   */
+  get numSegments(){
+    return this.segmentDivisor+1;
+  }
   get dt(){
     return this.drange/this.__segmentDivisor;
   }
@@ -194,58 +202,92 @@ class MathOfT{
   }
 
   /**
-   * get dSubRange - the delta between sub values in the evaluation range
-   * @param {Number} n the starting range index
-   * @param {Number} nn the end range index
-   * @return {Number}  description
+   * get dSubrange - given indices n & nn
+   * returns the delta between sub values in the MathOfT instance's
+   * evaluation range, or: range[nn%range.length]-range[n%range.length],
+   *
+   * when given no parameters, it uses 0 and 1
+   *
+   * @param {Number} [n=0] the starting range index.
+   * @param {Number} [nn=n+1%this.range.length] the end range index
+   * @return {Number}
+   * @throws {TypeError} when given non-number parameter
    */
   dSubrange(n, nn){
-    if(!MathOfT.ARENUMBERS(n,nn)){
-       throw new TypeError(`MathOfT.dSubRange only accepts Numbers, given ${arguments}`);
+    n = MathOfT.ISNUMBER(n)
+      ? n
+      : 0;
+    if(nn && !MathOfT.ISNUMBER(nn)){
+       throw new TypeError(`MathOfT.dSubRange only accepts Numbers, given ${[...arguments]}`);
     }
-
-    let rangesum = 0;
-    for (let i = 0; i < this._range.length; i++) {
-      this._range[i]
+    n = n%this._range.length;
+    if(!Number.isInteger(n)){
+      throw new RangeError(`MathOfT.dSubRange only accepts Integers, given ${[...arguments]}`)
     }
-    return;
+    // for this conditional, we use the explicit ISNUMBER to avoid logical
+    // error for zero case: if(0) is falsy
+    nn = MathOfT.ISNUMBER(nn)
+      ? nn%this._range.length
+      : (n+1)%this._range.length;
+    if(!Number.isInteger(nn)){
+      throw new RangeError(`MathOfT.dSubRange only accepts Integers, given ${[...arguments]}`)
+    }
+    return this._range[nn]-this._range[n];
   }
 
   /**
-  * get drange - the delta between the values of the evaluation range
+  * get drange - the delta between the the first and final values of the evaluation range
   *
-  * @return {Number}  description
+  * @return {Number}
   */
   get drange(){
-    let rangesum = 0;
-    for(let rangeIndex in this._range){
-      const rangeAdd = (rangeIndex == 0)
-      ? 0
-      : this._range[rangeIndex] - this._range[rangeIndex-1];
-      rangesum += rangeAdd;
-    }
-    return rangesum;
+    return this._range[this._range.length-1] - this._range[0];
   }
   /**
   * get dabsrange - the absolute value of the delta
-  * between the values of the evaluation range
+  * between the first and final values of the evaluation range
   *
-  * @return {Number}  description
+  * @return {Number}
   */
   get dabsrange(){
-    let rangesum = 0;
-    for(let rangeIndex in this._range){
-      const rangeAdd = (rangeIndex == 0)
-      ? 0
-      : this._range[rangeIndex] - this._range[rangeIndex-1];
-      rangesum += Math.abs(rangeAdd);
+    return Math.abs(this.drange);
+  }
+
+
+  /**
+   * subT - get a generator function that yields segmentDivisor+1 values of t spanning the range [this._range[n], this._range[n+1]], where if n or n+1 fall beyond the bounds of this._range.length, they are constrained to fit
+   *
+   * @param  {Number} [n=0] integer start index of range
+   *
+   * @return {type}   description
+   */
+  subT(n, omitLast){
+    omitLast = (typeof omitLast === 'boolean')
+      ? omitLast
+      : false;
+    let defaultN = 0;
+    n = MathOfT.ISNUMBER(n)
+      ? n % this.range.length
+      : defaultN;
+    let a = this.range[n],
+      b = this.range[(n+1) % this.range.length];
+    let tsubmax = (omitLast)
+      ? this.segmentDivisor-1
+      : this.segmentDivisor;
+    let dt = (b-a)/this.segmentDivisor;
+
+    /**
+    * @yields {Number}
+    */
+    return function*(){
+      for(let tsubindex = 0; tsubindex <= tsubmax; tsubindex ++){
+        yield a + tsubindex*dt;
+      }
     }
-    return rangesum;
   }
 
   /**
-  * get t - get a Generator yielding segmentDivisor+1 values
-  *  of t in range (inclusive)
+  * get t - get a Generator yielding all values of t across instance evaluation range
   * @example
   * // get the default t values for which a MathOfT is
   * // evaluated
@@ -255,15 +297,18 @@ class MathOfT{
   *   terms: (t) => [sin(t), cos(t)];
   * });
   * let t = [...MoT.t()]
-  * @return {Generator}
+  * @return {Generator<Number>}
   */
   get t(){
+    let rangelimit = this.range.length-2;
     /**
     * @yields {Number}
     */
     return function*(){
-      for(let tindex = 0; tindex <= this.__segmentDivisor; tindex ++){
-        yield tindex*this.dt + this._range[0];
+      for(let rangeIndex = 0; rangeIndex <= rangelimit; rangeIndex++){
+        yield* (rangeIndex == rangelimit)
+          ? this.subT(rangeIndex)()
+          : this.subT(rangeIndex,true)(); //chop last to eliminate double values 
       }
     }
   }
@@ -628,12 +673,12 @@ class MathOfT{
    *    0. [ MathOfT.DEFAULT_RANGE[0], MathOfT.DEFAULT_RANGE[1] ]
    *    1. [0, m],
    *    2. [0, m[0]], (when provided unit-length array)
-   *    3. [m[0], m[1]]
+   *    3. [m[0], m[m.length-1]]
    *    4, [m, mm]
    *
    * @param  {Number} n the number to test
    * @param  {(Number, Array<Number>)} [m] the end of the range starting with 0, or
-   *                                       the Array representing the range [m[0], m[1]]
+   *                                       the Array representing the range [m[0], m[last]]
    *                                       the begining of range ending in mm, or
    * @param  {Number} [mm] the optional end of the range
    * @return {boolean}
@@ -656,13 +701,15 @@ class MathOfT{
         // console.log(n,m)
         return ( m.length == 1 )
           ? test(n, 0, m[0])
-          : test(n, m[0], m[1]);
+          : test(n, m[0], m[m.length-1]);
       } else if(MathOfT.ISNUMBER(m)){
         if(!MathOfT.ISNUMBER(mm)){
           return test(n, 0, m);
-        } else if(!MathOfT.ISNUMBER(mm)){
+        } else if(MathOfT.ISNUMBER(mm)){
           return test(n, m, mm);
         }
+      } else {
+        return false;
       }
     }
   }
