@@ -308,27 +308,63 @@ class MathOfT{
       for(let rangeIndex = 0; rangeIndex <= rangelimit; rangeIndex++){
         yield* (rangeIndex == rangelimit)
           ? this.subT(rangeIndex)()
-          : this.subT(rangeIndex,true)(); //chop last to eliminate double values 
+          : this.subT(rangeIndex,true)(); //chop last to eliminate double values
       }
     }
   }
 
 
   /**
-  * tNormalised - given a Number t, return a normalized
+  * normalizeT - given a Number t, return a normalized (to MathOfT.DEFAULT_RANGE)
   * representation of how far along t is in the evaluation
   * range of this MathOfT
-  * @param  {Number} t
-  * @return {Number} between 0 and 1 , inclusive
+  *
+  * If t falls out of bounds of range, the value is returned as -/+ Infinity
+  *
+  * If the evaluation range has more than two values, e.g. [0,1,2],
+  * then normalizeT checks in each subrange, e.g. [0,1], [1,2]
+  * and returns an Array of normalized values corresponding to each range
+  *
+  * @see DEFAULT_RANGE
+  * @param  {Number} [t=0]
+  * @return {Number|Array<Number>}
   */
-  tNormalised(t){
-    return Math.abs((t-this.range[0])/(this.range[1]-this.range[0]));
+  normalizeT(t){
+    if(!MathOfT.ISNUMBER(t)){
+      t = 0;
+    }
+    let test = (tt, range)=>{
+      let [normA, normB] = MathOfT.DEFAULT_RANGE;
+      let minNorm = (normA < normB)
+        ? normA
+        : normB;
+      let maxNorm = (normB > normA)
+        ? normB
+        : normA;
+      let res = (tt - range[0]) / (range[1] - range[0]); //[0-1]
+      res = normA + (normB - normA)*res; //[normA, normB]
+
+      if(!MathOfT.INRANGE(res, normA, normB)){
+        res = (res < minNorm)
+          ? -Infinity
+          : Infinity;
+      }
+      return res;
+    }
+
+    let arr = Array(this.range.length-1);
+    for(let r = 0; r<arr.length; r++){
+      arr[r] = test(t, [this.range[r], this.range[r+1]])
+    }
+    return (arr.length==1)
+      ? arr[0]
+      : arr;
   }
 
   /**
   * ofTNormal - given a Number tNormal between -1 and 1, inclusive,
   * return the evaluation of this MathOfT on the t corresponding
-  * to the value of t in the evaluation range represented by the
+  * to the value of t in the complete evaluation range represented by the
   * given tNormal
   * @see ofT
   * @param  {Number} [tNormal=[-1,1]]
@@ -345,61 +381,13 @@ class MathOfT{
     return this.ofT(t);
   }
 
-  // ofTRange(trange, numsegment){
-  //   trange = (Array.isArray(trange)
-  //     && (range.length==2)
-  //     && hOfT.ARENUMBERS(...trange))
-  //     ? trange
-  //     : this.range;
-  //   trange = trange.map(v => Math.round(v*(this.__segmentDivisor-1)));
-  //   let result = function*(){
-  //     for(let i = trange[0]; i<trange[1]; i++){
-  //       yield this.ofTNormal(i/(trange[1]-trange[0]))
-  //     }
-  //   }
-  // }
-
-  // /**
-  //  * ofNormalisedRange - Evaluate terms over a given normalised numeric range
-  //  * if either range point falls between normally evaluated points based on __segmentDivisor
-  //  * the evaluation will include a value corresponding to that in-between point
-  //  * @param  {Array<number>} nrange two numbers each between [0,1] inclusive
-  //  * @yield {} tValues
-  //  */
-  // ofNormalisedRange(nrange){
-  //   nrange = (Array.isArray(nrange)
-  //     && (range.length==2)
-  //     && MathOfT.ARENUMBERS(...nrange)
-  //     && (Math.abs(nrange[0])<=1) && (Math.abs(nrange[1])<=1)
-  //     && (nrange[0]!=nrange[1]) )
-  //     ? nrange
-  //     : [0,1];
-  //   let addPoints = false,
-  //     addPointArr = Array(nrange.length).fill(false);
-  //   let sdrange = nrange.map((v, i)=>{
-  //     let res = v*this.__segmentDivisor;
-  //     addPointArr[i] = !Math.IsInteger(res); // if in between, add point
-  //   });
-  //
-  //
-  //   addPoints = addPointArr.includes(true);
-  //   let result = function*(){
-  //     for(let t = tIndices[0]; t < tIndices[1]; t+=){
-  //       yield [
-  //         t,
-  //         this.ofT(t)
-  //       ];
-  //     }
-  //   }
-  // }
-
   /**
   * ofT - evaluate all of the terms held by this MathofT for the
   * given t value.
   *
   * When evaluating a Function term, the function can is called with
   * a bound this containing information about t:
-  * @see tNormalised
+  * @see normalizeT
   * @see range
   * @see derange
   * @see t0
@@ -420,8 +408,8 @@ class MathOfT{
     : {
       "t":{
         t,
-        tNormal: this.tNormalised(t),
-        tNormalRemaining: 1- this.tNormalised(t),
+        tNormal: this.normalizeT(t),
+        tNormalRemaining: 1- this.normalizeT(t),
         trange: this.range,
         drange: this.drange,
         t0: this.t0,
@@ -881,41 +869,15 @@ class MathOfT{
    */
   static DEFAULT_SEGMENT_DIVISOR = 10;
   /**
-   * @static DEFAULT_RANGE By default, MathOfT instances divide into
-   * this many segments
+   * @static DEFAULT_RANGE By default, MathOfT instances evaluate functions over
+   * this range
    * @type {Array.<Number>}
-   * @default [0,1]
+   * @default [-1,1]
    */
-  static DEFAULT_RANGE = [0,1];
+  static DEFAULT_RANGE = [-1,1];
 
 }
 
 module.exports = {
   MathOfT,
 }
-
-    // TODO rewrite tests to comply with common usage patterns.
-    // let arr = [new MathOfT({terms: [t =>2*t]}), new MathOfT({terms: [t =>3*t]})];
-    // let pw = new PieceWiseMathOfTT({mathFunctionArray: arr});
-    // let pwxyz = new PieceWiseXYZofTTT({x: pw, y: pw, z:pw});
-    // // pwxyz.ofAllTTT //should have equal x,y,z to above
-    // // [...pwxyz] //should corresopnd to pwxyz.ofAllTTT, but in form of array of 3d arrays
-    // console.error(pw);
-    // console.error(pwxyz);
-    // // console.error([...pwxyz]);
-    // console.log(pwxyz.ofTTT(.4));
-    // console.error([...pwxyz][4]);
-    // console.assert([...pwxyz][5][1] == pw.ofTT(5))
-    // debugger;
-    //
-    // tests:
-    // a = new PieceWiseMathOfTT([new MathOfT(), new MathOfT()])
-    // PieceWiseMathOfTT {_mathFuncs: Array(2), __segmentDivisors: Array(2)}
-    // a
-    // PieceWiseMathOfTT {_mathFuncs: Array(2), __segmentDivisors: Array(2)}
-    // a.segmentDivisorsString
-    // "1010"
-    // a.segmentDivisors
-    // (2) [10, 10]
-    // a.numSegmentDivisors
-    // 20

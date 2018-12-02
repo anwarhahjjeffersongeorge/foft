@@ -211,7 +211,12 @@ describe('MathOfT', function() {
         let dummychar = ()=>String.fromCharCode(Math.floor(255*Math.random()));
         let badcodes = Array(10).fill(dummychar());
         badcodes.forEach((badcode)=>{
-          it(`returns null function for ${badcode} not in MathOfT.OPS`, function(){
+          let resetbadcode = () => badcode = String.fromCharCode(
+            Math.floor(255*Math.random()));
+          while (MathOfT.OPDICT.includes(badcode)){
+            resetbadcode();
+          }
+          it(`returns no-op passthrough function for ${badcode} not in MathOfT.OPS`, function(){
             let testargs = [Math.random(), Math.random()]
             let testTarget = MathOfT.OPPARSE(badcode);
             testTarget.should.be.a('function');
@@ -393,10 +398,10 @@ describe('MathOfT', function() {
       testObj.should.be.instanceof(MathOfT);
     });
     describe('should start with default instance members', function(){
-      it('range (Array): [0,1]', function(){
+      it(`range (Array) MathOfT.DEFAULT_RANGE ${MathOfT.DEFAULT_RANGE}: `, function(){
         testObj.range.should.be.array();
         testObj.range.should.be.ofSize(2);
-        testObj.range.should.be.equalTo([0,1]);
+        testObj.range.should.be.equalTo(MathOfT.DEFAULT_RANGE);
       });
       it(`segmentDivisor (number): MathOfT.DEFAULT_SEGMENT_DIVISOR ${MathOfT.DEFAULT_SEGMENT_DIVISOR}` , function(){
         testObj.segmentDivisor.should.be.a('number');
@@ -419,10 +424,10 @@ describe('MathOfT', function() {
       testObj.should.be.instanceof(MathOfT);
     });
     describe('should start with range set to given Array', function(){
-      it(`range (Array): [0,1]`, function(){
+      it(`range (Array) MathOfT.DEFAULT_RANGE ${MathOfT.DEFAULT_RANGE}`, function(){
         testObj.range.should.be.array();
         testObj.range.should.be.ofSize(2);
-        testObj.range.should.be.equalTo([0,1]);
+        testObj.range.should.be.equalTo(MathOfT.DEFAULT_RANGE);
       });
       it(`segmentDivisor (number): MathOfT.DEFAULT_SEGMENT_DIVISOR ${MathOfT.DEFAULT_SEGMENT_DIVISOR}` , function(){
         testObj.segmentDivisor.should.be.a('number');
@@ -605,6 +610,59 @@ describe('MathOfT', function() {
       });
 
     });
+    describe('.normalizeT', function(){
+      let outofboundsA, outofboundsB;
+      describe('for a MathOfT instance whose range has two elements',
+      function(){
+        before(function(){
+          testRangeArr = [Math.random(),Math.random()];
+          [outofboundsA, outofboundsB] = [
+            testRangeArr[0]-(testRangeArr[1]-testRangeArr[0]),
+            testRangeArr[1]-(testRangeArr[0]-testRangeArr[1])
+          ];
+          // console.log(testRangeArr);
+          // console.log(outofboundsA, outofboundsB)
+          testObj = new MathOfT(testRangeArr);
+        });
+        it('should when given parameter t correctly calculate the corresponding normalized value', function(){
+          testObj.normalizeT(testRangeArr[0]).should.equal(MathOfT.DEFAULT_RANGE[0])
+          testObj.normalizeT(testRangeArr[1]).should.equal(MathOfT.DEFAULT_RANGE[1])
+          let midVal = testRangeArr[0] + (testRangeArr[1]-testRangeArr[0])/2;
+          let midRangeVal = MathOfT.DEFAULT_RANGE[0] + (MathOfT.DEFAULT_RANGE[1]-MathOfT.DEFAULT_RANGE[0])/2;
+          testObj.normalizeT(midVal).should.equal(midRangeVal);
+        });
+        it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function(){
+          testObj.normalizeT(outofboundsA).should.equal(-Infinity)
+          testObj.normalizeT(outofboundsB).should.equal(Infinity)
+        });
+
+      });
+      describe('for a MathOfT instance whose range has more than two elements', function(){
+        before(function(){
+          testRangeArr =[
+            Math.random(),
+            Math.random(),
+            Math.random(),
+            Math.random()
+          ];
+          testObj = new MathOfT(testRangeArr);
+        });
+        it('should when given parameter t return array of normalized values for each element-pair-subrange in MathOfT instance range array', function(){
+          let res = testObj.normalizeT(-1) //less than Math.random in testRangeArr
+          res.should.be.an('array');
+          res.should.be.ofSize(testRangeArr.length-1)
+          res.every(v => v==-Infinity || v==Infinity ).should.be.true;
+          //explicit tValues
+          testObj = new MathOfT([0,1,2,0])
+          res =  testObj.normalizeT(.5)
+          res.should.be.equalTo([0,-Infinity,.5])
+        });
+
+      });
+
+
+    });
+
   });
 
 
