@@ -1,4 +1,11 @@
-Storable = (function Stores() {
+"use strict";
+/**
+ * Storable - A record of some possible types of
+ * js execution contexts
+ *
+ * @return {type}  description
+ */
+const Storable = (function Stores() {
   let o = {};
   [
     "nodejs_v8",
@@ -7,17 +14,26 @@ Storable = (function Stores() {
     "chro_exten",
     "ffox_windo",
     "ffox_exten",
-  ].map((e) => o[e]=Symbol(e));
+    "electr_app"
+  ].map((e) => {
+    o[e]=Symbol(e)
+    o[o[e]]=e;
+  });
   return o;
 })();
 
+/**
+ * env - determine the env and return a reference to the global/window/browser/chrome object
+ *
+ * @return {object} contains a named symbol property (@see Storable) representing current contex best-guess and whose value is the reference to the corresponding global context object
+ */
 function env(){
   if (arguments.length != 0) {
     throw new Error("env takes no arguments");
   }
   var result = {};
   let resultSymbol;
-
+  let resultContext;
   try { //// test
     // when testing for node,
     // 1. "this" doesnt get execution context
@@ -32,7 +48,9 @@ function env(){
     let windowExists = (typeof window !== 'undefined');
     let globalExists = (typeof global !== 'undefined');
 
+
     if(windowExists && !globalExists){
+      resultContext = window;
       //which browser context are we in?
       // test for firefox extension, default to browser window
       if(typeof browser !== 'undefined'){
@@ -55,10 +73,15 @@ function env(){
             resultSymbol = Storable.chro_windo;
           }
         }
+      } else {
+        let ua = window.navigator.userAgent;
+        if (ua.search(/(F|i)refox/)!=-1){
+          resultSymbol = Storable.ffox_windo;
+        }
       }
-    }
 
-    if(globalExists && !windowExists){
+    } else if(globalExists && !windowExists){
+      resultContext = global;
       // console.log('globalExists')
       //in nodejs, we should have root 'global' object equal to context
       if(typeof global === 'object'){
@@ -71,16 +94,40 @@ function env(){
           // console.log(result);
         }
       }
+    } else if(globalExists && windowExists) {
+      resultContext = global;
+      if(typeof global === 'object' && window === global ){
+        let ua = window.navigator.userAgent;
+        if(ua.search(/(E|e)lectron/)!=-1){
+          resultSymbol = Storable.electr_app;
+          //global === window so it don't matter
+        }
+      }
     } else {
       //we don't know the engine.
       resultSymbol = Storable.unknown_js;
     }
-    result = resultSymbol;
+
+    result = resultContext;
+    result[resultSymbol] = resultSymbol;
+
   } catch (err) {
     result = err;
   } finally {
     // console.log('found at');
     // console.log(result);
-    return Object.freeze(result);
+    return result;
   }
+};
+function symbols() {
+  let arr =  Object.getOwnPropertySymbols(env())
+    .filter(sym => sym in Storable);
+  return arr.length == 1
+    ? arr[0]
+    : arr;
+}
+
+module.exports = {
+  envs: Storable,
+  env, symbols
 };

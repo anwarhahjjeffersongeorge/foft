@@ -2,8 +2,11 @@
 /**
 * Test suite for ../mathoft.js
 */
+import * as env from './env.js';
+console.log(env.symbols())
 
 import chai from 'chai';
+
 import chai_arrays from 'chai-arrays';
 import chai_as_promised from 'chai-as-promised';
 chai.use(chai_as_promised);
@@ -657,9 +660,9 @@ describe('MathOfT', function() {
           res =  testObj.normalizeT(.5)
           res.should.be.equalTo([0,-Infinity,.5])
         });
-
       });
-
+    });
+    describe('ofTNormal', function(){
 
     });
 
