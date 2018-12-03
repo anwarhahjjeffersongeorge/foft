@@ -14,7 +14,7 @@
     "build": "npx cross-env NODE_ENV=production babel src --out-dir lib --ignore \"src/mocha/\"",
     "postbuild": "minify lib/*.js > lib/mathoft-min.js",
     "predev": "clear && rm -rf dist",
-    "dev": "webpack --watch"
+    "dev": "webpack -r esm --watch"
   },
   "repository": {
     "type": "git",
