@@ -1,31 +1,28 @@
 "use strict";
 /**
- * Storable - A record of some possible types of
+ * Envs - A record of some possible types of
  * js execution contexts
  *
  * @return {type}  description
  */
-const Storable = (function Stores() {
-  let o = {};
-  [
+const Envs = (function makeenvs() {
+  return [
     "nodejs_v8",
     "unknown_js",
     "chro_windo",
     "chro_exten",
-    "ffox_windo",
+    "ffx_windo",
     "ffox_exten",
     "electr_app"
-  ].map((e) => {
-    o[e]=Symbol(e)
-    o[o[e]]=e;
-  });
-  return o;
+  ].map(function setenv(e){
+    this[e]=Symbol(e), this[this[e]]=e;
+  }, {});
 })();
 
 /**
  * env - determine the env and return a reference to the global/window/browser/chrome object
  *
- * @return {object} contains a named symbol property (@see Storable) representing current contex best-guess and whose value is the reference to the corresponding global context object
+ * @return {object} contains a named symbol property (@see Envs) representing current contex best-guess and whose value is the reference to the corresponding global context object
  */
 function env(){
   if (arguments.length != 0) {
@@ -55,11 +52,11 @@ function env(){
       // test for firefox extension, default to browser window
       if(typeof browser !== 'undefined'){
         if(browser !== this && browser === this.browser){
-          resultSymbol = Storable.ffox_exten;
+          resultSymbol = Envs.ffox_exten;
           //TODO this case can fail to detect an extension that doesnt
           //ask for browser API permissions, in which case
         } else {
-          resultSymbol = Storable.ffox_windo;
+          resultSymbol = Envs.ffox_windo;
         }
       } //test for chrome exstention, default to browser window
       else if (typeof chrome !== 'undefined'){
@@ -68,15 +65,15 @@ function env(){
           * all extensions have access to this chrome API
           * @see [@link](https://developer.chrome.com/extensions/extension)*/
           if(chrome.hasOwnProperty('extension')){
-            resultSymbol = Storable.chro_exten;
+            resultSymbol = Envs.chro_exten;
           } else {
-            resultSymbol = Storable.chro_windo;
+            resultSymbol = Envs.chro_windo;
           }
         }
       } else {
         let ua = window.navigator.userAgent;
         if (ua.search(/(F|i)refox/)!=-1){
-          resultSymbol = Storable.ffox_windo;
+          resultSymbol = Envs.ffox_windo;
         }
       }
 
@@ -90,7 +87,7 @@ function env(){
         if(  (global.global === global)/*should be circular reference*/
         && (global.process.title === process.title)){
           // console.log('global checks out');
-          resultSymbol = Storable.nodejs_v8;
+          resultSymbol = Envs.nodejs_v8;
           // console.log(result);
         }
       }
@@ -99,13 +96,13 @@ function env(){
       if(typeof global === 'object' && window === global ){
         let ua = window.navigator.userAgent;
         if(ua.search(/(E|e)lectron/)!=-1){
-          resultSymbol = Storable.electr_app;
+          resultSymbol = Envs.electr_app;
           //global === window so it don't matter
         }
       }
     } else {
       //we don't know the engine.
-      resultSymbol = Storable.unknown_js;
+      resultSymbol = Envs.unknown_js;
     }
 
     result = resultContext;
@@ -121,13 +118,13 @@ function env(){
 };
 function symbols() {
   let arr =  Object.getOwnPropertySymbols(env())
-    .filter(sym => sym in Storable);
+    .filter(sym => sym in Envs);
   return arr.length == 1
     ? arr[0]
     : arr;
 }
 
 module.exports = {
-  envs: Storable,
+  envs: Envs,
   env, symbols
 };

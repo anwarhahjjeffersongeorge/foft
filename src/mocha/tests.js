@@ -640,9 +640,30 @@ module.exports = {
               res.should.be.ofSize(testRangeArr.length-1)
               res.every(v => v==-Infinity || v==Infinity ).should.be.true;
               //explicit tValues
-              testObj = new MathOfT([0,1,2,0])
-              res =  testObj.normalizeT(.5)
-              res.should.be.equalTo([0,-Infinity,.5])
+              testObj = new MathOfT([0,1,2,0]);
+              res =  testObj.normalizeT(.5);
+              res.should.be.equalTo([0,-Infinity,.5]);
+              res =  testObj.normalizeT(-.5);
+              res.should.be.equalTo([-Infinity,-Infinity, Infinity]);
+
+              testObj = new MathOfT([0,-1,-2,0]);
+              res =  testObj.normalizeT(.5);
+              res.should.be.equalTo([-Infinity,-Infinity,Infinity]);
+              res =  testObj.normalizeT(-.5);
+              res.should.be.equalTo([0,-Infinity,.5]);
+
+              testObj = new MathOfT([0,2,1,0]);
+              res =  testObj.normalizeT(.5);
+              res.should.be.equalTo([-.5,Infinity,0]);
+              res =  testObj.normalizeT(-.5);
+              res.should.be.equalTo([-Infinity,Infinity, Infinity]);
+
+              testObj = new MathOfT([0,2,1,0]);
+              res =  testObj.normalizeT(.25);
+              res.should.be.equalTo([-.75,Infinity,.5]);
+              res =  testObj.normalizeT(-.25);
+              res.should.be.equalTo([-Infinity,Infinity, Infinity]);
+
             });
           });
         });
