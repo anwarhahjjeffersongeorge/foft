@@ -4,17 +4,20 @@
   "description": "Evaluation of math terms over specified ranges.",
   "main": "lib/index.js",
   "module": "lib/main.js",
+  "private": true,
   "scripts": {
     "clean": "rm -rf docs test coverage ./mathoftmochajs.html",
     "predocs": "clear && rm -rf docs",
     "docs": "npx jsdoc --configure .jsdoc.json --verbose",
-    "pretest": "clear && rm -rf test && npx babel src --out-dir test; cp src/mocha/mathoftmochajs.html ./",
-    "test": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text mocha ./test/mocha/mathoftmocha.js",
+    "pretest": "clear && rm -rf test && npx babel src --out-dir test --ignore \"src/browserentry.js\"",
+    "test": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text mocha ./test/mocha/nodetestrunner.js",
     "prebuild": "clear && rm -rf lib",
-    "build": "npx cross-env NODE_ENV=production babel src --out-dir lib --ignore \"src/mocha/\"",
-    "postbuild": "minify lib/*.js > lib/mathoft-min.js",
-    "predev": "clear && rm -rf dist",
-    "dev": "webpack -r esm --watch"
+    "build": "npx cross-env NODE_ENV=production babel src --out-dir lib --ignore \"src/mocha/,src/browserentry.js\"",
+    "predev": "clear && rm -rf dist && mkdir dist",
+    "dev": "browserify -t [babelify] src/browserentry.js -o dist/mathoft.js",
+    "postdev": "minify dist/mathoft.js > lib/mathoft-min.js",
+    "predevtest": "cp src/mocha/mathoftmochajs.html test/mocha/",
+    "devtest": "browserify -t [babelify] src/mocha/mathoftmocha.js -o test/mocha/mathoftmochajs-browser.js"
   },
   "repository": {
     "type": "git",
@@ -41,8 +44,9 @@
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
-    "babel-loader": "^8.0.4",
     "babel-plugin-istanbul": "^5.0.1",
+    "babelify": "^10.0.0",
+    "browserify": "^16.2.3",
     "chai": "^4.2.0",
     "chai-arrays": "^2.0.0",
     "chai-as-promised": "^7.1.1",
@@ -51,8 +55,6 @@
     "jsdoc": "^3.5.5",
     "minify": "^4.1.0",
     "mocha": "^5.2.0",
-    "nyc": "^13.0.1",
-    "webpack": "^4.26.1",
-    "webpack-cli": "^3.1.2"
+    "nyc": "^13.0.1"
   }
 }
