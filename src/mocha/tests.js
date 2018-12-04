@@ -362,7 +362,7 @@ module.exports = {
               };
               let testObj;
               let testObjFunc = ()=>testObj= new MathOfT(testParamsObj);
-              testObjFunc.should.throw(TypeError);
+              testObjFunc.should.not.throw(TypeError);
               testObj.segmentDivisor.should.equal(10);
             });
             it('should error when provided non-number segment divisor', function() {
