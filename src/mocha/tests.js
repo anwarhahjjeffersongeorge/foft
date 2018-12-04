@@ -667,8 +667,38 @@ module.exports = {
             });
           });
         });
-        describe('ofTNormal', function(){
+        describe('ofT', function(){
+          describe('for a MathOfT instance with one function or MathOfT term', () => {
+            it('should provide the value of the term for any given t', () => {
+              testObj = new MathOfT(a => 9*a);
+              testObj.ofT(3).should.equal(27);
+              testObj = new MathOfT(new MathOfT(a => 9*a));
+              testObj.ofT(3).should.equal(27);
+            });
+          });
+          describe('for a MathOfT instance with multiple function or MathOfT terms', () => {
+            it('should provide the Array whose elements are the values of the terms for any given t ', ()=>{
+              testObj = new MathOfT({
+                terms:[
+                a => 9*a,
+                a => 9/a,
+                ]
+              });
+              testObj.ofT(3).should.be.equalTo([27,3]);
+              testObj = new MathOfT(new MathOfT({
+                terms:[
+                a => 9*a,
+                a => 9/a,
+                ]
+              }));
+              testObj.ofT(3).should.be.equalTo([27,3]);
+            });
+            it('should for a MathOfT instance with nested function or MathOfT terms provide the nested Array whose elements and subelements are the values of the terms in the correct order', );
+          });
 
+        });
+        describe('ofTNormal', function(){
+          it('should ');
         });
 
       });

@@ -363,26 +363,6 @@ class MathOfT{
   }
 
   /**
-  * ofTNormal - given a Number tNormal between -1 and 1, inclusive,
-  * return the evaluation of this MathOfT on the t corresponding
-  * to the value of t in the complete evaluation range represented by the
-  * given tNormal
-  * @see ofT
-  * @param  {Number} [tNormal=[-1,1]]
-  * @return {(Number|Array.<Number>)}
-  */
-  ofTNormal(tNormal){
-    tNormal = (typeof tNormal === 'number')
-    ? ((tNormal > 1) || (tNormal < -1))
-    ? Math.sign(tNormal) * 1
-    : tNormal
-    : 1;
-    let t = this.range[0] + tNormal*(this.range[1]-this.range[0])
-    // debugger;
-    return this.ofT(t);
-  }
-
-  /**
   * ofT - evaluate all of the terms held by this MathofT for the
   * given t value.
   *
@@ -439,7 +419,26 @@ class MathOfT{
     : result;
   }
 
-
+  /**
+  * ofTNormal - given a Number tNormal between -1 and 1, inclusive,
+  * return the evaluation of this MathOfT on the t corresponding
+  * to the value of t in the complete evaluation range represented by the
+  * given tNormal
+  * @see ofT
+  * @param  {Number} [tNormal=[-1,1]]
+  * @return {(Number|Array.<Number>)}
+  */
+  ofTNormal(tNormal){
+    tNormal = (typeof tNormal === 'number')
+    ? ((tNormal > 1) || (tNormal < -1))
+    ? Math.sign(tNormal) * 1
+    : tNormal
+    : 1;
+    let t = this.range[0] + tNormal*(this.range[1]-this.range[0])
+    // debugger;
+    return this.ofT(t);
+  }
+  
   /**
   * ofTOp - Calculate the value of performing an operation _op on the
   * values returned by calculating this MathOfT instance's terms for
