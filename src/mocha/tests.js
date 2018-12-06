@@ -597,7 +597,7 @@ module.exports = {
           });
 
         });
-        describe('.t', function(){
+        describe('.T', function(){
           before(function(){
             testRangeArr = [
               Math.random(),
@@ -609,10 +609,10 @@ module.exports = {
             testObj = new MathOfT(testRangeArr);
           });
           it('should be a function', function(){ //can't seem to test whether it's a generator though
-            testObj.t.should.be.a('function');
+            testObj.T.should.be.a('function');
           });
           it('should return a function that yields appropriate number of properly-range-spanning values across the entire evaluation range of the MathOfT instance', function(){
-            let yielded = [...testObj.t()];
+            let yielded = [...testObj.T()];
             //first and last values
             yielded[0].should.equal(testRangeArr[0])
             yielded[yielded.length-1]
@@ -695,13 +695,13 @@ module.exports = {
             });
           });
         });
-        describe('ofT', function(){
+        describe('oft', function(){
           describe('for a MathOfT instance with one function or MathOfT term', () => {
             it('should provide the value of the term for any given t', () => {
               testObj = new MathOfT(a => 9*a);
-              testObj.ofT(3).should.equal(27);
+              testObj.oft(3).should.equal(27);
               testObj = new MathOfT(new MathOfT(a => 9*a));
-              testObj.ofT(3).should.equal(27);
+              testObj.oft(3).should.equal(27);
             });
           });
           describe('for a MathOfT instance with multiple function or MathOfT terms', () => {
@@ -712,14 +712,14 @@ module.exports = {
                 a => 9/a,
                 ]
               });
-              testObj.ofT(3).should.be.equalTo([27,3]);
+              testObj.oft(3).should.be.equalTo([27,3]);
               testObj = new MathOfT(new MathOfT({
                 terms:[
                 a => 9*a,
                 a => 9/a,
                 ]
               }));
-              testObj.ofT(3).should.be.equalTo([27,3]);
+              testObj.oft(3).should.be.equalTo([27,3]);
             });
             it('should for a MathOfT instance with nested function or MathOfT terms provide the nested Array whose elements and subelements are the values of the terms in the correct order', ()=> {
               testObj = new MathOfT({
@@ -734,7 +734,7 @@ module.exports = {
                   ]
                 ]
               });
-              let res = testObj.ofT(3);
+              let res = testObj.oft(3);
               let correctres = [
                 [27,3],
                 [9,1]
@@ -760,7 +760,7 @@ module.exports = {
                   })
                 ]
               });
-              res = testObj.ofT(3);
+              res = testObj.oft(3);
               correctres = [
                 [27,3],
                 [9,1]
@@ -780,7 +780,7 @@ module.exports = {
                   3/a,
                 ]
               ]);
-              res = testObj.ofT(3);
+              res = testObj.oft(3);
               correctres = [
                 [27,3],
                 [9,1]
@@ -793,7 +793,7 @@ module.exports = {
           });
 
         });
-        describe('ofTNormal', function(){
+        describe('oftNormal', function(){
           it('should ');
         });
 

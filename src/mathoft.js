@@ -20,7 +20,7 @@
 * });
 * MathOfT also evaluates some of the properties
 * of the Function or MathOfT objects in its terms
-* @see MathOfT.ofT
+* @see MathOfT.oft
 */
 class MathOfT{
 
@@ -290,7 +290,7 @@ class MathOfT{
   }
 
   /**
-  * get t - get a Generator yielding all values of t across instance evaluation range
+  * get T -  get a Generator yielding all values of t across instance evaluation range
   * @example
   * // get the default t values for which a MathOfT is
   * // evaluated
@@ -299,10 +299,10 @@ class MathOfT{
   *   segmentDivisor: 22,
   *   terms: (t) => [sin(t), cos(t)];
   * });
-  * let t = [...MoT.t()]
+  * let T = [...MoT.t()]
   * @return {Generator<Number>}
   */
-  get t(){
+  get T(){
     let rangelimit = this.range.length-2;
     /**
     * @yields {Number}
@@ -365,7 +365,7 @@ class MathOfT{
   }
 
   /**
-  * ofT - evaluate all of the terms held by this MathofT for the
+  * oft - evaluate all of the terms held by this Mathoft for the
   * given t value.
   *
   * When evaluating a Function term, the function can is called with
@@ -376,12 +376,12 @@ class MathOfT{
   * @see t0
   * @see segmentDivisor
   * It also receives a value i corresponding to the index that this t
-  * might correspond to in an Array of ofT results for the evaluation range.
+  * might correspond to in an Array of oft results for the evaluation range.
   *
   * @param  {Number} t
   * @return {(Number|Array.<Number>|Array<Array>)}
   */
-  ofT(t){
+  oft(t){
     t = (typeof t === 'number')
     ? t
     : this.range[0];
@@ -405,7 +405,7 @@ class MathOfT{
       if(typeof _term === 'function'){
         result.push(_term.call(tthis, t));
       } else if(_term instanceof MathOfT){
-        result.push(_term.ofT.call(Object.assign(_term,{tthis}), t)); //OVERRIDE?
+        result.push(_term.oft.call(Object.assign(_term,{tthis}), t)); //OVERRIDE?
       }
     }
     return (result.length == 1)
@@ -414,15 +414,15 @@ class MathOfT{
   }
 
   /**
-  * ofTNormal - given a Number tNormal between -1 and 1, inclusive,
+  * oftNormal - given a Number tNormal between -1 and 1, inclusive,
   * return the evaluation of this MathOfT on the t corresponding
   * to the value of t in the complete evaluation range represented by the
   * given tNormal
-  * @see ofT
+  * @see oft
   * @param  {Number} [tNormal=[-1,1]]
   * @return {(Number|Array.<Number>)}
   */
-  ofTNormal(tNormal){
+  oftNormal(tNormal){
     tNormal = (typeof tNormal === 'number')
     ? ((tNormal > 1) || (tNormal < -1))
     ? Math.sign(tNormal) * 1
@@ -430,15 +430,15 @@ class MathOfT{
     : 1;
     let t = this.range[0] + tNormal*(this.range[1]-this.range[0])
     // debugger;
-    return this.ofT(t);
+    return this.oft(t);
   }
 
   /**
-  * ofTOp - Calculate the value of performing an operation _op on the
+  * oftOp - Calculate the value of performing an operation _op on the
   * values returned by calculating this MathOfT instance's terms for
   * some evaluation value t.
   *
-  * @see ofT
+  * @see oft
   *
   * @param  {Number} t the t to evaluate
   * @param  {type} _acc an accumulator value to start with
@@ -446,7 +446,7 @@ class MathOfT{
   * @param  {type} [_op=this.opcode]  an opcode to perform
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
-  ofTOp(t, _acc, _op){
+  oftOp(t, _acc, _op){
     _op = (_op in MathOfT.OPS)
     ? MathOfT.OPS[_op]
     : this.opcode;
@@ -461,23 +461,23 @@ class MathOfT{
 
     if(this.terms.length == 1){
       // console.log('non')
-      let _ofT = this.ofT(t);
+      let _oft = this.oft(t);
       let result;
-      if(!Array.isArray(_ofT)^!Array.isArray(_acc)){
+      if(!Array.isArray(_oft)^!Array.isArray(_acc)){
         if(!Array.isArray(_acc)){
-          result = _ofT.map((v,i)=>_op(v, _acc));
-        } else if (!Array.isArray(_ofT)){
-          result = _acc.map((v,i)=>_op(v, _ofT));
+          result = _oft.map((v,i)=>_op(v, _acc));
+        } else if (!Array.isArray(_oft)){
+          result = _acc.map((v,i)=>_op(v, _oft));
         }
-      } else if(Array.isArray(_ofT) && Array.isArray(_acc)){
-        result = _ofT.map((v,i)=>_op(v, _acc[i]));
+      } else if(Array.isArray(_oft) && Array.isArray(_acc)){
+        result = _oft.map((v,i)=>_op(v, _acc[i]));
       } else {
         result = _op(v,_acc);
       }
       // debugger;
       return result;
     }else {
-      return this.ofT(t).reduce((acc,valarray,i,arr)=>{
+      return this.oft(t).reduce((acc,valarray,i,arr)=>{
         if((i==0)){
           // console.warn(valarray, acc)
           return valarray;
@@ -510,38 +510,38 @@ class MathOfT{
   }
 
   /**
-  * get ofFirstT - return the ofT for the first t in the evaluation range
+  * get ofFirstT - return the oft for the first t in the evaluation range
   *
   * @see t0
-  * @see ofT
+  * @see oft
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
   get ofFirstT(){
-    return this.ofT(this.t0);
+    return this.oft(this.t0);
   }
   /**
-  * get ofLastT - return the ofT for the final t in the evaluation range
+  * get ofLastT - return the oft for the final t in the evaluation range
   *
   * @see range
-  * @see ofT
+  * @see oft
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
   get ofLastT(){
-    return this.ofT(this._range[this._range.length-1]);
+    return this.oft(this._range[this._range.length-1]);
   }
 
   /**
   * get ofAllT - get a Generator that yields
-  * all Array=[t, this.ofT(t)] for t in evaluation range
-  * @see ofT
-  * @return {Generator} yielding Array in form [t, this.ofT(t)]
+  * all Array=[t, this.oft(t)] for t in evaluation range
+  * @see oft
+  * @return {Generator} yielding Array in form [t, this.oft(t)]
   */
   get ofAllT(){
     return function*(){
-      for(let t of [...this.t()]){
+      for(let t of [...this.T()]){
         yield [
           t,
-          this.ofT(t)
+          this.oft(t)
         ];
       }
     }
@@ -549,19 +549,19 @@ class MathOfT{
 
   /**
   * get - Symbol.iterator get a Generator that yields
-  *    all this.ofT(t) for t in evaluation range
-  * @see ofT
-  * @return {Generator} Generator function yielding this.ofT(t)
+  *    all this.oft(t) for t in evaluation range
+  * @see oft
+  * @return {Generator} Generator function yielding this.oft(t)
   */
   get [Symbol.iterator](){
     return function*(){
-      yield* [...this.t()].map((t,i)=>this.ofT(t));
+      yield* [...this.T()].map((t,i)=>this.oft(t));
     }
   }
 
   /**
   * get ofAllTOp - get a Generator that yields all
-  * this.ofTOp(_t, _acc, _op) for _t in evaluation range,
+  * this.oftOp(_t, _acc, _op) for _t in evaluation range,
   * _acc, _op provided by user
   *
   * @see ofAllTOp
@@ -569,7 +569,7 @@ class MathOfT{
   */
   get ofAllTOp(){
     return function*(_acc, _op){
-      yield* [...this.t()].map((_t,i)=>this.ofTOp(_t,_acc,_op))
+      yield* [...this.T()].map((_t,i)=>this.oftOp(_t,_acc,_op))
     }
   }
 
