@@ -13,11 +13,11 @@
     "test": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text mocha ./test/mocha/nodetestrunner.js",
     "prebuild": "clear && rm -rf lib",
     "build": "npx cross-env NODE_ENV=production babel src --out-dir lib --ignore \"src/mocha/,src/browserentry.js\"",
-    "predev": "clear && rm -rf dist && mkdir dist",
-    "dev": "browserify -t [babelify] src/browserentry.js -o dist/mathoft.js",
+    "predist": "clear && rm -rf dist && mkdir dist",
+    "dist": "browserify -t [babelify] src/browserentry.js -o dist/mathoft.js",
     "postdist": "minify dist/mathoft.js > lib/mathoft-min.js",
     "predisttest": "clear && rm -rf disttest && mkdir disttest && cp src/mocha/mathoftmochajs.html disttest && browserify -t [ babelify --presets [ @babel/preset-env ] --plugins [ @babel/plugin-proposal-class-properties ] ] src/mocha/browsertestrunner.js -o disttest/mathoftmochajs-browser.js",
-    "disttest": ""
+    "disttest": "firefox disttest/mathoftmochajs.html"
   },
   "repository": {
     "type": "git",
@@ -42,7 +42,7 @@
     "not dead"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.2.0"
+    "@babel/runtime-corejs2": "^7.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
