@@ -15,7 +15,7 @@ var should = chai.should();
 var expect = chai.expect;
 var assert = chai.assert;
 
-import {MathOfT} from './mathoft.js';
+import {MathOfT} from '../mathoft.js';
 import {dotest} from './tests.js';
-dotest(MathOfT)
+dotest(MathOfT);
 // run();
