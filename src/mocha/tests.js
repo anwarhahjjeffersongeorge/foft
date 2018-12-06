@@ -22,6 +22,7 @@ module.exports = {
           OPS: 'Object',
           DEFAULT_SEGMENT_DIVISOR: 'Number',
           DEFAULT_RANGE: 'Array',
+          MAX_SAFE_DIVISOR: 'Object',
         };
         Object.keys(staticpropsandtypes).forEach((propname)=>{
           let typename = staticpropsandtypes[propname];
@@ -34,8 +35,30 @@ module.exports = {
 
         describe('with the functionalities such that', function() {
           describe(`MathOfT.CALC_PRECISION_WARN`, function(){
-            it('should',)
-          })
+            it('should return an object that can collapse to a number or string', ()=>{
+              let res = MathOfT.CALC_PRECISION_WARN();
+              res.should.be.an('object');
+              (+res).should.be.a('number');
+              (''+res).should.be.a('string');
+            });
+          });
+
+          describe(`MathOfT.MAX_SAFE_DIVISOR`, function(){
+            let res;
+            before(function(){
+              res = MathOfT.MAX_SAFE_DIVISOR;
+            });
+            it('should be an object that can collapse to a number or string', ()=>{
+              res.should.be.an('object');
+              (+res).should.be.a('number');
+              (''+res).should.be.a('string');
+            });
+            it('should be equal to MathOfT.CALC_PRECISION_WARN()', function(){
+              (+res).should.equal(+MathOfT.CALC_PRECISION_WARN());
+              (''+res).should.equal(''+MathOfT.CALC_PRECISION_WARN());
+            });
+
+          });
 
           describe(`MathOfT.ISNUMBER`, function(){
             it('returns true when provided a SINGLE argument of Number type', function(){
