@@ -3,10 +3,11 @@
  * Envs - A record of some possible types of
  * js execution contexts
  *
- * @return {type}  description
+ * @return {object}  description
  */
 const Envs = (function makeenvs() {
-  return [
+  let o = {};
+  [
     "nodejs_v8",
     "unknown_js",
     "chro_windo",
@@ -16,7 +17,8 @@ const Envs = (function makeenvs() {
     "electr_app"
   ].map(function setenv(e){
     this[e]=Symbol(e), this[this[e]]=e;
-  }, {});
+  }, o);
+  return o;
 })();
 
 /**
