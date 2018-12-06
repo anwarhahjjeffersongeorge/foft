@@ -202,32 +202,6 @@ class MathOfT{
     }
   }
 
-
-  /**
-   * @static CALC_PRECISION_WARN - give precision warning
-   *
-   * @return {object}  the warning
-   */
-  static CALC_PRECISION_WARN(){
-    let msg;
-    let getmsg = (e) => `Maximum safe divide by one quotient: ${e}`;
-    let test = (a)=>((1/a)*a!=1);
-    let testnum=0;
-    const maxtest=21;
-    while (testnum < maxtest) {
-      if(!test(++testnum)){
-        msg = getmsg(e);
-        break;
-      }
-    }
-    return {
-      [Symbol.toPrimitive]:(hint)=>{
-        if (hint === 'number') return testnum;
-        return msg;
-      },
-    }
-  }
-
   /**
    * get dSubrange - given indices n & nn
    * returns the delta between sub values in the MathOfT instance's
@@ -661,7 +635,6 @@ class MathOfT{
     }
   }
 
-  }
   /**
    * @static ISNUMBER - return true IFF both of the following conditions are met
    *   1. there was one argument provided, and

@@ -34,7 +34,7 @@ module.exports = {
 
         describe('with the functionalities such that', function() {
           describe(`MathOfT.CALC_PRECISION_WARN`, function(){
-            it('should',
+            it('should',)
           })
 
           describe(`MathOfT.ISNUMBER`, function(){
