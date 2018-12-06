@@ -202,6 +202,32 @@ class MathOfT{
     }
   }
 
+
+  /**
+   * @static CALC_PRECISION_WARN - give precision warning
+   *
+   * @return {object}  the warning
+   */
+  static CALC_PRECISION_WARN(){
+    let msg;
+    let getmsg = (e) => `Maximum safe divide by one quotient: ${e}`;
+    let test = (a)=>((1/a)*a!=1);
+    let testnum=0;
+    const maxtest=21;
+    while (testnum < maxtest) {
+      if(!test(++testnum)){
+        msg = getmsg(e);
+        break;
+      }
+    }
+    return {
+      [Symbol.toPrimitive]:(hint)=>{
+        if (hint === 'number') return testnum;
+        return msg;
+      },
+    }
+  }
+
   /**
    * get dSubrange - given indices n & nn
    * returns the delta between sub values in the MathOfT instance's
@@ -257,6 +283,8 @@ class MathOfT{
 
   /**
    * subT - get a generator function that yields segmentDivisor+1 values of t spanning the range [this._range[n], this._range[n+1]], where if n or n+1 fall beyond the bounds of this._range.length, they are constrained to fit
+   *
+   *
    *
    * @param  {Number} [n=0] integer start index of range
    *
@@ -403,15 +431,7 @@ class MathOfT{
       if(typeof _term === 'function'){
         result.push(_term.call(tthis, t));
       } else if(_term instanceof MathOfT){
-        // debugger;
-        // result.push(_term.ofT.call(tthis, t)); //OVERRIDE?
-        let resultsubarr=[];
-        if(_term.opcode){
-          resultsubarr=[..._term.ofAllTOp(null,_term.opcode)];
-        } else {
-          resultsubarr=[..._term.ofAllT()];
-        }
-        result.push(resultsubarr);
+        result.push(_term.ofT.call(Object.assign(_term,{tthis}), t)); //OVERRIDE?
       }
     }
     return (result.length == 1)
@@ -438,7 +458,7 @@ class MathOfT{
     // debugger;
     return this.ofT(t);
   }
-  
+
   /**
   * ofTOp - Calculate the value of performing an operation _op on the
   * values returned by calculating this MathOfT instance's terms for
@@ -616,7 +636,32 @@ class MathOfT{
   static R =  ['x', 'y', 'z'];
 
 
+  /**
+   * @static CALC_PRECISION_WARN - give precision warning
+   *
+   * @return {object}  the warning
+   */
+  static CALC_PRECISION_WARN(){
+    let msg;
+    let getmsg = (e) => `Maximum safe divide by one quotient: ${e}`;
+    let test = (a)=>((1/a)*a!=1);
+    let testnum=0;
+    const maxtest=21;
+    while (testnum < maxtest) {
+      if(!test(++testnum)){
+        msg = getmsg(e);
+        break;
+      }
+    }
+    return {
+      [Symbol.toPrimitive]:(hint)=>{
+        if (hint === 'number') return testnum;
+        return msg;
+      },
+    }
+  }
 
+  }
   /**
    * @static ISNUMBER - return true IFF both of the following conditions are met
    *   1. there was one argument provided, and

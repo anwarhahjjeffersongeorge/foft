@@ -12,6 +12,7 @@ module.exports = {
         //these are the static properties and types that should be in MathOfT
         const staticpropsandtypes={
           R: 'Array',
+          CALC_PRECISION_WARN: 'function',
           ISNUMBER: 'function',
           ARENUMBERS: 'function',
           OPDICT: 'Array',
@@ -32,6 +33,10 @@ module.exports = {
         });
 
         describe('with the functionalities such that', function() {
+          describe(`MathOfT.CALC_PRECISION_WARN`, function(){
+            it('should',
+          })
+
           describe(`MathOfT.ISNUMBER`, function(){
             it('returns true when provided a SINGLE argument of Number type', function(){
               MathOfT.ISNUMBER(3).should.be.true;
@@ -693,7 +698,75 @@ module.exports = {
               }));
               testObj.ofT(3).should.be.equalTo([27,3]);
             });
-            it('should for a MathOfT instance with nested function or MathOfT terms provide the nested Array whose elements and subelements are the values of the terms in the correct order', );
+            it('should for a MathOfT instance with nested function or MathOfT terms provide the nested Array whose elements and subelements are the values of the terms in the correct order', ()=> {
+              testObj = new MathOfT({
+                terms:[
+                  (a)=>[
+                    9*a,
+                    9/a,
+                  ],
+                  (a)=>[
+                    3*a,
+                    3/a,
+                  ]
+                ]
+              });
+              let res = testObj.ofT(3);
+              let correctres = [
+                [27,3],
+                [9,1]
+              ];
+              res.should.be.an("array");
+              for (let i in res) {
+                res[i].should.be.equalTo(correctres[i])
+              }
+
+              testObj = new MathOfT({
+                terms:[
+                  new MathOfT({
+                    terms:[
+                    a => 9*a,
+                    a => 9/a,
+                    ]
+                  }),
+                  new MathOfT({
+                    terms:[
+                    a => 3*a,
+                    a => 3/a,
+                    ]
+                  })
+                ]
+              });
+              res = testObj.ofT(3);
+              correctres = [
+                [27,3],
+                [9,1]
+              ];
+              res.should.be.an("array");
+              for (let i in res) {
+                res[i].should.be.equalTo(correctres[i])
+              }
+
+              testObj = new MathOfT((a)=>[
+                [
+                  9*a,
+                  9/a,
+                ],
+                [
+                  3*a,
+                  3/a,
+                ]
+              ]);
+              res = testObj.ofT(3);
+              correctres = [
+                [27,3],
+                [9,1]
+              ];
+              res.should.be.an("array");
+              for (let i in res) {
+                res[i].should.be.equalTo(correctres[i])
+              }
+            });
           });
 
         });
