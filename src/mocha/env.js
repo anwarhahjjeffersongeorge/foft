@@ -12,7 +12,7 @@ const Envs = (function makeenvs() {
     "unknown_js",
     "chro_windo",
     "chro_exten",
-    "ffx_windo",
+    "ffox_windo",
     "ffox_exten",
     "electr_app"
   ].map(function setenv(e){
@@ -41,15 +41,15 @@ function env(){
     // to be in strict mode, and there's no default local scope for IIFE
     // in strict mode =
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
-
+    // debugger;
     //could people be pretending to be in node?
     //check for a few things with each case
     let windowExists = (typeof window !== 'undefined');
     let globalExists = (typeof global !== 'undefined');
 
-
     if(windowExists && !globalExists){
       resultContext = window;
+      console.log('windowexists')
       //which browser context are we in?
       // test for firefox extension, default to browser window
       if(typeof browser !== 'undefined'){
@@ -61,7 +61,8 @@ function env(){
           resultSymbol = Envs.ffox_windo;
         }
       } //test for chrome exstention, default to browser window
-      else if (typeof chrome !== 'undefined'){
+
+     if (typeof chrome !== 'undefined'){
         if(chrome !== this && chrome === this.chrome){
           /**
           * all extensions have access to this chrome API
@@ -71,11 +72,6 @@ function env(){
           } else {
             resultSymbol = Envs.chro_windo;
           }
-        }
-      } else {
-        let ua = window.navigator.userAgent;
-        if (ua.search(/(F|i)refox/)!=-1){
-          resultSymbol = Envs.ffox_windo;
         }
       }
 
@@ -93,22 +89,35 @@ function env(){
           // console.log(result);
         }
       }
-    } else if(globalExists && windowExists) {
+    } else if(globalExists === windowExists) {
       resultContext = global;
       if(typeof global === 'object' && window === global ){
-        let ua = window.navigator.userAgent;
-        if(ua.search(/(E|e)lectron/)!=-1){
+        //default to user agent
+        let ua = resultContext.navigator.userAgent;
+        if(ua.search(/Electron/i)!=-1){
           resultSymbol = Envs.electr_app;
           //global === window so it don't matter
         }
+        if (ua.search(/firefox/i)!=-1){
+          resultSymbol = Envs.ffox_windo;
+        }
+        if (ua.search(/chrome/i)!=-1){
+          resultSymbol = Envs.chro_windo;
+        }
       }
     } else {
+
+
+    }
+
+    if(!resultSymbol){
       //we don't know the engine.
       resultSymbol = Envs.unknown_js;
     }
-
-    result = resultContext;
-    result[resultSymbol] = resultSymbol;
+    result = {
+      resultContext,
+      [resultSymbol]:resultContext
+    };
 
   } catch (err) {
     result = err;
@@ -118,6 +127,7 @@ function env(){
     return result;
   }
 };
+
 function symbols() {
   let arr =  Object.getOwnPropertySymbols(env())
     .filter(sym => sym in Envs);
@@ -125,8 +135,14 @@ function symbols() {
     ? arr[0]
     : arr;
 }
+function descriptions(){
+  let res = symbols();
+  return Array.isArray(res)
+    ? res.map(v=>v.description)
+    : res.description;
+}
 
 module.exports = {
   envs: Envs,
-  env, symbols
+  env, symbols, descriptions
 };

@@ -3,7 +3,7 @@
 * Test suite for ../mathoft.js
 */
 import * as env from './env.js';
-console.log(env.symbols())
+console.log(env.descriptions())
 
 import chai from 'chai';
 import chai_arrays from 'chai-arrays';
