@@ -168,11 +168,21 @@ class MathOfT{
   }
 
   /**
-  * get t0 - the first value of t in the evaluation range
+  * get t0 - the first value of t in the evaluation range T
+  * @see T
   * @return {Number}
   */
   get t0(){
     return this.range[0];
+  }
+
+  /**
+  * get tt - the last value of t in the evaluation range T
+  * @see T
+  * @return {Number}
+  */
+  get tt(){
+    return this.range[this.range.length - 1 ];
   }
 
   /**
@@ -414,23 +424,59 @@ class MathOfT{
   }
 
   /**
-  * oftNormal - given a Number tNormal between -1 and 1, inclusive,
-  * return the evaluation of this MathOfT on the t corresponding
-  * to the value of t in the complete evaluation range represented by the
-  * given tNormal
+  * get ofFirstt - return the oft for the first t in the evaluation range
+  *
+  * @see t0
+  * @see oft
+  * @return {(Number|Array.<Number>|Array.<Array>)}
+  */
+  get ofFirstt(){
+    return this.oft(this.t0);
+  }
+  /**
+  * get ofLastt - return the oft for the final t in the evaluation range
+  *
+  * @see range
+  * @see oft
+  * @return {(Number|Array.<Number>|Array.<Array>)}
+  */
+  get ofLastt(){
+    return this.oft(this.tt);
+  }
+
+  /**
+  * oftNormal - Accepts a Number tNormal that falls within MathOfT.DEFAULT_RANGE, inclusive, and when provided
+  *  1 . A NaN value, return NaN
+  *  2.  +Infinity, returns evaluation from end bound of range
+  *  3.  -Infinity, returns evaluation from start bound of range
+  *  4. Any other number even outside of normal range, returns value of that t.
+  *
+  * @see ISCALCULABLE
+  * @see ofFirstt
+  * @see ofLastt
+  * @see DEFAULT_RANGE
   * @see oft
   * @param  {Number} [tNormal=[-1,1]]
   * @return {(Number|Array.<Number>)}
   */
   oftNormal(tNormal){
-    tNormal = (typeof tNormal === 'number')
-    ? ((tNormal > 1) || (tNormal < -1))
-    ? Math.sign(tNormal) * 1
-    : tNormal
-    : 1;
-    let t = this.range[0] + tNormal*(this.range[1]-this.range[0])
+    let dNormal = MathOfT.DEFAULT_RANGE[1]-MathOfT.DEFAULT_RANGE[0];
+    let midNormal  = MathOfT.DEFAULT_RANGE[0] + dNormal/2;
+    tNormal = MathOfT.ISNUMBER(tNormal)
+      ? tNormal
+      : midNormal;
+    let t=undefined, midt = (this.tt-this.t0)/2 + this.t0;
+    if(MathOfT.ISCALCULABLE(tNormal)){
+      t = midt + (tNormal-midNormal) * this.dabsrange/2;
+    }
     // debugger;
-    return this.oft(t);
+    return ( t !== undefined)
+      ? this.oft(t)
+      : (isNaN(tNormal))
+        ? NaN
+        : tNormal === -Infinity
+          ? this.ofFirstt
+          : this.oflastt;
   }
 
   /**
@@ -509,26 +555,7 @@ class MathOfT{
     }
   }
 
-  /**
-  * get ofFirstT - return the oft for the first t in the evaluation range
-  *
-  * @see t0
-  * @see oft
-  * @return {(Number|Array.<Number>|Array.<Array>)}
-  */
-  get ofFirstT(){
-    return this.oft(this.t0);
-  }
-  /**
-  * get ofLastT - return the oft for the final t in the evaluation range
-  *
-  * @see range
-  * @see oft
-  * @return {(Number|Array.<Number>|Array.<Array>)}
-  */
-  get ofLastT(){
-    return this.oft(this._range[this._range.length-1]);
-  }
+
 
   /**
   * get ofAllT - get a Generator that yields
@@ -639,13 +666,28 @@ class MathOfT{
 
   /**
    * @static ISNUMBER - return true IFF both of the following conditions are met
-   *   1. there was one argument provided, and
-   *   2. the sole provided argument was a number
+   *   1. there was ONE argument provided, and
+   *   2. the sole provided argument was a Number
+   *
    *
    * @return {boolean}
    */
   static ISNUMBER = function(){
     return (arguments.length == 1) && (typeof arguments[0] === 'number');
+  }
+
+  /**
+   * @static ISCALCULABLE - return true IFF all of the following conditions are met
+   * 1. argument satisfies ISNUMBER (One Number argument)
+   * 2. argument is not NaN
+   * 3. argument is not +/-Infinity
+   *
+   * @see ISNUMBER
+   *
+   * @return {boolean}  description
+   */
+  static ISCALCULABLE = function(){
+    return MathOfT.ISNUMBER(arguments[0]) && isFinite(arguments[0]);
   }
 
   /**

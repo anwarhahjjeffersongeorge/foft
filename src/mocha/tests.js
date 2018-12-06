@@ -1,7 +1,9 @@
+'use strict';
 module.exports = {
   dotest: function(MathOfT, chaigrammar) {
-    // const {should, expect, assert} = chaigrammar;
-    // console.log(chaigrammar)
+    const PI = Math.PI;
+    const TAU = 2*PI;
+
     //TODO MathOFT tests
     describe('MathOfT', function() {
       it('should be a function (class)', function() {
@@ -14,6 +16,7 @@ module.exports = {
           R: 'Array',
           CALC_PRECISION_WARN: 'function',
           ISNUMBER: 'function',
+          ISCALCULABLE: 'function',
           ARENUMBERS: 'function',
           OPDICT: 'Array',
           ISOP: 'function',
@@ -58,6 +61,16 @@ module.exports = {
               (''+res).should.equal(''+MathOfT.CALC_PRECISION_WARN());
             });
 
+          });
+          describe(`MathOfT.ISCALCULABLE`, function(){
+            it('returns true when provided a SINGLE argument of Number type that is not NaN, +Infinity or -Infinity', function(){
+              MathOfT.ISCALCULABLE(3.3).should.be.true;
+              MathOfT.ISCALCULABLE(0).should.be.true;
+              MathOfT.ISCALCULABLE(NaN).should.be.false;
+              MathOfT.ISCALCULABLE(Infinity).should.be.false;
+              MathOfT.ISCALCULABLE(-Infinity).should.be.false;
+              MathOfT.ISCALCULABLE(Math.random()).should.be.true;
+            });
           });
 
           describe(`MathOfT.ISNUMBER`, function(){
@@ -368,7 +381,7 @@ module.exports = {
             let testParamsObj = {
               terms: [(t)=>Math.sin(t)/5, (t)=>Math.cos(3*t)/7, (t)=>Math.sin(5*t)/9],
               segmentDivisor: 15,
-              range: [0, -Math.PI]
+              range: [0, -PI]
             }
             let testObj = new MathOfT(testParamsObj);
             testObj.range.should.be.array();
@@ -386,7 +399,7 @@ module.exports = {
               let testParamsObj = {
                 terms: [(t)=>Math.sin(t)/5, (t)=>Math.cos(3*t)/7, (t)=>Math.sin(5*t)/9],
                 segmentDivisor: NaN,
-                range: [0, -Math.PI]
+                range: [0, PI]
               };
               let testObj;
               let testObjFunc = ()=>testObj= new MathOfT(testParamsObj);
@@ -496,6 +509,28 @@ module.exports = {
             testObj.addTerm(badobj).should.be.false;
             testObj.addTerm(goodobjA).should.be.true;
             testObj.addTerm(goodobjB).should.be.true;
+          });
+        });
+
+        describe('.t0', function(){
+          before(function(){
+            testObj = new MathOfT(
+              [Math.random(), Math.random()]
+            );
+          });
+          it('should return the first t value in the evaluation range', function(){
+            testObj.t0.should.equal(testObj.range[0])
+          });
+        });
+
+        describe('.tt', function(){
+          before(function(){
+            testObj = new MathOfT(
+              [Math.random(), Math.random()]
+            );
+          });
+          it('should return the first t value in the evaluation range', function(){
+            testObj.tt.should.equal(testObj.range[testObj.range.length-1])
           });
         });
         describe('.drange', function(){
@@ -791,10 +826,52 @@ module.exports = {
               }
             });
           });
+        });
+
+        describe('ofLastt', function(){
+          before(function(){
+            testObj = new MathOfT({
+              range: [Math.random(), Math.random()],
+              terms: (t) => 55/t
+            });
+          });
+          it('should return the value of the MathOfT instance for the first t in its evaluation range', function(){
+            testObj.ofLastt.should.equal(testObj.oft(testObj.range[testObj.range.length-1]))
+          });
 
         });
+
+
+        describe('ofFirstt', function(){
+          before(function(){
+            testObj = new MathOfT({
+              range: Math.random(),
+              terms: (t) => 55/t
+            });
+          });
+          it('should return the value of the MathOfT instance for the first t in its evaluation range', function(){
+            testObj.ofFirstt.should.equal(testObj.oft(testObj.range[0]))
+          });
+
+        });
+
+
         describe('oftNormal', function(){
-          it('should ');
+          before(function(){
+            testObj = new MathOfT({
+              range: PI,
+              terms: (t) => [Math.cos(t), Math.sin(t)]
+            });
+          });
+          it('should return the value for middle of range  when given non-number tNormal', function(){
+            let correctres =[ Math.cos(0), Math.sin(0)];
+            let res = testObj.oftNormal('sfdafhurkysjerky');
+            res.should.be.equalTo(correctres);
+          });
+          it('should correctly calculate values for any given tNormal')
+          it('should know when to provide start-of-range computation after receiving -Infinity');
+          it('should know when to provide end-of-range computation after receiving +Infinity');
+          it('should know when to provide NaN after receiving NaN');
         });
 
       });
