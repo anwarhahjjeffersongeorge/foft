@@ -52,7 +52,7 @@ class MathOfT{
     // define the division of the evaluation range
     const segmentDivisor = params.segmentDivisor || MathOfT.DEFAULT_SEGMENT_DIVISOR;
     if(typeof segmentDivisor !== 'number' || Number.isNaN(segmentDivisor)){
-      console.log('NaN segment Divisor')
+      // console.log('NaN segment Divisor')
       throw new TypeError('segmentDivisor should be non-NaN number');
     }
     this.__segmentDivisor = segmentDivisor;
@@ -899,5 +899,10 @@ class MathOfT{
 }
 
 module.exports = {
-  MathOfT: Object.defineProperty(MathOfT, 'MAX_SAFE_DIVISOR'),
+  MathOfT: Object.defineProperty(MathOfT, 'MAX_SAFE_DIVISOR', {
+    value: MathOfT.CALC_PRECISION_WARN(),
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  }),
 }
