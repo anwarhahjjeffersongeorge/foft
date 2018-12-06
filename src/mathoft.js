@@ -611,25 +611,27 @@ class MathOfT{
 
 
   /**
-   * @static CALC_PRECISION_WARN - give precision warning
+   * @static CALC_PRECISION_WARN - give precision warning in the form of an object that can be converted to a primitive. Warning value is produced by a*1/a==1 test
    *
-   * @return {object}  the warning
+   * @return {object}  the object with primitive values:
+   *         {number}  the maximum value for which no precision is lost
+   *         {string}  as brief message
    */
   static CALC_PRECISION_WARN(){
     let msg;
-    let getmsg = (e) => `Maximum safe divide by one quotient: ${e}`;
-    let test = (a)=>((1/a)*a!=1);
+    let getmsg = (e) => `Maximum safe unit divisor: ${e}`;
+    let test = (a)=>((1/a)*a==1);
     let testnum=0;
-    const maxtest=21;
+    const maxtest=144;
     while (testnum < maxtest) {
       if(!test(++testnum)){
-        msg = getmsg(e);
+        msg = getmsg(testnum);
         break;
       }
     }
     return {
       [Symbol.toPrimitive]:(hint)=>{
-        if (hint === 'number') return testnum;
+        if (hint === 'number') return testnum-1;
         return msg;
       },
     }
@@ -897,5 +899,5 @@ class MathOfT{
 }
 
 module.exports = {
-  MathOfT,
+  MathOfT: Object.defineProperty(MathOfT, 'MAX_SAFE_DIVISOR'),
 }
