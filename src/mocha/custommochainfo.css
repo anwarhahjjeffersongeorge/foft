@@ -1,0 +1,12 @@
+#custominfo {
+	position: fixed;
+	bottom: 15px;
+	right: 10px;
+	font-size: 12px;
+	margin: 0;
+  padding: 12px;
+  font-weight: bold;
+	color: #8fa;
+  background-color: #444;
+  z-index: 1;
+}
