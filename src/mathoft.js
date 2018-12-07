@@ -663,7 +663,48 @@ class MathOfT{
       },
     }
   }
+  //TODO: static SIN_OF_PI_WARN
+/*js: (0=== Math.sin(-Math.PI))=false
 
+in electron:
+
+0=== Math.sin(0)
+true
+(0=== Math.sin(-Math.PI))
+false
+
+ Math.sin(-Math.PI)
+-1.2246467991473532e-16
+ Math.sin(Math.PI)
+1.2246467991473532e-16
+
+in node:
+
+>  Math.sin(-Math.PI)
+-1.2246467991473532e-16
+>  Math.sin(-Math.PI)
+-1.2246467991473532e-16
+
+in node with decimal.js(https://github.com/MikeMcl/decimal.js):
+
+console.log(Decimal.sin(-Math.PI).toPrecision(20))
+-2.3846264338327950288e-16
+undefined
+>  console.log(Decimal.sin(-Math.PI).toPrecision(80))
+-2.3846264338327950288000000000000000000000000000000000000000000000000000000000000e-16
+undefined
+>  console.log(Decimal.sin(3.1415926535897932384626433832795028841971693993751).toPrecision(80))
+2.3846264338327950288000000000000000000000000000000000000000000000000000000000000e-16
+undefined
+>  console.log(Decimal.sin(3.1415926535897932384626433832795028841971693993751*2).toPrecision(80))
+-4.7692528676655900577000000000000000000000000000000000000000000000000000000000000e-16
+undefined
+>  console.log(Decimal.sin(3.1415926535897932384626433832795028841971693993751*2).toPrecision(80))
+-4.7692528676655900577000000000000000000000000000000000000000000000000000000000000e-16
+undefined
+>  console.log(Decimal.sin(Decimal('3.1415926535897932384626433832795028841971693993751')).toPrecision(80))
+5.8209749445923078164000000000000000000000000000000000000000000000000000000000000e-51
+undefined*/
   /**
    * @static ISNUMBER - return true IFF both of the following conditions are met
    *   1. there was ONE argument provided, and

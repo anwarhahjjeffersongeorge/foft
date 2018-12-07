@@ -826,6 +826,9 @@ module.exports = {
               }
             });
           });
+          describe('when called with a non-anonymous Function object', () => {
+            it('should pass a this object to the Function');
+          });
         });
 
         describe('ofLastt', function(){
@@ -868,7 +871,23 @@ module.exports = {
             let res = testObj.oftNormal('sfdafhurkysjerky');
             res.should.be.equalTo(correctres);
           });
-          it('should correctly calculate values for any given tNormal')
+          it('should correctly calculate values for any given tNormal', function() {
+            let ttargets = [-1, -.75, -.5, -.25, 0];
+            let correctres = [
+              [ -1, 0],
+              [ -Math.sqrt(2)/2, -Math.sqrt(2)/2 ],
+              [ 0, -1],
+              [ Math.sqrt(2)/2, -Math.sqrt(2)/2],
+              [ 1, 0],
+            ];
+            for (var i in ttargets) {
+              let t = ttargets[i];
+              let res = testObj.oftNormal(t);
+              let thet = PI*t;
+              res.should.be.equalTo([ Math.cos(thet), Math.sin(thet)]);
+              // res.should.be.equalTo(correctres[i]);
+            }
+          });
           it('should know when to provide start-of-range computation after receiving -Infinity');
           it('should know when to provide end-of-range computation after receiving +Infinity');
           it('should know when to provide NaN after receiving NaN');
