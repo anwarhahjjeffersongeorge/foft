@@ -8,13 +8,13 @@
 const Envs = (function makeenvs() {
   let o = {};
   [
-    "nodejs_v8",
-    "unknown_js",
+    "node_jsenv",
+    "unkn_jsenv",
     "chro_windo",
     "chro_exten",
     "ffox_windo",
     "ffox_exten",
-    "electr_app"
+    "elec_appli"
   ].map(function setenv(e){
     this[e]=Symbol(e), this[this[e]]=e;
   }, o);
@@ -139,7 +139,9 @@ function descriptions(){
   let res = symbols();
   return Array.isArray(res)
     ? res.map(v=>v.description)
-    : res.description;
+    : (res.description)
+      ? res.description
+      : /(?:Symbol\()(\w+)(?:\))/.exec(res.toString())[1]; //Symbol.description may be undefined, so use regexp
 }
 
 module.exports = {
