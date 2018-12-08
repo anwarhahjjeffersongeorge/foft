@@ -309,7 +309,7 @@ class MathOfT{
   *   segmentDivisor: 22,
   *   terms: (t) => [sin(t), cos(t)];
   * });
-  * let T = [...MoT.t()]
+  * let T = [...MoT.T()]
   * @return {Generator<Number>}
   */
   get T(){
@@ -327,30 +327,6 @@ class MathOfT{
   }
 
 
-  /**
-   * i - given a Number t within a the evaluation range of this instance
-   * (inclusive), return the value of the corresponding i such that
-   *   1. i is proportional to the location of t within the range
-   *   2. i is scaled to segmentDivisor
-   *
-   * If t falls out of bounds of the range, i is returned as
-   *   1. When i lies beyond the 0th bound: 0, or
-   *   2. When i lies beyond the length-1th bound: segmentDivisor.
-   * @see segmentDivisor
-   * @see normalizeT
-   * @param  {Number} t
-   * @return {Number} [0, segmentDivisor]
-   */
-  i(t){
-    let TT = this.tRange;
-    if (MathOfT.INRANGE(t, TT)){
-      return Math.round((t-TT[0])/(TT[T.length-1]-TT[0]) * this.segmentDivisor);
-    }
-    // debugger;
-    return (MathOfT.NORMALIZETORANGE(t, TT) == -Infinity)
-      ? 0
-      : this.segmentDivisor;
-  }
 
   /**
   * normalizeT - given a Number t, return a normalized (to MathOfT.DEFAULT_RANGE)
@@ -403,6 +379,35 @@ class MathOfT{
   antinormalizeT(t){
     return this.normalizeT(t,true)
   }
+
+  /**
+   * i - given a Number t within a the evaluation range of this instance
+   * (inclusive), return the value of the corresponding i such that
+   *   1. i is proportional to the location of t within the range
+   *   2. i is scaled to segmentDivisor
+   *
+   * If t falls out of bounds of the range, nothing is returned
+   *
+   * If the range has more than two elements, return an array of length range-1
+   * @see IINRANGE
+   * @see segmentDivisor
+   * @see normalizeT
+   * @param  {Number} t
+   * @return {Number|null|Array<number|null>} [0, segmentDivisor]
+   */
+  i(t){
+    let arr = Array(this.range.length-1);
+    for(let r = 0; r<arr.length; r++){
+      arr[r] = MathOfT.IINRANGE(t, [
+        this.range[r],
+        this.range[r+1]
+      ], this.segmentDivisor);
+    }
+    return (arr.length==1)
+      ? arr[0]
+      : arr;
+  }
+
   /**
   * oft - evaluate all of the terms held by this Mathoft for the
   * given t value.
@@ -853,7 +858,7 @@ undefined*/
   }
 
   /**
-   * @static NORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to MathOfT.DEFAULT_RANGE)
+   * @static NORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to an optional range NN or MathOfT.DEFAULT_RANGE)
    * representation of the ratio between the two deltas A and B where
    *   1. A is the difference betewen t and TT[first]
    *   2. B is the difference between TT[last] and TT[first]
@@ -864,18 +869,22 @@ undefined*/
    *   1. -Infinity corresponding to beyond the bound of TT[first], and
    *   2. +Infinity corresponding to beyond the bound of TT[last]
    *
+   *
    * @param  {number} [t=0] the t to evaluate
    * @param  {Array<number>} [TT=DEFAULT_RANGE] the range in which to test for TT
-   * @return {number}
+   * @param  {Array<number>} [NN=DEFAULT_RANGE] the target normalization range * @return {number}
    */
-  static NORMALIZETORANGE(t, TT){
+  static NORMALIZETORANGE(t, TT, NN){
     if(!MathOfT.ISNUMBER(t)){
       t = 0;
+    }
+    if(!MathOfT.ARENUMBERS(NN)){
+      NN = MathOfT.DEFAULT_RANGE;
     }
     if(!MathOfT.ARENUMBERS(TT)){
       TT = MathOfT.DEFAULT_RANGE;
     }
-    let [normA, normB] = MathOfT.DEFAULT_RANGE;
+    let [normA, normB] = NN;
     let minNorm = (normA < normB)
       ? normA
       : normB;
@@ -911,16 +920,40 @@ undefined*/
    * @param  {Array<number>} [TT=DEFAULT_RANGE] the range in which to test for TT
    * @return {number}
    */
-  static ANTINORMALIZETORANGE(t, TT){
+  static ANTINORMALIZETORANGE(t, TT, NN){
     if(!MathOfT.ISNUMBER(t)){
       t = 0;
     }
     if(!MathOfT.ARENUMBERS(TT)){
       TT = MathOfT.DEFAULT_RANGE;
     }
-    return MathOfT.NORMALIZETORANGE(t, Array.from(TT).reverse());
+    if(!MathOfT.ARENUMBERS(NN)){
+      NN = MathOfT.DEFAULT_RANGE;
+    }
+    return MathOfT.NORMALIZETORANGE(t, Array.from(TT).reverse(), NN);
   }
 
+  /**
+   * @static IINRANGE - given a number t, a range TT and a divisor d, return the value of the corresponding i such that
+   *   1. i is proportional to the location of t within the range
+   *   2. i is proportional to d
+   *
+   * @param  {number} t  t to find in TT
+   * @param  {Array<number>} TT range
+   * @param  {type} d  divisor
+   * @return {null|number}
+   */
+  static IINRANGE(t, TT, d){
+    d = (MathOfT.ISNUMBER(d))
+      ? Math.floor(d)
+      : MathOfT.DEFAULT_SEGMENT_DIVISOR;
+    let res = MathOfT.NORMALIZETORANGE(t, TT, [0, 1]);
+    return (res == Infinity)
+      ? null
+      : (res == -Infinity)
+        ? null
+        : Math.floor(res * d);
+  }
   /**
    * @static OPDICT - an array of the ops that MathOfT class  can recognize
    */
