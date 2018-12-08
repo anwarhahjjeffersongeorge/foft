@@ -1,4 +1,16 @@
 'use strict';
+import chai from 'chai';
+import chai_almost from 'chai-almost';
+import chai_arrays from 'chai-arrays';
+import chai_as_promised from 'chai-as-promised';
+chai.use(chai_as_promised);
+chai.use(chai_arrays);
+chai.use(chai_almost()); //chai.use(chai_almost(Number.EPSILON));
+chai.config.includeStack = true; // turn on stack trace
+var should = chai.should();
+var expect = chai.expect;
+var assert = chai.assert;
+
 module.exports = {
   dotest: function(MathOfT, chaigrammar) {
     const PI = Math.PI;
@@ -9,6 +21,7 @@ module.exports = {
       it('should be a function (class)', function() {
         MathOfT.should.be.an('function')
         // console.log(MathOfT);
+        // (Math.sin(PI)).should.be.almost.equalTo(0)
       });
       describe('Has static members of specified types', function(){
         //these are the static properties and types that should be in MathOfT
@@ -22,6 +35,8 @@ module.exports = {
           ISOP: 'function',
           OPPARSE: 'function',
           INRANGE: 'function',
+          NORMALIZETORANGE: 'function',
+          ANTINORMALIZETORANGE: 'function',
           OPS: 'Object',
           DEFAULT_SEGMENT_DIVISOR: 'Number',
           DEFAULT_RANGE: 'Array',
@@ -217,6 +232,65 @@ module.exports = {
               MathOfT.INRANGE(testN, testM, testN).should.be.true; //[m, mm]
             });
           });
+
+          describe('MathOfT.NORMALIZETORANGE', function(){
+            let outofboundsA, outofboundsB, testRangeArr, dTestRangeArr;
+            describe('for any t and range TT that has two elements',
+            function(){
+              beforeEach(function(){
+                testRangeArr = [Math.random(),Math.random()];
+                dTestRangeArr = () => testRangeArr[testRangeArr.length-1]-testRangeArr[0];
+                [outofboundsA, outofboundsB] = [
+                  testRangeArr[0]-dTestRangeArr(),
+                  testRangeArr[1]+dTestRangeArr(),
+                ];
+              });
+              it('should when given parameter t correctly calculate the corresponding normalized value', function(){
+                MathOfT.NORMALIZETORANGE(testRangeArr[0], testRangeArr).should.equal(MathOfT.DEFAULT_RANGE[0])
+                MathOfT.NORMALIZETORANGE(testRangeArr[1], testRangeArr).should.equal(MathOfT.DEFAULT_RANGE[1])
+                let midVal = testRangeArr[0] + (testRangeArr[1]-testRangeArr[0])/2;
+                let fullRangeVal = MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0]
+                let midRangeVal = MathOfT.DEFAULT_RANGE[0] + fullRangeVal/2;
+                MathOfT.NORMALIZETORANGE(midVal, testRangeArr).should.equal(midRangeVal);
+                testRangeArr=[0,1];
+                let normt = .35;
+                let testval = normt * dTestRangeArr() + testRangeArr[0]
+                MathOfT.NORMALIZETORANGE(testval,testRangeArr).should.equal(midRangeVal+fullRangeVal/2*normt)
+              });
+              it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function(){
+                MathOfT.NORMALIZETORANGE(outofboundsA, testRangeArr).should.equal(-Infinity)
+                MathOfT.NORMALIZETORANGE(outofboundsB, testRangeArr).should.equal(Infinity)
+              });
+
+            });
+          });
+
+          describe('MathOfT.ANTINORMALIZETORANGE', function(){
+            let outofboundsA, outofboundsB, testRangeArr;
+            describe('for any t and range TT has two elements',
+            function(){
+              before(function(){
+                testRangeArr = [Math.random(),Math.random()];
+                [outofboundsA, outofboundsB] = [
+                  testRangeArr[0]-(testRangeArr[1]-testRangeArr[0]),
+                  testRangeArr[1]-(testRangeArr[0]-testRangeArr[1])
+                ];
+              });
+              it('should when given parameter t correctly calculate the corresponding normalized value', function(){
+                MathOfT.ANTINORMALIZETORANGE(testRangeArr[0], testRangeArr).should.equal(MathOfT.DEFAULT_RANGE[1])
+                MathOfT.ANTINORMALIZETORANGE(testRangeArr[1], testRangeArr).should.equal(MathOfT.DEFAULT_RANGE[0])
+                let midVal = testRangeArr[0] + (testRangeArr[1]-testRangeArr[0])/2;
+                let midRangeVal = MathOfT.DEFAULT_RANGE[0] + (MathOfT.DEFAULT_RANGE[1]-MathOfT.DEFAULT_RANGE[0])/2;
+                MathOfT.ANTINORMALIZETORANGE(midVal, testRangeArr).should.equal(midRangeVal);
+              });
+              it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function(){
+                MathOfT.ANTINORMALIZETORANGE(outofboundsA, testRangeArr).should.equal(Infinity)
+                MathOfT.ANTINORMALIZETORANGE(outofboundsB, testRangeArr).should.equal(-Infinity)
+              });
+
+            });
+          });
+
 
           describe('MathOfT.OPDICT', function() {
             // console.log(MathOfT.OPDICT)
@@ -511,7 +585,11 @@ module.exports = {
             testObj.addTerm(goodobjB).should.be.true;
           });
         });
+        describe('trange', function(){
+          describe('when called upon an instance with a two-element evaluation range, return the range', function(){
 
+          });
+        });
         describe('.t0', function(){
           before(function(){
             testObj = new MathOfT(
@@ -660,6 +738,55 @@ module.exports = {
           });
 
         });
+        describe('.i', function(){
+          let common;
+          describe('for a MathOfT instance whose range has two elements',
+          function(){
+            before(function(){
+              common = 20;
+              testObj = new MathOfT({
+                segmentDivisor: common,
+                range: [0, common],
+              })
+            });
+            it('should accept a lone parameter t, setting the range to the instance\'s first and last range values by default', function(){
+              testObj.i(10).should.equal(10);
+            });
+            it('should when given a t beyond the first bound of the range, return 0', function(){
+              testObj.i(-10).should.equal(0);
+            });
+            it('should when given a t beyond the last bound of the range, return the instance\'s segmentDivisor', function(){
+              testObj.i(21).should.equal(testObj.segmentDivisor);
+            });
+            it('should when given a t within the inclusive bounds of the range, return an appropriately scaled index', function(){
+              for(let t = 0; t < common; t++){
+                testObj.i(t).should.equal(t);
+              }
+            });
+          });
+          describe('for a MathOfT instance whose range has more than two elements', function(){
+            before(function(){
+              common = 20;
+              testObj = new MathOfT({
+                segmentDivisor: common,
+                range: [0, 33, common],
+              })
+            });
+            it('should when given a t beyond the first bound of the range, return 0', function(){
+              testObj.i(-10).should.equal(0);
+            });
+            it('should when given a t beyond the last bound of the range, return the instance\'s segmentDivisor', function(){
+              testObj.i(21).should.equal(testObj.segmentDivisor);
+            });
+            it('should when given a t within the inclusive bounds of the range, return an appropriately scaled index', function(){
+              for(let t = 0; t < common; t++){
+                testObj.i(t).should.equal(t);
+              }
+            });
+          });
+
+        });
+
         describe('.normalizeT', function(){
           let outofboundsA, outofboundsB;
           describe('for a MathOfT instance whose range has two elements',
@@ -729,7 +856,81 @@ module.exports = {
 
             });
           });
+          describe('for any MathOfT, when provided with a ', function(){
+
+          });
+
         });
+
+        describe('antinormalizeT', function(){
+          let outofboundsA, outofboundsB;
+          describe('for a MathOfT instance whose range has two elements', function(){
+            before(function(){
+              testRangeArr = [Math.random(),Math.random()];
+              [outofboundsA, outofboundsB] = [
+                testRangeArr[0]-(testRangeArr[1]-testRangeArr[0]),
+                testRangeArr[1]-(testRangeArr[0]-testRangeArr[1])
+              ];
+              // console.log(testRangeArr);
+              // console.log(outofboundsA, outofboundsB)
+              testObj = new MathOfT(testRangeArr);
+            });
+            it('should when given parameter t correctly calculate the corresponding normalized value', function(){
+              testObj.antinormalizeT(testRangeArr[0]).should.equal(MathOfT.DEFAULT_RANGE[1])
+              testObj.antinormalizeT(testRangeArr[1]).should.equal(MathOfT.DEFAULT_RANGE[0])
+              let midVal = testRangeArr[0] + (testRangeArr[1]-testRangeArr[0])/2;
+              let midRangeVal = MathOfT.DEFAULT_RANGE[0] + (MathOfT.DEFAULT_RANGE[1]-MathOfT.DEFAULT_RANGE[0])/2;
+              testObj.normalizeT(midVal).should.equal(midRangeVal);
+            });
+            it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function(){
+              testObj.antinormalizeT(outofboundsA).should.equal(Infinity)
+              testObj.antinormalizeT(outofboundsB).should.equal(-Infinity)
+            });
+          });
+          describe('for a MathOfT instance whose range has more than two elements', function(){
+            before(function(){
+              testRangeArr =[
+                Math.random(),
+                Math.random(),
+                Math.random(),
+                Math.random()
+              ];
+              testObj = new MathOfT(testRangeArr);
+            });
+            it('should when given parameter t return array of normalized values for each element-pair-subrange in MathOfT instance range array', function(){
+              let res = testObj.antinormalizeT(-1) //less than Math.random in testRangeArr
+              res.should.be.an('array');
+              res.should.be.ofSize(testRangeArr.length-1)
+              res.every(v => v==-Infinity || v==Infinity ).should.be.true;
+              //explicit tValues
+              testObj = new MathOfT([0,1,2,0]);
+              res =  testObj.antinormalizeT(.5);
+              res.should.be.equalTo([1,Infinity,.5]);
+              res =  testObj.antinormalizeT(-.5);
+              res.should.be.equalTo([Infinity,Infinity, -Infinity]);
+
+              testObj = new MathOfT([0,-1,-2,0]);
+              res =  testObj.antinormalizeT(.5);
+              res.should.be.equalTo([Infinity,Infinity,-Infinity]);
+              res =  testObj.antinormalizeT(-.5);
+              res.should.be.equalTo([1,Infinity,.5]);
+
+              testObj = new MathOfT([0,2,1,0]);
+              res =  testObj.antinormalizeT(.5);
+              res.should.be.equalTo([1.5,-Infinity,1]);
+              res =  testObj.antinormalizeT(-.5);
+              res.should.be.equalTo([Infinity, -Infinity, -Infinity]);
+
+              testObj = new MathOfT([0,2,1,0]);
+              res =  testObj.antinormalizeT(.25);
+              res.should.be.equalTo([1.75,-Infinity,.5]);
+              res =  testObj.antinormalizeT(-.25);
+              res.should.be.equalTo([Infinity, -Infinity, -Infinity]);
+
+            });
+          });
+        });
+
         describe('oft', function(){
           describe('for a MathOfT instance with one function or MathOfT term', () => {
             it('should provide the value of the term for any given t', () => {
@@ -827,8 +1028,16 @@ module.exports = {
             });
           });
           describe('when called with a non-anonymous Function object', () => {
-            it('should pass a this object to the Function');
+            it('should pass a this object to the Function named tthis', function () {
+              testObj= new MathOfT(function (t){
+                this.should.be.an('object');
+              });
+              testObj.oft()
+            });
           });
+          describe('should when called with no parameters', ()=>{
+            it('should default to returning the value of the term for the instance t0 range bound')
+          })
         });
 
         describe('ofLastt', function(){
