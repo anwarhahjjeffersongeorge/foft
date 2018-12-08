@@ -328,8 +328,33 @@ class MathOfT{
 
 
   /**
+   * i - given a Number t within a the evaluation range of this instance
+   * (inclusive), return the value of the corresponding i such that
+   *   1. i is proportional to the location of t within the range
+   *   2. i is scaled to segmentDivisor
+   *
+   * If t falls out of bounds of the range, i is returned as
+   *   1. When i lies beyond the 0th bound: 0, or
+   *   2. When i lies beyond the length-1th bound: segmentDivisor.
+   * @see segmentDivisor
+   * @see normalizeT
+   * @param  {Number} t
+   * @return {Number} [0, segmentDivisor]
+   */
+  i(t){
+    let TT = this.tRange;
+    if (MathOfT.INRANGE(t, TT)){
+      return Math.round((t-TT[0])/(TT[T.length-1]-TT[0]) * this.segmentDivisor);
+    }
+    // debugger;
+    return (MathOfT.NORMALIZETORANGE(t, TT) == -Infinity)
+      ? 0
+      : this.segmentDivisor;
+  }
+
+  /**
   * normalizeT - given a Number t, return a normalized (to MathOfT.DEFAULT_RANGE)
-  * representation of how far along t is in the evaluation
+  * representation of the ratio between t and the delta of the evaluation
   * range of this MathOfT
   *
   * If t falls out of bounds of range, the value is returned as -/+ Infinity
@@ -338,42 +363,46 @@ class MathOfT{
   * then normalizeT checks in each subrange, e.g. [0,1], [1,2]
   * and returns an Array of normalized values corresponding to each range
   *
+  * @see NORMALIZETORANGE
   * @see DEFAULT_RANGE
   * @param  {Number} [t=0]
+  * @param {boolean} [doAnti=false]
   * @return {Number|Array<Number>}
   */
-  normalizeT(t){
-    if(!MathOfT.ISNUMBER(t)){
-      t = 0;
-    }
-    let test = (tt, range)=>{
-      let [normA, normB] = MathOfT.DEFAULT_RANGE;
-      let minNorm = (normA < normB)
-        ? normA
-        : normB;
-      let maxNorm = (normB > normA)
-        ? normB
-        : normA;
-      let res = (tt - range[0]) / (range[1] - range[0]); //[0-1]
-      res = normA + (normB - normA)*res; //[normA, normB]
-
-      if(!MathOfT.INRANGE(res, normA, normB)){
-        res = (res < minNorm)
-          ? -Infinity
-          : Infinity;
-      }
-      return res;
-    }
-
+  normalizeT(t, doAnti){
+    doAnti =  (typeof doAnti === 'boolean')
+      ? doAnti
+      : false;
+    let func = (doAnti)
+        ? MathOfT.ANTINORMALIZETORANGE
+        : MathOfT.NORMALIZETORANGE;
     let arr = Array(this.range.length-1);
     for(let r = 0; r<arr.length; r++){
-      arr[r] = test(t, [this.range[r], this.range[r+1]])
+      arr[r] = func(t, [
+        this.range[r],
+        this.range[r+1]
+      ]);
     }
     return (arr.length==1)
       ? arr[0]
       : arr;
   }
 
+
+  /**
+   * antinormalizeT - given a number t return a normalized representation of the ratio of a quantity n to the delta of the instance evaluation range such that the ratio of t to the delta of the evaluation range N satisfies
+   * 1.n = maximum normal - N
+   *
+   * if t falls beyond the lower bound of the evaluation range, return +Infinity
+   * if t falls beyond the upper bound of the evaluation range, return -Infinity
+   *
+   * @see normalizeT
+   * @param  {number} t
+   * @return {number} n
+   */
+  antinormalizeT(t){
+    return this.normalizeT(t,true)
+  }
   /**
   * oft - evaluate all of the terms held by this Mathoft for the
   * given t value.
@@ -388,13 +417,13 @@ class MathOfT{
   * It also receives a value i corresponding to the index that this t
   * might correspond to in an Array of oft results for the evaluation range.
   *
-  * @param  {Number} t
+  * @param  {Number} [t=t0]
   * @return {(Number|Array.<Number>|Array<Array>)}
   */
   oft(t){
     t = (typeof t === 'number')
     ? t
-    : this.range[0];
+    : this.t0;
     // debugger;
     let tthis = (typeof this.tthis === 'object')
     ? this.tthis
@@ -407,7 +436,7 @@ class MathOfT{
         drange: this.drange,
         t0: this.t0,
         segmentDivisor: this.segmentDivisor,
-        i: Math.round(t * this.segmentDivisor)
+        i: this.i
       }
     };
     let result = [];
@@ -422,6 +451,24 @@ class MathOfT{
     ? result[0]
     : result;
   }
+
+
+  /**
+   * @static TTHIS_TEMPLATE - get an object with some keys for inter instance
+   * communication
+   *
+   * @see oft
+   * @param  {Number} t the t of the instance communicatiing
+   * @return {object}
+   */
+  static TTHIS_TEMPLATE(t,mathoft){
+    let o = (MathOfT.ISNUMBER(t) )
+      ? {
+        t,
+        normalizeT: normalizeT,
+      }
+      : null;
+  };
 
   /**
   * get ofFirstt - return the oft for the first t in the evaluation range
@@ -472,7 +519,7 @@ class MathOfT{
     // debugger;
     return ( t !== undefined)
       ? this.oft(t)
-      : (isNaN(tNormal))
+      : (Number.isNaN(tNormal))
         ? NaN
         : tNormal === -Infinity
           ? this.ofFirstt
@@ -803,6 +850,75 @@ undefined*/
         return false;
       }
     }
+  }
+
+  /**
+   * @static NORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to MathOfT.DEFAULT_RANGE)
+   * representation of the ratio between the two deltas A and B where
+   *   1. A is the difference betewen t and TT[first]
+   *   2. B is the difference between TT[last] and TT[first]
+   *
+   *
+   * If t falls out of bounds of range, the value is returned as -/+ Infinity,
+   * where:
+   *   1. -Infinity corresponding to beyond the bound of TT[first], and
+   *   2. +Infinity corresponding to beyond the bound of TT[last]
+   *
+   * @param  {number} [t=0] the t to evaluate
+   * @param  {Array<number>} [TT=DEFAULT_RANGE] the range in which to test for TT
+   * @return {number}
+   */
+  static NORMALIZETORANGE(t, TT){
+    if(!MathOfT.ISNUMBER(t)){
+      t = 0;
+    }
+    if(!MathOfT.ARENUMBERS(TT)){
+      TT = MathOfT.DEFAULT_RANGE;
+    }
+    let [normA, normB] = MathOfT.DEFAULT_RANGE;
+    let minNorm = (normA < normB)
+      ? normA
+      : normB;
+    let maxNorm = (normB > normA)
+      ? normB
+      : normA;
+    let res = (t - TT[0]) / (TT[1] - TT[0]); //[0-1]
+    res = normA + (normB - normA)*res; //[normA, normB]
+
+    if(!MathOfT.INRANGE(res, normA, normB)){
+      res = (res < minNorm)
+        ? -Infinity
+        : Infinity;
+    }
+
+    return res;
+
+  }
+
+  /**
+   * @static ANTINORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to MathOfT.DEFAULT_RANGE)
+   * representation of the ratio between the two deltas A and B where
+   *   1. A is the difference betewen t and TT[last]
+   *   2. B is the difference between TT[last] and TT[first]
+   *
+   * If t falls out of bounds of range, the value is returned as -/+ Infinity,
+   * where:
+   *   1. +Infinity corresponding to beyond the bound of TT[first], and
+   *   2. -Infinity corresponding to beyond the bound of TT[last]
+   *
+   * @see NORMALIZETORANGE
+   * @param  {number} [t=0] the t to evaluate
+   * @param  {Array<number>} [TT=DEFAULT_RANGE] the range in which to test for TT
+   * @return {number}
+   */
+  static ANTINORMALIZETORANGE(t, TT){
+    if(!MathOfT.ISNUMBER(t)){
+      t = 0;
+    }
+    if(!MathOfT.ARENUMBERS(TT)){
+      TT = MathOfT.DEFAULT_RANGE;
+    }
+    return MathOfT.NORMALIZETORANGE(t, Array.from(TT).reverse());
   }
 
   /**
