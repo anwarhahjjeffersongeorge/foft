@@ -369,6 +369,8 @@ class MathOfT{
    * antinormalizeT - given a number t return a normalized representation of the ratio of a quantity n to the delta of the instance evaluation range such that the ratio of t to the delta of the evaluation range N satisfies
    * 1.n = maximum normal - N
    *
+   * This is the remaining range for the normalized value provided by normalizeT
+   *
    * if t falls beyond the lower bound of the evaluation range, return +Infinity
    * if t falls beyond the upper bound of the evaluation range, return -Infinity
    *
@@ -431,19 +433,8 @@ class MathOfT{
     : this.t0;
     // debugger;
     let tthis = (typeof this.tthis === 'object')
-    ? this.tthis
-    : {
-      "t":{
-        t,
-        tNormal: this.normalizeT(t),
-        tNormalRemaining: 1- this.normalizeT(t),
-        trange: this.range,
-        drange: this.drange,
-        t0: this.t0,
-        segmentDivisor: this.segmentDivisor,
-        i: this.i
-      }
-    };
+      ? this.tthis
+      : MathOfT.TTHIS_TEMPLATE(t, this);
     let result = [];
     for(let _term of this._terms){
       if(typeof _term === 'function'){
@@ -458,22 +449,7 @@ class MathOfT{
   }
 
 
-  /**
-   * @static TTHIS_TEMPLATE - get an object with some keys for inter instance
-   * communication
-   *
-   * @see oft
-   * @param  {Number} t the t of the instance communicatiing
-   * @return {object}
-   */
-  static TTHIS_TEMPLATE(t,mathoft){
-    let o = (MathOfT.ISNUMBER(t) )
-      ? {
-        t,
-        normalizeT: normalizeT,
-      }
-      : null;
-  };
+
 
   /**
   * get ofFirstt - return the oft for the first t in the evaluation range
@@ -957,6 +933,46 @@ undefined*/
         ? null
         : Math.floor(res * d);
   }
+
+  /**
+   * @static TTHIS_TEMPLATE - get an object with some keys for inter instance
+   * communication
+   *
+   * @see oft
+   * @param  {Number} t the t of the instance communicatiing
+   * @param {MathOfT} mathoft the instance doing communication
+   * @return {object|Array<string>} communication object, or array of communication keys
+   */
+  static TTHIS_TEMPLATE(t,mathoft){
+    let o = (MathOfT.ISNUMBER(t) )
+      ? { t }
+      : { };
+    let populateFunc = (mathoft instanceof MathOfT)&&(MathOfT.ISNUMBER(t))
+      ? (key)=>o[key]=mathoft[key](t)
+      : ()=>null;
+    let populateMemb = (mathoft instanceof MathOfT)
+      ? (key)=>o[key]=mathoft[key]
+      : () => null;
+    let funckeys = [
+      'normalizeT',
+      'antinormalizeT',
+      'i'
+    ]
+    let memberkeys = [
+      'trange:',
+      'drange:',
+      't0:',
+      'segmentDivisor:',
+      ];
+    funckeys.map(fkey=>populateFunc(fkey));
+    memberkeys.map(mkey=>populateMemb(mkey));
+    if(Object.keys(o).length==0){
+      return funckeys.concat(memberkeys);
+    } else {
+      return o;
+    }
+  };
+
   /**
    * @static OPDICT - an array of the ops that MathOfT class  can recognize
    */

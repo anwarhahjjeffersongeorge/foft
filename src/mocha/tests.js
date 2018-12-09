@@ -38,6 +38,7 @@ module.exports = {
           NORMALIZETORANGE: 'function',
           ANTINORMALIZETORANGE: 'function',
           IINRANGE: 'function',
+          TTHIS_TEMPLATE: 'function',
           OPS: 'Object',
           DEFAULT_SEGMENT_DIVISOR: 'Number',
           DEFAULT_RANGE: 'Array',
@@ -338,6 +339,14 @@ module.exports = {
                 MathOfT.ANTINORMALIZETORANGE(normt,testRangeArr,normarr).should.equal(65)
               });
             });
+          });
+
+          describe('MathOfT.TTHIS_TEMPLATE', function(){
+            it('when called without a valid t or mathoft method, return an array of keys', function(){
+              let res = MathOfT.TTHIS_TEMPLATE();
+              res.should.be.an('array');
+            });
+
           });
 
 
@@ -905,7 +914,14 @@ module.exports = {
 
             });
           });
-          describe('for any MathOfT, when provided with a ', function(){
+          describe('for any MathOfT, when provided with a boolean doAnti parameter that equals true', function(){
+            it('should return the appropriate anti-normalized T', function(){
+              testObj = new MathOfT([0, 100, -100, 100])
+              let res = testObj.normalizeT(25)
+              res.should.be.equalTo([-.5,-.25, .25])
+              res = testObj.normalizeT(25, true);
+              res.should.be.equalTo([1.5,1.25,.75])
+            });
 
           });
 
@@ -1076,16 +1092,34 @@ module.exports = {
               }
             });
           });
-          describe('when called with a non-anonymous Function object', () => {
+          describe('when called on a MathOfT whose term is a non-anonymous Function object', () => {
+            it('should pass a this object to the Function that includes TTHIS_TEMPLATE object values', function () {
+              testObj= new MathOfT(function (t){
+                this.should.be.an('object');
+                let template = MathOfT.TTHIS_TEMPLATE();
+                Object.keys(this).every(key=>key in template).should.be.true;
+              });
+              return false;
+            });
+          });
+          describe('when called on a MathOfT whose term is another MathOfT', () => {
             it('should pass a this object to the Function named tthis', function () {
               testObj= new MathOfT(function (t){
                 this.should.be.an('object');
               });
-              testObj.oft()
+              return false;
             });
           });
+
+
           describe('should when called with no parameters', ()=>{
-            it('should default to returning the value of the term for the instance t0 range bound')
+            it('default to returning the value of the term for the instance t0 range bound', function () {
+              testObj = new MathOfT((t)=> [t*2, t*5])
+              testObj.oft().should.be.equalTo([
+                MathOfT.DEFAULT_RANGE[0]*2,
+                MathOfT.DEFAULT_RANGE[0]*5
+              ])
+            })
           })
         });
 
