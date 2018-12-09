@@ -1119,12 +1119,14 @@ module.exports = {
             });
           });
           describe('when called on a MathOfT whose term is another MathOfT', () => {
-            it('should pass a this object to the Function with a member named tthis', function () {
+            it('should pass a this object to the Function with an object member named tthis that includes TTHIS_TEMPLATE object values', function () {
               testObj= new MathOfT(function (t){
                 this.should.be.an('object');
-                should.exist(this.tthis)
+                should.exist(this.tthis);
+                this.tthis.should.be.an('object');
+                let template = MathOfT.TTHIS_TEMPLATE();
+                Object.keys(this.tthis).every(key=>key in template).should.be.true;
               });
-              'e'.should.equal('rr')
             });
           });
 
@@ -1144,7 +1146,7 @@ module.exports = {
           before(function(){
             testObj = new MathOfT({
               range: [Math.random(), Math.random()],
-              terms: (t) => 55/t
+              terms: (t) => 55/+t
             });
           });
           it('should return the value of the MathOfT instance for the first t in its evaluation range', function(){
@@ -1158,7 +1160,7 @@ module.exports = {
           before(function(){
             testObj = new MathOfT({
               range: Math.random(),
-              terms: (t) => 55/t
+              terms: (t) => 55+t
             });
           });
           it('should return the value of the MathOfT instance for the first t in its evaluation range', function(){
@@ -1194,7 +1196,7 @@ module.exports = {
               let res = testObj.oftNormal(t);
               let thet = PI*t;
               res.should.be.equalTo([ Math.cos(thet), Math.sin(thet)]);
-              // res.should.be.equalTo(correctres[i]);
+              // res.should.be.almost.equalTo(correctres[i]);
             }
           });
           it('should know when to provide start-of-range computation after receiving -Infinity');
