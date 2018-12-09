@@ -953,25 +953,27 @@ undefined*/
     let populateMemb = (mathoft instanceof MathOfT)
       ? (key)=>o[key]=mathoft[key]
       : () => null;
-    let funckeys = [
-      'normalizeT',
-      'antinormalizeT',
-      'i'
-    ]
-    let memberkeys = [
-      'trange:',
-      'drange:',
-      't0:',
-      'segmentDivisor:',
-      ];
-    funckeys.map(fkey=>populateFunc(fkey));
-    memberkeys.map(mkey=>populateMemb(mkey));
+    MathOfT.FUNCKEYS.map(fkey=>populateFunc(fkey));
+    MathOfT.MEMBERKEYS.map(mkey=>populateMemb(mkey));
     if(Object.keys(o).length==0){
-      return funckeys.concat(memberkeys);
+      return MathOfT.FUNCKEYS.concat(MathOfT.MEMBERKEYS);
     } else {
       return o;
     }
   };
+
+  static FUNCKEYS = [
+    'normalizeT',
+    'antinormalizeT',
+    'i'
+  ]
+  static MEMBERKEYS = [
+    'range',
+    'drange',
+    't0',
+    'segmentDivisor',
+  ];
+
 
   /**
    * @static OPDICT - an array of the ops that MathOfT class  can recognize

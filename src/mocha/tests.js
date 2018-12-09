@@ -32,6 +32,8 @@ module.exports = {
           ISCALCULABLE: 'function',
           ARENUMBERS: 'function',
           OPDICT: 'Array',
+          MEMBERKEYS: 'Array',
+          FUNCKEYS: 'Array',
           ISOP: 'function',
           OPPARSE: 'function',
           INRANGE: 'function',
@@ -346,7 +348,21 @@ module.exports = {
               let res = MathOfT.TTHIS_TEMPLATE();
               res.should.be.an('array');
             });
-
+            it('when called with a first parameter that satisfies MathOfT.ISNUMBER and a second parameter that is a MathOfT instance, return an object whose members correspond to the MathOfT\'s computed values for t or own members', function () {
+              let testObj = new MathOfT({
+                terms: [t=>3+t*2],
+                range: [0, 100]
+              });
+              let testt = 2;
+              let res = MathOfT.TTHIS_TEMPLATE(testt, testObj);
+              res.should.be.an('object');
+              for (var fkey of MathOfT.FUNCKEYS) {
+                res[fkey].should.equal(testObj[fkey](testt));
+              }
+              for (var mkey of MathOfT.MEMBERKEYS) {
+                res[mkey].should.equal(testObj[mkey]);
+              }
+            });
           });
 
 
