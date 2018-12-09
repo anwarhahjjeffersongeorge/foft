@@ -1119,11 +1119,12 @@ module.exports = {
             });
           });
           describe('when called on a MathOfT whose term is another MathOfT', () => {
-            it('should pass a this object to the Function named tthis', function () {
+            it('should pass a this object to the Function with a member named tthis', function () {
               testObj= new MathOfT(function (t){
                 this.should.be.an('object');
+                should.exist(this.tthis)
               });
-              return false;
+              'e'.should.equal('rr')
             });
           });
 
