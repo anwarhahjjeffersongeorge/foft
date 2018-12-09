@@ -252,7 +252,7 @@ module.exports = {
                 let midVal = testRangeArr[0] + (testRangeArr[1]-testRangeArr[0])/2;
                 let fullRangeVal = MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0]
                 let midRangeVal = MathOfT.DEFAULT_RANGE[0] + fullRangeVal/2;
-                MathOfT.NORMALIZETORANGE(midVal, testRangeArr).should.equal(midRangeVal);
+                MathOfT.NORMALIZETORANGE(midVal, testRangeArr).should.almost.equal(midRangeVal);
                 //ex.
                 testRangeArr=[0,1];
                 let normt = .35;
@@ -302,7 +302,7 @@ module.exports = {
           });
           describe('MathOfT.ANTINORMALIZETORANGE', function(){
             let outofboundsA, outofboundsB, testRangeArr, dTestRangeArr;
-            describe('for any t and range TT has two elements',
+            describe('for any t and range TT that has two elements',
             function(){
               beforeEach(function(){
                 testRangeArr = [Math.random(),Math.random()];
@@ -313,18 +313,18 @@ module.exports = {
                 ];
               });
               it('should when given parameter t correctly calculate the corresponding normalized value', function(){
-                MathOfT.ANTINORMALIZETORANGE(testRangeArr[0], testRangeArr).should.equal(MathOfT.DEFAULT_RANGE[1])
-                MathOfT.ANTINORMALIZETORANGE(testRangeArr[1], testRangeArr).should.equal(MathOfT.DEFAULT_RANGE[0])
+                MathOfT.ANTINORMALIZETORANGE(testRangeArr[0], testRangeArr).should.equal(MathOfT.DEFAULT_RANGE[1]-MathOfT.DEFAULT_RANGE[0])
+                MathOfT.ANTINORMALIZETORANGE(testRangeArr[1], testRangeArr).should.equal(0)
                 let midVal = testRangeArr[0] + (testRangeArr[1]-testRangeArr[0])/2;
                 let fullRangeVal = MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0]
                 let midRangeVal = MathOfT.DEFAULT_RANGE[0] + fullRangeVal/2;
-                MathOfT.ANTINORMALIZETORANGE(midVal, testRangeArr).should.equal(midRangeVal);
+                MathOfT.ANTINORMALIZETORANGE(midVal, testRangeArr).should.almost.equal(MathOfT.DEFAULT_RANGE[1]-midRangeVal);
                 //ex.
                 testRangeArr=[0,1];
                 let normt = .35;
                 let antinormt = testRangeArr[1] - normt;
                 let testval = normt * dTestRangeArr() + testRangeArr[0]
-                MathOfT.ANTINORMALIZETORANGE(testval,testRangeArr).should.equal(MathOfT.DEFAULT_RANGE[0]+fullRangeVal*antinormt)
+                MathOfT.ANTINORMALIZETORANGE(testval,testRangeArr).should.equal(1.3)
               });
               it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function(){
                 MathOfT.ANTINORMALIZETORANGE(outofboundsA, testRangeArr).should.equal(Infinity)
@@ -335,7 +335,7 @@ module.exports = {
                 let normarr = [0, 100];
                 let normt = .35;
                 let testval = normt * dTestRangeArr() + testRangeArr[0]
-                MathOfT.NORMALIZETORANGE(normt,testRangeArr,normarr).should.equal(65)
+                MathOfT.ANTINORMALIZETORANGE(normt,testRangeArr,normarr).should.equal(65)
               });
             });
           });
@@ -741,7 +741,7 @@ module.exports = {
               let randind = Math.floor(Math.random()*yielded.length);
               let deltaRange = testRangeArr[nn1]-testRangeArr[n1];
               let deltaSegment = deltaRange/testObj.segmentDivisor;
-              yielded[randind].should.equal(
+              yielded[randind].should.almost.equal(
                 testRangeArr[n1] + randind*deltaSegment
               );
             }
@@ -855,7 +855,7 @@ module.exports = {
               testObj.normalizeT(testRangeArr[1]).should.equal(MathOfT.DEFAULT_RANGE[1])
               let midVal = testRangeArr[0] + (testRangeArr[1]-testRangeArr[0])/2;
               let midRangeVal = MathOfT.DEFAULT_RANGE[0] + (MathOfT.DEFAULT_RANGE[1]-MathOfT.DEFAULT_RANGE[0])/2;
-              testObj.normalizeT(midVal).should.equal(midRangeVal);
+              testObj.normalizeT(midVal).should.almost.equal(midRangeVal);
             });
             it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function(){
               testObj.normalizeT(outofboundsA).should.equal(-Infinity)
@@ -925,11 +925,11 @@ module.exports = {
               testObj = new MathOfT(testRangeArr);
             });
             it('should when given parameter t correctly calculate the corresponding normalized value', function(){
-              testObj.antinormalizeT(testRangeArr[0]).should.equal(MathOfT.DEFAULT_RANGE[1])
-              testObj.antinormalizeT(testRangeArr[1]).should.equal(MathOfT.DEFAULT_RANGE[0])
+              testObj.antinormalizeT(testRangeArr[0]).should.equal(MathOfT.DEFAULT_RANGE[1]-MathOfT.DEFAULT_RANGE[0])
+              testObj.antinormalizeT(testRangeArr[1]).should.equal(0)
               let midVal = testRangeArr[0] + (testRangeArr[1]-testRangeArr[0])/2;
               let midRangeVal = MathOfT.DEFAULT_RANGE[0] + (MathOfT.DEFAULT_RANGE[1]-MathOfT.DEFAULT_RANGE[0])/2;
-              testObj.normalizeT(midVal).should.equal(midRangeVal);
+              testObj.antinormalizeT(midVal).should.almost.equal(MathOfT.DEFAULT_RANGE[1]-midRangeVal);
             });
             it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function(){
               testObj.antinormalizeT(outofboundsA).should.equal(Infinity)
@@ -954,7 +954,7 @@ module.exports = {
               //explicit tValues
               testObj = new MathOfT([0,1,2,0]);
               res =  testObj.antinormalizeT(.5);
-              res.should.be.equalTo([0,Infinity,-.5]);
+              res.should.be.equalTo([1,Infinity,.5]);
               res =  testObj.antinormalizeT(-.5);
               res.should.be.equalTo([Infinity,Infinity, -Infinity]);
 
@@ -962,7 +962,7 @@ module.exports = {
               res =  testObj.antinormalizeT(.5);
               res.should.be.equalTo([Infinity,Infinity,-Infinity]);
               res =  testObj.antinormalizeT(-.5);
-              res.should.be.equalTo([0,Infinity,-.5]);
+              res.should.be.equalTo([1,Infinity,.5]);
 
               testObj = new MathOfT([0,2,1,0]);
               res =  testObj.antinormalizeT(.5);

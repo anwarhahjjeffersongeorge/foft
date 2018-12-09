@@ -930,7 +930,10 @@ undefined*/
     if(!MathOfT.ARENUMBERS(NN)){
       NN = MathOfT.DEFAULT_RANGE;
     }
-    return MathOfT.NORMALIZETORANGE(t, Array.from(TT).reverse(), NN);
+    let res = MathOfT.NORMALIZETORANGE(t, TT, NN);
+    return (Math.abs(res) === Infinity)
+      ? -res
+      : NN[NN.length-1]-res
   }
 
   /**
