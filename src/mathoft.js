@@ -756,7 +756,7 @@ undefined*/
    * @return {boolean}  description
    */
   static ISCALCULABLE = function(){
-    return MathOfT.ISNUMBER(arguments[0]) && isFinite(arguments[0]);
+    return MathOfT.ISNUMBER(arguments[0]) && Number.isFinite(arguments[0]);
   }
 
   /**
