@@ -495,7 +495,7 @@ class MathOfT{
       : midNormal;
     let t=undefined, midt = (this.tt-this.t0)/2 + this.t0;
     if(MathOfT.ISCALCULABLE(tNormal)){
-      t = midt + (tNormal-midNormal) * this.dabsrange/2;
+      t = midt + (tNormal-midNormal) * this.drange/2;
     }
     // debugger;
     return ( t !== undefined)

@@ -1213,6 +1213,16 @@ module.exports = {
           it('should know when to provide NaN after receiving NaN', function () {
             testObj.oftNormal(NaN).should.be.NaN;
           });
+          it('should when called with a calculable t value that falls outside of the normalization range correctly calculate the corresponding value', function () {
+            let drange = MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0];
+            let toutofboundsA = MathOfT.DEFAULT_RANGE[0]-drange, toutofboundsB = MathOfT.DEFAULT_RANGE[1]+drange;
+            testObj = new MathOfT({
+              terms: [(t) => t+1],
+              range: 50,
+            });
+            testObj.oftNormal(toutofboundsA).should.equal(-149);
+            testObj.oftNormal(toutofboundsB).should.equal(151);
+          });
         });
 
       });
