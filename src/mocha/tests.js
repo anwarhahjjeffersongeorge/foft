@@ -1171,9 +1171,12 @@ module.exports = {
 
 
         describe('oftNormal', function(){
+          let bound, outofboundsA, outofboundsB;
           before(function(){
+            bound=PI;
+            outofboundsA=2*bound, outofboundsB=-2*bound;
             testObj = new MathOfT({
-              range: PI,
+              range: bound,
               terms: (t) => [Math.cos(t), Math.sin(t)]
             });
           });
@@ -1199,9 +1202,17 @@ module.exports = {
               // res.should.be.almost.equalTo(correctres[i]);
             }
           });
-          it('should know when to provide start-of-range computation after receiving -Infinity');
-          it('should know when to provide end-of-range computation after receiving +Infinity');
-          it('should know when to provide NaN after receiving NaN');
+          it('should know when to provide start-of-range computation after receiving -Infinity', function () {
+            let res = testObj.oftNormal(-Infinity);
+            res.should.be.equalTo(testObj.ofFirstt);
+          });
+          it('should know when to provide end-of-range computation after receiving +Infinity', function () {
+            let res = testObj.oftNormal(Infinity);
+            res.should.be.equalTo(testObj.ofLastt);
+          });
+          it('should know when to provide NaN after receiving NaN', function () {
+            testObj.oftNormal(NaN).should.be.NaN;
+          });
         });
 
       });

@@ -504,7 +504,7 @@ class MathOfT{
         ? NaN
         : tNormal === -Infinity
           ? this.ofFirstt
-          : this.oflastt;
+          : this.ofLastt;
   }
 
   /**
