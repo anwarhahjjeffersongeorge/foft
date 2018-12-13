@@ -1011,14 +1011,25 @@ module.exports = {
             });
           });
         });
-
+        describe('isInRange', () => {
+          describe('when giyen a single parameter t', () => {
+            it('should return true IFF t falls within the evaluation range of this instance', () => {
+              testObj = new MathOfT([11, 51]);
+              testObj.isInRange(55).should.be.false;
+              testObj.isInRange(5).should.be.false;
+              testObj.isInRange(11).should.be.true;
+              testObj.isInRange(51).should.be.true;
+              testObj.isInRange(15).should.be.true;
+            });
+          });
+        });
         describe('oft', function(){
           describe('for a MathOfT instance with one function or MathOfT term', () => {
             it('should provide the value of the term for any given t', () => {
               testObj = new MathOfT(a => 9*a);
               testObj.oft(3).should.equal(27);
               testObj = new MathOfT(new MathOfT(a => 9*a));
-              testObj.oft(3).should.equal(27);
+              testObj.oft(.5).should.equal(4.5);
             });
           });
           describe('for a MathOfT instance with multiple function or MathOfT terms', () => {
@@ -1029,17 +1040,33 @@ module.exports = {
                 a => 9/a,
                 ]
               });
+              testObj.oft(3).should.be.an('array');
               testObj.oft(3).should.be.equalTo([27,3]);
-              testObj = new MathOfT(new MathOfT({
+              testObj = new MathOfT({
                 terms:[
-                a => 9*a,
-                a => 9/a,
+                  new MathOfT({
+                    range: [3,33],
+                    terms:[
+                    a => 9*a,
+                    a => 9/a,
+                    ]
+                  }),
+                  new MathOfT({
+                    range: [3,33],
+                    terms:[
+                    a => 27*a,
+                    a => 27/a,
+                    ]
+                  })
                 ]
-              }));
-              testObj.oft(3).should.be.equalTo([27,3]);
+              });
+              testObj.oft(3).should.be.an('array');
+              testObj.oft(3)[0].should.be.equalTo([27,3]);
+              testObj.oft(3)[1].should.be.equalTo([81,9]);
             });
             it('should for a MathOfT instance with nested function or MathOfT terms provide the nested Array whose elements and subelements are the values of the terms in the correct order', ()=> {
               testObj = new MathOfT({
+                // range: [0, 66],
                 terms:[
                   (a)=>[
                     9*a,
@@ -1064,12 +1091,14 @@ module.exports = {
               testObj = new MathOfT({
                 terms:[
                   new MathOfT({
+                    range: [0, 66],
                     terms:[
                     a => 9*a,
                     a => 9/a,
                     ]
                   }),
                   new MathOfT({
+                    range: [0, 66],
                     terms:[
                     a => 3*a,
                     a => 3/a,
@@ -1137,9 +1166,40 @@ module.exports = {
               testObj.oft().should.be.equalTo([
                 MathOfT.DEFAULT_RANGE[0]*2,
                 MathOfT.DEFAULT_RANGE[0]*5
-              ])
-            })
-          })
+              ]);
+            });
+          });
+
+          describe('when called with any t on a MathOfT that has any MathOfT terms', () => {
+            it('should produce null values corresponding to those MathOfT terms whose evaluation ranges exclude t', () => {
+              testObj = new MathOfT({
+                terms: [
+                  new MathOfT({
+                    range: [0, 6],
+                    terms:[
+                    a => 9*a
+                    ]
+                  }),
+                  new MathOfT({
+                    range: [6.1,12],
+                    terms:[
+                    a => 3*a
+                    ]
+                  }),
+                  new MathOfT({
+                    range: [0, 12],
+                    terms:[
+                    a => 27*a
+                    ]
+                  }),
+                ]
+              });
+              testObj.oft(3).should.be.an('array');
+              testObj.oft(3).should.be.equalTo([27, null, 81]);
+              testObj.oft(10).should.be.an('array');
+              testObj.oft(10).should.be.equalTo([null, 30, 270]);
+            });
+          });
         });
 
         describe('ofLastt', function(){
@@ -1164,7 +1224,7 @@ module.exports = {
             });
           });
           it('should return the value of the MathOfT instance for the first t in its evaluation range', function(){
-            testObj.ofFirstt.should.equal(testObj.oft(testObj.range[0]))
+            testObj.ofFirstt.should.equal(testObj.oft(testObj.range[0]));
           });
 
         });

@@ -410,11 +410,21 @@ class MathOfT{
       : arr;
   }
 
+
+  /**
+   * isInRange - return true IFF a given t falls within the evaluation range of this instance
+   *
+   * @param  {number} t
+   * @return {boolean}
+   */
+  isInRange(t){
+    return MathOfT.INRANGE(t, this.range);
+  }
   /**
   * oft - evaluate all of the terms held by this Mathoft for the
   * given t value.
   *
-  * When evaluating a Function term, the function can is called with
+  * When evaluating a Function or MathOfT term, the function or MathOfT is called with
   * a bound this containing information about t:
   * @see normalizeT
   * @see range
@@ -424,6 +434,9 @@ class MathOfT{
   * It also receives a value i corresponding to the index that this t
   * might correspond to in an Array of oft results for the evaluation range.
   *
+  *
+  * When evaluating a MathOfT term, any t that falls outside that term's evaluation range will produce a null result.
+  * @see isInRange
   * @param  {Number} [t=t0]
   * @return {(Number|Array.<Number>|Array<Array>)}
   */
@@ -440,7 +453,10 @@ class MathOfT{
       if(typeof _term === 'function'){
         result.push(_term.call(tthis, t));
       } else if(_term instanceof MathOfT){
-        result.push(_term.oft.call(Object.assign(_term,{tthis}), t)); //OVERRIDE?
+        let subres = _term.isInRange(t)
+          ? _term.oft.call(Object.assign(_term,{tthis}), t)
+          : null;
+        result.push(subres); //OVERRIDE?
       }
     }
     return (result.length == 1)
