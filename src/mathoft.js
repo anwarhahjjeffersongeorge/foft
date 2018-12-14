@@ -435,15 +435,19 @@ class MathOfT{
   * might correspond to in an Array of oft results for the evaluation range.
   *
   *
-  * When evaluating a MathOfT term, any t that falls outside that term's evaluation range will produce a null result.
+  * When evaluating a MathOfT term, any t that falls outside that term's evaluation range will produce a null result. If the filterNulls parameter is true, then null values will be stripped from the returned result.
   * @see isInRange
   * @param  {Number} [t=t0]
+  * @param {boolean} [filterNulls=false]
   * @return {(Number|Array.<Number>|Array<Array>)}
   */
-  oft(t){
+  oft(t, filterNulls){
     t = (typeof t === 'number')
     ? t
     : this.t0;
+    filterNulls = (typeof filterNulls === 'boolean')
+    ? filterNulls
+    : false;
     // debugger;
     let tthis = (typeof this.tthis === 'object')
       ? this.tthis
@@ -459,6 +463,9 @@ class MathOfT{
         result.push(subres); //OVERRIDE?
       }
     }
+    result = (filterNulls)
+      ? result.filter((v) => v)
+      : result;
     return (result.length == 1)
     ? result[0]
     : result;

@@ -1200,6 +1200,34 @@ module.exports = {
               testObj.oft(10).should.be.an('array');
               testObj.oft(10).should.be.equalTo([null, 30, 270]);
             });
+            it('should when given a true second parameter filter from its result all null values corresponding to those MathOfT terms whose evaluation ranges exclude t', () => {
+              testObj = new MathOfT({
+                terms: [
+                  new MathOfT({
+                    range: [0, 6],
+                    terms:[
+                    a => 9*a
+                    ]
+                  }),
+                  new MathOfT({
+                    range: [6.1,12],
+                    terms:[
+                    a => 3*a
+                    ]
+                  }),
+                  new MathOfT({
+                    range: [0, 12],
+                    terms:[
+                    a => 27*a
+                    ]
+                  }),
+                ]
+              });
+              testObj.oft(3, true).should.be.an('array');
+              testObj.oft(3, true).should.be.equalTo([27, 81]);
+              testObj.oft(10, true).should.be.an('array');
+              testObj.oft(10, true).should.be.equalTo([30, 270]);
+            });
           });
         });
 
@@ -1286,6 +1314,9 @@ module.exports = {
           });
         });
 
+        describe('oftOp', () => {
+
+        });
       });
 
 
