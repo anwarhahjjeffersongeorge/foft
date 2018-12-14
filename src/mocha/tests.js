@@ -57,11 +57,12 @@ module.exports = {
 
         describe('with the functionalities such that', function() {
           describe(`MathOfT.CALC_PRECISION_WARN`, function(){
-            it('should return an object that can collapse to a number or string', ()=>{
+            it('should return an object that can collapse to a number or string that includes said number', ()=>{
               let res = MathOfT.CALC_PRECISION_WARN();
               res.should.be.an('object');
               (+res).should.be.a('number');
               (''+res).should.be.a('string');
+              (''+res).includes(+res).should.be.true;
             });
           });
 

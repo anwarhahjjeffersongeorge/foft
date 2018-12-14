@@ -689,23 +689,25 @@ class MathOfT{
    *         {string}  as brief message
    */
   static CALC_PRECISION_WARN(){
-    let msg;
+    let msg, res;
     let getmsg = (e) => `Maximum safe unit divisor: ${e}`;
     let test = (a)=>((1/a)*a==1);
     let testnum=0;
     const maxtest=144;
     while (testnum < maxtest) {
       if(!test(++testnum)){
-        msg = getmsg(testnum);
+        let final = testnum - 1;
+        msg = getmsg(final);
+        res = {
+          [Symbol.toPrimitive]:(hint)=>{
+            if (hint === 'number') return final;
+            return msg;
+          },
+        };
         break;
       }
     }
-    return {
-      [Symbol.toPrimitive]:(hint)=>{
-        if (hint === 'number') return testnum-1;
-        return msg;
-      },
-    }
+    return res;
   }
   //TODO: static SIN_OF_PI_WARN
 /*js: (0=== Math.sin(-Math.PI))=false
