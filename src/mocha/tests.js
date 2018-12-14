@@ -379,21 +379,21 @@ module.exports = {
           });
           describe('Math.OPPARSE', function(){
             MathOfT.OPDICT.forEach((key)=>{
-              it(`returns function for ${key} in MathOfT.OPS`, function(){
+              it(`returns function for key ${key} in MathOfT.OPS`, function(){
                 if(key){ //key can be null
                   MathOfT.OPPARSE(key).should.be.a('function');
                 }
               });
             });
             let dummychar = ()=>String.fromCharCode(Math.floor(255*Math.random()));
-            let badcodes = Array(10).fill(dummychar());
+            let badcodes = Array(10).fill(null).map(() => dummychar());
             badcodes.forEach((badcode)=>{
               let resetbadcode = () => badcode = String.fromCharCode(
                 Math.floor(255*Math.random()));
               while (MathOfT.OPDICT.includes(badcode)){
                 resetbadcode();
               }
-              it(`returns no-op passthrough function for ${badcode} not in MathOfT.OPS`, function(){
+              it(`returns no-op passthrough function for random code ${badcode} not in MathOfT.OPDICT`, function(){
                 let testargs = [Math.random(), Math.random()]
                 let testTarget = MathOfT.OPPARSE(badcode);
                 testTarget.should.be.a('function');
@@ -423,7 +423,7 @@ module.exports = {
             }
             // console.info(badtestcodes.length)
             badtestcodes.forEach((code)=>{
-              it(`returns false when given random code ${code}`, function() {
+              it(`returns false when given random code ${code} not in MathOfT.OPDICT`, function() {
                 MathOfT.ISOP(code).should.be.false;
               });
             });
