@@ -1056,6 +1056,12 @@ undefined*/
     },
     'resfunc':{
       value: (code, base, args) =>{
+        if (!MathOfT.ISCALCULABLE(base)) {
+          throw new TypeError('MathOfT.OPS.resfunc requires a calculable base parameter');
+        }
+        if (!(Object.getOwnPropertySymbols(args).includes(Symbol.iterator)||Array.isArray(args)||ArrayBuffer.isView(args))) {
+          throw new TypeError('MathOfT.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter');
+        }
         let opfunc = MathOfT.OPS.opfunc;
         if (MathOfT.ARENUMBERS(...args)){
           return opfunc(code)(args);

@@ -460,12 +460,32 @@ module.exports = {
             let resfunckey='resfunc';
             describe(`contains property ${resfunckey}`, function() {
               let testTarget = MathOfT.OPS[resfunckey];
-              it(`which is a non-enumerable function that takes one string argument in MathOfT.OPDICT, a number, and an iterable, and returns a number`, function() {
+              it(`which is a non-enumerable function that takes three arguments`, function() {
                 Object.keys(MathOfT.OPS).includes(resfunckey).should.be.false;
                 should.exist(MathOfT.OPS[resfunckey]);
                 testTarget.should.be.a('function');
                 testTarget.length.should.equal(3);
-                false.should.be.true;
+              });
+              it('which throws error when given an unrecognized code parameter', () =>{
+                let badfunc=()=>testTarget({},1,[0,2,4]);
+                badfunc.should.throw(TypeError);
+                let badcode;
+                let resetbadcode = () => badcode = String.fromCharCode(
+                  Math.floor(255*Math.random()));
+                resetbadcode();
+                while (MathOfT.OPDICT.includes(badcode)){
+                  resetbadcode();
+                }
+                badfunc=()=>testTarget(badcode,1,[0,2,4]);
+                badfunc.should.throw(RangeError);
+              });
+              it('which throws error when given an incalculable base parameter', () => {
+                let badfunc=()=>testTarget('-',NaN,[0,2,4]);
+                badfunc.should.throw(TypeError);
+              });
+              it('which throws error when given a non iterable args parameter', () => {
+                let badfunc=()=>testTarget('-',1,33);
+                badfunc.should.throw(TypeError);
               });
             });
             opskeys.forEach((key)=>{
