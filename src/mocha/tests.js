@@ -379,7 +379,7 @@ module.exports = {
           });
           describe('Math.OPPARSE', function(){
             MathOfT.OPDICT.forEach((key)=>{
-              it(`returns function for key ${key} in MathOfT.OPS`, function(){
+              it(`returns function for ${key} in MathOfT.OPS`, function(){
                 if(key){ //key can be null
                   MathOfT.OPPARSE(key).should.be.a('function');
                 }
@@ -429,7 +429,37 @@ module.exports = {
             });
           });
           describe('MathOfT.OPS', function() {
-            let opskeys=[null, '+', '-', '*', '/', '**']
+            let hiddenkeys=['opfunc'];
+            let opskeys=MathOfT.OPDICT;
+            hiddenkeys.forEach((key)=>{
+              let testTarget = MathOfT.OPS[key];
+              // console.log(testTarget)
+              describe(`contains property ${key}`, function() {
+                it(`which is a non-enumerable function that takes one string argument in MathOfT.OPDICT and returns a function`, function() {
+                  Object.keys(MathOfT.OPS).includes(key).should.be.false;
+                  should.exist(MathOfT.OPS[key]);
+                  testTarget.should.be.a('function');
+                  testTarget.length.should.equal(1);
+                  let badfunc=()=>testTarget(3);
+                  badfunc.should.throw(TypeError);
+                  badfunc=()=>testTarget({});
+                  badfunc.should.throw(TypeError);
+                  let badcode;
+                  let resetbadcode = () => badcode = String.fromCharCode(
+                    Math.floor(255*Math.random()));
+                  resetbadcode();
+                  while (MathOfT.OPDICT.includes(badcode)){
+                    resetbadcode();
+                  }
+                  badfunc=()=>testTarget(badcode);
+                  badfunc.should.throw(RangeError);
+                  testTarget('-').should.not.throw();
+                  testTarget('-').should.be.a('function');
+                })
+
+              });
+            });
+
             opskeys.forEach((key)=>{
               let testTarget = MathOfT.OPS[key];
               // console.log(testTarget)
@@ -510,14 +540,14 @@ module.exports = {
             MathOfT.constructor.length.should.equal(1);
           });
           it('should accept Function as parameter and set it to terms array', function(){
-            let testFunction = (t)=>t*32
+            let testFunction = (t)=>t*32;
             let testObj = new MathOfT(testFunction);
             testObj.terms[0].should.be.a('function');
             let testVal = Math.random();
             testObj.terms[0](testVal).should.equal(testFunction(testVal));
           });
           it('should accept Array.<Number> as paramter and set it to range array ', function() {
-            let testArray = [0,44]
+            let testArray = [0,44];
             let testObj = new MathOfT(testArray);
             testObj.range.should.be.array();
             testObj.range.should.be.equalTo(testArray);

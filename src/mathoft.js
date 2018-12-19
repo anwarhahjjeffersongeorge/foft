@@ -573,7 +573,7 @@ class MathOfT{
       }
       // debugger;
       return result;
-    }else {
+    } else {
       return this.oft(t).reduce((acc,valarray,i,arr)=>{
         if((i==0)){
           // console.warn(valarray, acc)
@@ -590,7 +590,7 @@ class MathOfT{
           ? acc
           : Array(MathOfT.R.length).fill(acc);
           result = valarray.map((vv,ii) => _op(accvec[ii], vv));
-        } else if (Array.isArray(valarray)&&Array.isArray(acc)){
+        } else if (Array.isArray(valarray)&&Array.isArray(acc)) {
           result = valarray.map((vv,ii) => _op(acc[ii], vv));
         } else {
           let valnum = (typeof valarray === 'number')
@@ -1040,6 +1040,25 @@ undefined*/
    * @see MathOfT.ARENUMBERS
    */
   static OPS =  Object.defineProperties({}, {
+    'opfunc':{
+      value: (code) =>{
+        if (typeof code !== 'string') {
+          throw new TypeError('MathOfT.OPS.opfunc takes one string')
+        }else if (!MathOfT.OPDICT.includes(code)) {
+          throw new RangeError('MathOfT.OPS.opfunc takes one string in MathOfT.OPDICT')
+        }
+        return new Function('args',
+          `"use strict;" `
+          + `return [...args].reduce((acc, c,i )=>{
+               return (i==0)
+                 ? c
+                 : acc ${code} c;
+             })`);
+      },
+      writable: false,
+      configurable: false,
+      enumerable: false,
+    },
     [null]:{
       get: () => {
         function res(){
