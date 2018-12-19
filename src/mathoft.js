@@ -1048,12 +1048,23 @@ undefined*/
           throw new RangeError('MathOfT.OPS.opfunc takes one string in MathOfT.OPDICT')
         }
         return new Function('args',
-          `"use strict;" `
-          + `return [...args].reduce((acc, c,i )=>{
-               return (i==0)
-                 ? c
-                 : acc ${code} c;
-             })`);
+           `"use strict";return [...args].reduce((acc, c,i )=>{return(i==0) ? c: acc ${code} c; })`);
+      },
+      writable: false,
+      configurable: false,
+      enumerable: false,
+    },
+    'resfunc':{
+      value: (code, base, args) =>{
+        let opfunc = MathOfT.OPS.opfunc;
+        if (MathOfT.ARENUMBERS(...args)){
+          return opfunc(code)(args);
+        }
+        let filtered = [...args].map(v=>(v==null)?base:v)
+        if(MathOfT.ARENUMBERS(filtered)){
+          return opfunc(code)(filtered);
+        }
+        return NaN;
       },
       writable: false,
       configurable: false,
@@ -1072,17 +1083,12 @@ undefined*/
     },
     '+':{
       get: () => {
-        let base = 0;
+        let base = 0,
+          code = '+';
         function res(){
-          return (MathOfT.ARENUMBERS(...arguments))
-            ? [...arguments].reduce((acc, c,i )=>{
-              return (i==0)
-                ? c
-                : acc+c
-            })
-            : NaN;
+          return MathOfT.OPS.resfunc(code, base, arguments);
         }
-        res.code = '+';
+        res.code = code;
         res.base = base;
         return res;
       },

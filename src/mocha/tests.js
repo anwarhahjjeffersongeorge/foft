@@ -429,37 +429,45 @@ module.exports = {
             });
           });
           describe('MathOfT.OPS', function() {
-            let hiddenkeys=['opfunc'];
             let opskeys=MathOfT.OPDICT;
-            hiddenkeys.forEach((key)=>{
-              let testTarget = MathOfT.OPS[key];
-              // console.log(testTarget)
-              describe(`contains property ${key}`, function() {
-                it(`which is a non-enumerable function that takes one string argument in MathOfT.OPDICT and returns a function`, function() {
-                  Object.keys(MathOfT.OPS).includes(key).should.be.false;
-                  should.exist(MathOfT.OPS[key]);
-                  testTarget.should.be.a('function');
-                  testTarget.length.should.equal(1);
-                  let badfunc=()=>testTarget(3);
-                  badfunc.should.throw(TypeError);
-                  badfunc=()=>testTarget({});
-                  badfunc.should.throw(TypeError);
-                  let badcode;
-                  let resetbadcode = () => badcode = String.fromCharCode(
-                    Math.floor(255*Math.random()));
+            // console.log(testTarget)
+            let opfunckey='opfunc';
+            describe(`contains property ${opfunckey}`, function() {
+              let testTarget = MathOfT.OPS[opfunckey];
+              it(`which is a non-enumerable function that takes one string argument in MathOfT.OPDICT and returns a function`, function() {
+                Object.keys(MathOfT.OPS).includes(opfunckey).should.be.false;
+                should.exist(MathOfT.OPS[opfunckey]);
+                testTarget.should.be.a('function');
+                testTarget.length.should.equal(1);
+                let badfunc=()=>testTarget(3);
+                badfunc.should.throw(TypeError);
+                badfunc=()=>testTarget({});
+                badfunc.should.throw(TypeError);
+                let badcode;
+                let resetbadcode = () => badcode = String.fromCharCode(
+                  Math.floor(255*Math.random()));
+                resetbadcode();
+                while (MathOfT.OPDICT.includes(badcode)){
                   resetbadcode();
-                  while (MathOfT.OPDICT.includes(badcode)){
-                    resetbadcode();
-                  }
-                  badfunc=()=>testTarget(badcode);
-                  badfunc.should.throw(RangeError);
-                  testTarget('-').should.not.throw();
-                  testTarget('-').should.be.a('function');
-                })
-
+                }
+                badfunc=()=>testTarget(badcode);
+                badfunc.should.throw(RangeError);
+                let goodfunc = ()=>testTarget('-');
+                goodfunc.should.not.throw();
+                goodfunc().should.be.a('function');
               });
             });
-
+            let resfunckey='resfunc';
+            describe(`contains property ${resfunckey}`, function() {
+              let testTarget = MathOfT.OPS[resfunckey];
+              it(`which is a non-enumerable function that takes one string argument in MathOfT.OPDICT, a number, and an iterable, and returns a number`, function() {
+                Object.keys(MathOfT.OPS).includes(resfunckey).should.be.false;
+                should.exist(MathOfT.OPS[resfunckey]);
+                testTarget.should.be.a('function');
+                testTarget.length.should.equal(3);
+                false.should.be.true;
+              });
+            });
             opskeys.forEach((key)=>{
               let testTarget = MathOfT.OPS[key];
               // console.log(testTarget)
