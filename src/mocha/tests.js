@@ -507,6 +507,7 @@ module.exports = {
                     testTarget['code'].should.be.a('string');
                   });
                 }
+                let base = MathOfT.OPS[key].base;
                 switch (key) {
                   case null:
                     it(`should perform null operation on its operands, returning them unchanged in array format`, function(){
@@ -523,32 +524,36 @@ module.exports = {
                     });
                     break;
                   case '+':
-                    it(`should perform summation on its number operands`, function(){
+                    it(`should perform summation on its number operands, substituting ${base} for null operands`, function(){
                       MathOfT.OPS[key](1,2,3,4).should.equal(1+2+3+4);
+                      MathOfT.OPS[key](1,null,3,4).should.equal(1+base+3+4);
                       MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
                     });
                     break;
                   case '-':
-                    it(`should perform subtraction on its number operands`, function(){
+                    it(`should perform subtraction on its number operands, substituting ${base} for null operands`, function(){
                       MathOfT.OPS[key](1,2,3,4).should.equal(1-2-3-4);
+                      MathOfT.OPS[key](1,null,3,4).should.equal(1-base-3-4);
                       MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
                     });
                     break;
                   case '*':
-                    it(`should perform multiplication on its number operands`, function(){
+                    it(`should perform multiplication on its number operands, substituting ${base} for null operands`, function(){
                       MathOfT.OPS[key](1,2,3,4).should.equal(1*2*3*4);
+                      MathOfT.OPS[key](1,null,3,4).should.equal(1*base*3*4);
                       MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
                     });
                     break;
                   case '/':
-                    it(`should perform division on its number operands`, function(){
-                      MathOfT.OPS[key](1,2,3,4).should.equal(1/2/3/4);
+                    it(`should perform division on its number operands, substituting ${base} for null operands`, function(){
+                      MathOfT.OPS[key](1,2,3,4).should.equal(1/2/3/4);      MathOfT.OPS[key](1,null,3,4).should.equal(1/base/3/4);
                       MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
                     });
                     break;
                   case '**':
-                    it(`should perform exponentiation on its number operands`, function(){
+                    it(`should perform exponentiation on its number operands, substituting ${base} for null operands`, function(){
                       MathOfT.OPS[key](1,2,3,4).should.equal(1**2**3**4);
+                      MathOfT.OPS[key](1,null,3,4).should.equal(1**base**3**4);
                       MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
                     });
                     break;

@@ -1089,102 +1089,92 @@ undefined*/
     },
     '+':{
       get: () => {
-        let base = 0,
-          code = '+';
-        function res(){
-          return MathOfT.OPS.resfunc(code, base, arguments);
-        }
-        res.code = code;
-        res.base = base;
-        return res;
+        let base = 0, code = '+';
+        return Object.assign(
+          function(){
+            return MathOfT.OPS.resfunc(code, base, arguments);
+          }, {
+            code,
+            base
+          }
+        );
       },
       set: () => '+'
     },
     '-':{
       get: () => {
-        let base=0;
-        function res(){
-          return (MathOfT.ARENUMBERS(...arguments))
-            ? [...arguments].reduce((acc, c, i)=>{
-              return (i==0)
-                ? c
-                : acc-c;
-            }, base)
-            : NaN;
-        }
-        // let res = (a, b) => (MathOfT.ARENUMBERS(a,b))
-        // ? a - b
-        // : NaN;
-        res.code = '-';
-        res.base = base;
-        return res;
+        let base = 0, code = '-';
+        return Object.assign(
+          function(){
+            return MathOfT.OPS.resfunc(code, base, arguments);
+          },
+          {
+            code,
+            base
+          }
+        );
       },
       set: () => '-'
     },
     '*':{
       get: () => {
-        let base=1;
-        function res(){
-          return (MathOfT.ARENUMBERS(...arguments))
-            ? [...arguments].reduce((acc, c, i)=>{
-              return (i==0)
-                ? c
-                : acc*c;
-            }, base)
-            : NaN;
-        }
-        res.code = '*';
-        res.base = base;
-        return res;
+        let base = 1, code = '*';
+        return Object.assign(
+          function(){
+            return MathOfT.OPS.resfunc(code, base, arguments);
+          },
+          {
+            code,
+            base
+          }
+        );
       },
       set: () => '*'
     },
     '/':{
       get: () => {
-        let base=1;
-        function res(){
-          return (MathOfT.ARENUMBERS(...arguments))
-            ? [...arguments].reduce((acc, c, i)=>{
-              return (i==0)
-                ? c
-                : acc/c;
-            }, base)
-            : NaN;
-        }
-        res.code = '/';
-        res.base = base;
-        return res;
+        let base = 1, code = '/';
+        return Object.assign(
+          function(){
+            return MathOfT.OPS.resfunc(code, base, arguments);
+          },
+          {
+            code,
+            base
+          }
+        );
       },
       set: () => '/'
     },
     '**':{
       get: () => {
-        let base=1;
-        function res(){
-          return (MathOfT.ARENUMBERS(...arguments))
-            ? [...arguments].reduce((acc, c, i)=>{
-              return (i==0)
-                ? c
-                : acc**c;
-            }, base)
-            : NaN;
-        }
-        res.code = '**';
-        res.base = base;
-        return res;
+        let base = 1, code = '**';
+        return Object.assign(
+          function(){
+            return MathOfT.OPS.resfunc(code, base, arguments);
+          },
+          {
+            code,
+            base
+          }
+        );
       },
       set: () => '**'
     },
     '...':{
       get: () => {
-        let res = (a, b) => (Array.isArray(a))
-        ? a.concat(b)
-        : Array.isArray(b)
-        ? b.concat(a)
-        : [a,b];
-        res.code = '...';
-        res.base = [];
-        return res;
+        let code = '...', base = [];
+        return Object.assign(
+          (a, b) => (Array.isArray(a))
+            ? a.concat(b)
+            : Array.isArray(b)
+            ? b.concat(a)
+            : [a,b],
+          {
+            code,
+            base
+          }
+        );
       },
       set: () => '...'
     }
