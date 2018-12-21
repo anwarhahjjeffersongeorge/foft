@@ -96,7 +96,7 @@ class MathOfT{
     }
     // console.log(params.opcode)
     // debugger;
-    this._opcode = params.opcode;
+    this.opcode = params.opcode;
   }
 
 
@@ -204,12 +204,12 @@ class MathOfT{
   * set opcode - set the opcode to one of the opcodes
   *  defined in MathOfT.OPS
   *
-  * @param  {string} opcode @see MathOfT.OPS
+  * @param  {string} [opcode=null] @see MathOfT.OPS
   */
   set opcode(opcode){
-    if(MathOfT.ISOP(opcode)){
-      this._opcode = opcode;
-    }
+    this._opcode = (MathOfT.ISOP(opcode))
+      ? opcode
+      : null;
   }
 
   /**
@@ -1078,12 +1078,16 @@ undefined*/
     },
     [null]:{
       get: () => {
-        function res(){
-          return [...arguments];
-        };
-        res.code = null;
-        res.base = null;
-        return res;
+        let code = null, base = null;
+        return Object.assign(
+          function(){
+            return [...arguments];
+          },
+          {
+            code,
+            base
+          }
+        );
       },
       set: () => null,
     },

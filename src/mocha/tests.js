@@ -503,7 +503,6 @@ module.exports = {
                   });
                   it(`has own property code(string) `, function() {
                     testTarget.should.be.a('function');
-                    testTarget.should.have.own.property('code');
                     testTarget['code'].should.be.a('string');
                   });
                 }
@@ -653,6 +652,9 @@ module.exports = {
             let testFunc = testObj.terms[0], testVal = Math.random();
             testFunc.should.be.a('function');
             testFunc(testVal).should.equal(testVal);
+          });
+          it('opcode: null', function(){
+            expect(testObj.opcode).to.be.null;
           });
         });
       });
