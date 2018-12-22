@@ -724,6 +724,20 @@ module.exports = {
             testObj.addTerm(goodobjA).should.be.true;
             testObj.addTerm(goodobjB).should.be.true;
           });
+          describe('when provided a true boolean parameter harmonize and a MathOfT instance as term parameter', () => {
+            it('should add a modified version of the term whose range and segmentDivisor are set to those of the receiving term and the ', () => {
+              testObj = new MathOfT({
+                range: [11,33,55,33,11],
+                terms: (a)=>a+33
+              });
+              let testTerm = new MathOfT({
+                range: [11,3],
+                terms: (a)=>a+33
+              });
+              testTerm.range.should.not.be.equalTo(testObj.range)
+              testObj.addTerm(testTerm)
+            });
+          });
         });
         describe('trange', function(){
           describe('when called upon an instance with a two-element evaluation range, return the range', function(){
@@ -1380,11 +1394,19 @@ module.exports = {
         });
 
         describe('oftOp', () => {
-          describe('for any given t parameter', () => {
-            it('should', () => {
-
+          before(function(){
+            testObj = new MathOfT({
+              range: [Math.random(), Math.random()],
+              terms: (t) => 55/+t
             });
-
+          });
+          describe('for any given calculable t parameter', () => {
+            describe('for any invalid _op parameter should perform the instance op where', () => {
+              it('the result is equivalent to performing said op on the results of the evaluations of the instance\'s terms for the given t');
+            });
+            describe('for any given numeric _acc parameter and an invalid _op parameter', () => {
+              it('');
+            });
           });
         });
       });

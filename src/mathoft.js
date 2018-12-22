@@ -51,11 +51,7 @@ class MathOfT{
 
     // define the division of the evaluation range
     const segmentDivisor = params.segmentDivisor || MathOfT.DEFAULT_SEGMENT_DIVISOR;
-    if(!MathOfT.ISCALCULABLE(segmentDivisor)){
-      // console.log('NaN segment Divisor')
-      throw new TypeError('segmentDivisor should be non-NaN number');
-    }
-    this.__segmentDivisor = segmentDivisor;
+    this.segmentDivisor = segmentDivisor;
 
     let rangeoverride = (typeof params.rangeoverride === 'boolean')
     ? params.rangeoverride
@@ -63,19 +59,14 @@ class MathOfT{
 
     // create an evaluation range
     let range = (rangeoverride)
-    ? [0, this.__segmentDivisor]
+    ? [0, this.segmentDivisor]
     : params.range || MathOfT.DEFAULT_RANGE;
     range = MathOfT.ISCALCULABLE(range)
     ? [-range, range]
     : range;
     if(!Array.isArray(range)) throw new TypeError('range should be array');
     // if(range.length!==2) throw new RangeError('range should have two elements')
-    if(!MathOfT.ARENUMBERS(...range)) throw new TypeError('range values should be numbers')
-    this._range = Array(range.length);
-
-    for(let rangeIndex in range){
-      this._range[rangeIndex] = range[rangeIndex];
-    }
+    this.range = Array.from(range);
 
     // this MathOfT can use these terms
     // define terms
@@ -115,7 +106,7 @@ class MathOfT{
   *
   * @param  {(function|MathOfT)} term A Function that takes a parameter (t) or
   *   MathOfT
-  * @param @deprecated {boolean} [harmonize=false] if true, and term is a MathOfT
+  * @param {boolean} [harmonize=false] if true, and term is a MathOfT
   *  instance, this overwrites the range and segmentDivisor of term to make them
   *  equivalent for the same parameters of this instance.
   * @returns {boolean} true if length of terms grew
@@ -128,13 +119,24 @@ class MathOfT{
     } else if (term instanceof MathOfT){
       this.terms.push(term);
       if(harmonize){
-        term._range = this._range; // IMPORTANT
-        term.__segmentDivisor = this.__segmentDivisor;
+        term.range = this.range;
+        term.segmentDivisor = this.segmentDivisor;
       }
     }
     return numterms==this.terms.length-1;
   }
 
+  set segmentDivisor(segmentDivisor){
+    segmentDivisor = Array.isArray(segmentDivisor)
+      ? segmentDivisor[0]
+      : segmentDivisor;
+    if(!MathOfT.ISCALCULABLE(segmentDivisor)){
+      // console.log('NaN segment Divisor')
+      throw new TypeError('segmentDivisor should be non-NaN number');
+    } else {
+      this._segmentDivisor = [segmentDivisor];
+    }
+  }
   /**
   * get segmentDivisor The number of segment divisors
   * (number of t evaluation points -1)
@@ -143,7 +145,7 @@ class MathOfT{
   * @return {Number}
   */
   get segmentDivisor(){
-    return this.__segmentDivisor;
+    return this._segmentDivisor[0];
   }
 
   /**
@@ -155,9 +157,17 @@ class MathOfT{
     return this.segmentDivisor+1;
   }
   get dt(){
-    return this.drange/this.__segmentDivisor;
+    return this.drange/this.segmentDivisor;
   }
 
+  set range(range){
+    if(!MathOfT.ARENUMBERS(...range)) throw new TypeError('range values should be Array of numbers')
+    this._range = Array(range.length);
+
+    for(let rangeIndex in range){
+      this._range[rangeIndex] = range[rangeIndex];
+    }
+  }
   /**
   * get range - the evaluation range is the minimum and maximum values for t
   *
@@ -231,19 +241,19 @@ class MathOfT{
     if(nn && !MathOfT.ISNUMBER(nn)){
        throw new TypeError(`MathOfT.dSubRange only accepts Numbers, given ${[...arguments]}`);
     }
-    n = n%this._range.length;
+    n = n%this.range.length;
     if(!Number.isInteger(n)){
       throw new RangeError(`MathOfT.dSubRange only accepts Integers, given ${[...arguments]}`)
     }
     // for this conditional, we use the explicit ISNUMBER to avoid logical
     // error for zero case: if(0) is falsy
     nn = MathOfT.ISNUMBER(nn)
-      ? nn%this._range.length
-      : (n+1)%this._range.length;
+      ? nn%this.range.length
+      : (n+1)%this.range.length;
     if(!Number.isInteger(nn)){
       throw new RangeError(`MathOfT.dSubRange only accepts Integers, given ${[...arguments]}`)
     }
-    return this._range[nn]-this._range[n];
+    return this.range[nn]-this.range[n];
   }
 
   /**
@@ -252,7 +262,7 @@ class MathOfT{
   * @return {Number}
   */
   get drange(){
-    return this._range[this._range.length-1] - this._range[0];
+    return this.range[this.range.length-1] - this.range[0];
   }
   /**
   * get dabsrange - the absolute value of the delta
@@ -266,7 +276,7 @@ class MathOfT{
 
 
   /**
-   * subT - get a generator function that yields segmentDivisor+1 values of t spanning the range [this._range[n], this._range[n+1]], where if n or n+1 fall beyond the bounds of this._range.length, they are constrained to fit
+   * subT - get a generator function that yields segmentDivisor+1 values of t spanning the range [this.range[n], this.range[n+1]], where if n or n+1 fall beyond the bounds of this.range.length, they are constrained to fit
    *
    *
    *
@@ -531,22 +541,21 @@ class MathOfT{
   * @see oft
   *
   * @param  {Number} t the t to evaluate
-  * @param  {type} [_acc=_op.base] an accumulator value to start with @see MathOfT.OPS -> base
-  * @param  {type} [_op=this.opcode]  an opcode to perform @see MathOfT.OPS
+  * @param  {number} [_acc=_op.base] an accumulator value to start with @see MathOfT.OPS -> base
+  * @param  {number} [_op=this.opcode]  an opcode to perform @see MathOfT.OPS
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
   oftOp(t, _acc, _op){
     _op = (_op in MathOfT.OPS)
-    ? _op
-    : this.opcode;
+      ? _op
+      : this.opcode;
     const op=MathOfT.OPS[_op];
     // debugger;
     _acc = (!_acc)
-    ? _op.base
-    : _acc;
-    _acc = (MathOfT.ISCALCULABLE(_acc))
-    ? _acc
-    : NaN;
+      ? op.base
+      : (MathOfT.ISNUMBER(_acc))
+        ? _acc
+        : NaN;
     // debugger;
 
 
@@ -788,7 +797,7 @@ undefined*/
    *      and ALL other arguments are Number type or Array with ALL members of Number type,
    *
    *
-   * @params {} [arguments] figure out whether the arguments are numbers
+   * @params {} [arguments] figure out whether the arguments are numbers or
    *  an Array thereof
    * @return {boolean}
    */
