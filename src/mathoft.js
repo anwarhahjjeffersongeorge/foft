@@ -132,7 +132,7 @@ class MathOfT{
       : segmentDivisor;
     if(!MathOfT.ISCALCULABLE(segmentDivisor)){
       // console.log('NaN segment Divisor')
-      throw new TypeError('segmentDivisor should be non-NaN number');
+      throw new TypeError('segmentDivisor should be non-NaN number, not: '+ segmentDivisor);
     } else {
       this._segmentDivisor = [segmentDivisor];
     }
@@ -779,12 +779,14 @@ undefined*/
    * 2. argument is not NaN
    * 3. argument is not +/-Infinity
    *
+   * This function does more calls than just using isFinite, however, it is used in the MathOfT class because the class also deals with arrays and objects.
+   *
    * @see ISNUMBER
    *
    * @return {boolean}  description
    */
   static ISCALCULABLE = function(){
-    return MathOfT.ISNUMBER(arguments[0]) && Number.isFinite(arguments[0]);
+    return (arguments.length == 1) && Number.isFinite(arguments[0]);
   }
 
   /**
@@ -793,9 +795,10 @@ undefined*/
    *   2. The sole provided argument is an Array whose members are ALL of Number type,
    *   3. Any provided argument is an Array whose members are
    *      A. ALL of Number type, or
-   *      B. nested Arrays whose submembers are all number types or Arra
+   *      B. nested Arrays whose submembers are all number types or Arrays
    *      and ALL other arguments are Number type or Array with ALL members of Number type,
    *
+   * @see ARECALCULABLES
    *
    * @params {} [arguments] figure out whether the arguments are numbers or
    *  an Array thereof
@@ -809,6 +812,34 @@ undefined*/
         return Array.isArray(v)
           ? MathOfT.ARENUMBERS(...v)
           : MathOfT.ISNUMBER(v);
+      });
+    }
+  };
+
+  /**
+   * @static ARECALCULABLES return true IFF one of these conditions are met
+   *   1. The provided arguments are ALL of Number type,
+   *   2. The sole provided argument is an Array whose members are ALL of Number type,
+   *   3. Any provided argument is an Array whose members are
+   *      A. ALL of Number type, or
+   *      B. nested Arrays whose submembers are all number types or Array,
+   *   and ALL other arguments are Number type or Array with ALL members of Number type, and
+   *   4. All arguments of number type are neither NaN nor -/+Infinity
+   *
+   * @see ARENUMBERS
+   *
+   * @params {} [arguments] figure out whether the arguments are numbers or
+   *  an Array thereof
+   * @return {boolean}
+   */
+  static ARECALCULABLES = function(){
+    if(arguments.length == 0){
+      return false;
+    } else {
+      return [...arguments].every(v => {
+        return Array.isArray(v)
+          ? MathOfT.ARECALCULABLES(...v)
+          : MathOfT.ISCALCULABLE(v);
       });
     }
   };

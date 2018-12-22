@@ -31,6 +31,7 @@ module.exports = {
           ISNUMBER: 'function',
           ISCALCULABLE: 'function',
           ARENUMBERS: 'function',
+          ARECALCULABLES: 'function',
           OPDICT: 'Array',
           MEMBERKEYS: 'Array',
           FUNCKEYS: 'Array',
@@ -92,7 +93,55 @@ module.exports = {
               MathOfT.ISCALCULABLE(Math.random()).should.be.true;
             });
           });
-
+          describe(`MathOfT.ARECALCULABLES`,function(){
+            it('returns true when ALL arguments are numbers(excluding NaN, Infinity)', function() {
+              MathOfT.ARECALCULABLES(Math.random(), Math.random()).should.be.true;
+              MathOfT.ARECALCULABLES(0,1,2,3,4,6,7,8,99).should.be.true;
+              MathOfT.ARECALCULABLES(0, NaN, 44).should.be.false;
+              MathOfT.ARECALCULABLES(0, Infinity, 44).should.be.false;
+            });
+            it('returns false when ANY arguments are not numbers', function(){
+              MathOfT.ARECALCULABLES('l').should.be.false;
+              MathOfT.ARECALCULABLES('55',5).should.be.false;
+              MathOfT.ARECALCULABLES(55, 55, 5.4, NaN, Infinity, 5).should.be.false;
+              MathOfT.ARECALCULABLES(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false;
+            });
+            it('returns false when arguments are null', function(){
+              MathOfT.ARECALCULABLES().should.be.false;
+            });
+            it('returns true when ALL array members are numbers(excluding NaN, Infinity)',
+              function() {
+              MathOfT.ARECALCULABLES([Math.random(), Math.random()]).should.be.true;
+              MathOfT.ARECALCULABLES([0,1,2,3,4,6,7,8,99]).should.be.true;
+              MathOfT.ARECALCULABLES([0, NaN, 44]).should.be.false;
+              MathOfT.ARECALCULABLES([0, Infinity, 44]).should.be.false;
+            });
+            it('returns false when ANY array members are not finite numbers', function(){
+              MathOfT.ARECALCULABLES(['l']).should.be.false;
+              MathOfT.ARECALCULABLES(['55',5]).should.be.false;
+              MathOfT.ARECALCULABLES([55, 55, 5.4, NaN, Infinity, 5]).should.be.false;
+              MathOfT.ARECALCULABLES([55, 55, 5.4,'535', 5]).should.be.false;
+            });
+            it('returns false for null array', function(){
+              MathOfT.ARECALCULABLES([]).should.be.false;
+            });
+            it('returns true for arrays whose nested array members contain submembers that are ALL finite numbers', function(){
+              MathOfT.ARECALCULABLES([1,2,3,[1,34]]).should.be.true;
+              MathOfT.ARECALCULABLES([[NaN,Infinity]]).should.be.false;
+            });
+            it('returns false for arrays whose nested array members contain submembers that are NOT ALL finite numbers', function(){
+              MathOfT.ARECALCULABLES([1,2,3,[1,'b', 34]]).should.be.false;
+              MathOfT.ARECALCULABLES([[NaN,{},Infinity]]).should.be.false;
+            });
+            it('returns true for mixed args of numbers and arrays whose nested array members contain submembers that are ALL numbers or finite Number-filled Arrays', function(){
+              MathOfT.ARECALCULABLES(1,2,3,[1,34]).should.be.true;
+              MathOfT.ARECALCULABLES([NaN,Infinity],2,4).should.be.false;
+            });
+            it('returns false for mixed args of numbers and arrays whose nested array members contain submembers that are NOT ALL numbers or Number-filled Arrays', function(){
+              MathOfT.ARECALCULABLES(1,2,3,{},[1,34]).should.be.false;
+              MathOfT.ARECALCULABLES(['popo',NaN,Infinity],2,4).should.be.false;
+            });
+          });
           describe(`MathOfT.ISNUMBER`, function(){
             it('returns true when provided a SINGLE argument of Number type', function(){
               MathOfT.ISNUMBER(3).should.be.true;
@@ -125,6 +174,7 @@ module.exports = {
               MathOfT.ARENUMBERS('l').should.be.false;
               MathOfT.ARENUMBERS('55',5).should.be.false;
               MathOfT.ARENUMBERS(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false;
+              MathOfT.ARENUMBERS(55, 55, 5.4, '535', 5).should.be.false;
             });
             it('returns false when arguments are null', function(){
               MathOfT.ARENUMBERS().should.be.false;
@@ -140,6 +190,8 @@ module.exports = {
               MathOfT.ARENUMBERS(['l']).should.be.false;
               MathOfT.ARENUMBERS(['55',5]).should.be.false;
               MathOfT.ARENUMBERS([55, 55, 5.4, NaN, Infinity, '535', 5]).should.be.false;
+              MathOfT.ARENUMBERS([55, 55, 5.4, '535', 5]).should.be.false;
+
             });
             it('returns false for null array', function(){
               MathOfT.ARENUMBERS([]).should.be.false;
