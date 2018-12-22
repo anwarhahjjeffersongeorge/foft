@@ -51,7 +51,7 @@ class MathOfT{
 
     // define the division of the evaluation range
     const segmentDivisor = params.segmentDivisor || MathOfT.DEFAULT_SEGMENT_DIVISOR;
-    if(typeof segmentDivisor !== 'number' || Number.isNaN(segmentDivisor)){
+    if(!MathOfT.ISCALCULABLE(segmentDivisor)){
       // console.log('NaN segment Divisor')
       throw new TypeError('segmentDivisor should be non-NaN number');
     }
@@ -65,7 +65,7 @@ class MathOfT{
     let range = (rangeoverride)
     ? [0, this.__segmentDivisor]
     : params.range || MathOfT.DEFAULT_RANGE;
-    range = (typeof range === 'number')
+    range = MathOfT.ISCALCULABLE(range)
     ? [-range, range]
     : range;
     if(!Array.isArray(range)) throw new TypeError('range should be array');
@@ -424,16 +424,7 @@ class MathOfT{
   * oft - evaluate all of the terms held by this Mathoft for the
   * given t value.
   *
-  * When evaluating a Function or MathOfT term, the function or MathOfT is called with
-  * a bound this containing information about t:
-  * @see normalizeT
-  * @see range
-  * @see derange
-  * @see t0
-  * @see segmentDivisor
-  * It also receives a value i corresponding to the index that this t
-  * might correspond to in an Array of oft results for the evaluation range.
-  *
+  * When evaluating a Function or MathOfT term, the function or MathOfT is called with a this object containing certain useful data regarding the calling instance's evaluation of t @see TTHIS_TEMPLATE
   *
   * When evaluating a MathOfT term, any t that falls outside that term's evaluation range will produce a null result. If the filterNulls parameter is true, then null values will be stripped from the returned result.
   * @see isInRange
@@ -442,7 +433,7 @@ class MathOfT{
   * @return {(Number|Array.<Number>|Array<Array>)}
   */
   oft(t, filterNulls){
-    t = (typeof t === 'number')
+    t = MathOfT.ISCALCULABLE(t)
     ? t
     : this.t0;
     filterNulls = (typeof filterNulls === 'boolean')
@@ -535,26 +526,29 @@ class MathOfT{
   * values returned by calculating this MathOfT instance's terms for
   * some evaluation value t.
   *
+  * This is intended to facilitate convenient manipulation of terms and results.
+  *
   * @see oft
   *
   * @param  {Number} t the t to evaluate
-  * @param  {type} _acc an accumulator value to start with
-  * @see MathOfT.OPS -> base
-  * @param  {type} [_op=this.opcode]  an opcode to perform
+  * @param  {type} [_acc=_op.base] an accumulator value to start with @see MathOfT.OPS -> base
+  * @param  {type} [_op=this.opcode]  an opcode to perform @see MathOfT.OPS
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
   oftOp(t, _acc, _op){
     _op = (_op in MathOfT.OPS)
-    ? MathOfT.OPS[_op]
+    ? _op
     : this.opcode;
+    const op=MathOfT.OPS[_op];
     // debugger;
     _acc = (!_acc)
     ? _op.base
     : _acc;
-    _acc = (typeof _acc === 'number' && !Number.isNaN(_acc))
+    _acc = (MathOfT.ISCALCULABLE(_acc))
     ? _acc
     : NaN;
     // debugger;
+
 
     if(this.terms.length == 1){
       // console.log('non')
@@ -562,14 +556,14 @@ class MathOfT{
       let result;
       if(!Array.isArray(_oft)^!Array.isArray(_acc)){
         if(!Array.isArray(_acc)){
-          result = _oft.map((v,i)=>_op(v, _acc));
+          result = _oft.map((v,i)=>op(v, _acc));
         } else if (!Array.isArray(_oft)){
-          result = _acc.map((v,i)=>_op(v, _oft));
+          result = _acc.map((v,i)=>op(v, _oft));
         }
       } else if(Array.isArray(_oft) && Array.isArray(_acc)){
-        result = _oft.map((v,i)=>_op(v, _acc[i]));
+        result = _oft.map((v,i)=>op(v, _acc[i]));
       } else {
-        result = _op(v,_acc);
+        result = op(v,_acc);
       }
       // debugger;
       return result;
@@ -589,16 +583,16 @@ class MathOfT{
           let accvec = Array.isArray(acc)
           ? acc
           : Array(MathOfT.R.length).fill(acc);
-          result = valarray.map((vv,ii) => _op(accvec[ii], vv));
+          result = valarray.map((vv,ii) => op(accvec[ii], vv));
         } else if (Array.isArray(valarray)&&Array.isArray(acc)) {
-          result = valarray.map((vv,ii) => _op(acc[ii], vv));
+          result = valarray.map((vv,ii) => op(acc[ii], vv));
         } else {
-          let valnum = (typeof valarray === 'number')
+          let valnum = (MathOfT.ISCALCULABLE(valarray))
           ? valarray
           : NaN;
           result = (Number.isNaN(valnum) || Number.isNaN(acc))
           ? NaN
-          : _op(acc, valnum);
+          : op(acc, valnum);
         }
         return result;
       }, _acc);
@@ -960,8 +954,9 @@ undefined*/
   }
 
   /**
-   * @static TTHIS_TEMPLATE - get an object with some keys for inter instance
-   * communication
+   * @static TTHIS_TEMPLATE - given a t and a MathOfT instance, produces an object with some keys for inter-instance communication corresponding to:
+   * 1 the result of evaluating certain methods of the calling instance for t @see FUNCKEYS
+   * 2 certain members of the calling instance @see MEMBERKEYS
    *
    * @see oft
    * @param  {Number} t the t of the instance communicatiing
@@ -969,10 +964,10 @@ undefined*/
    * @return {object|Array<string>} communication object, or array of communication keys
    */
   static TTHIS_TEMPLATE(t,mathoft){
-    let o = (MathOfT.ISNUMBER(t) )
+    let o = (MathOfT.ISCALCULABLE(t) )
       ? { t }
       : { };
-    let populateFunc = (mathoft instanceof MathOfT)&&(MathOfT.ISNUMBER(t))
+    let populateFunc = (mathoft instanceof MathOfT)&&(MathOfT.ISCALCULABLE(t))
       ? (key)=>o[key]=mathoft[key](t)
       : ()=>null;
     let populateMemb = (mathoft instanceof MathOfT)
@@ -987,11 +982,20 @@ undefined*/
     }
   };
 
+  /**
+   * @static FUNCKEYS - methods for inter-instance communication
+   * @see TTHIS_TEMPLATE
+   */
   static FUNCKEYS = [
     'normalizeT',
     'antinormalizeT',
     'i'
-  ]
+  ];
+
+  /**
+   * @static OPDICT - members for inter-instance communication
+   * @see TTHIS_TEMPLATE
+   */
   static MEMBERKEYS = [
     'range',
     'drange',

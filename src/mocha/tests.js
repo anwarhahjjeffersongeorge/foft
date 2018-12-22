@@ -1380,7 +1380,12 @@ module.exports = {
         });
 
         describe('oftOp', () => {
+          describe('for any given t parameter', () => {
+            it('should', () => {
 
+            });
+
+          });
         });
       });
 
