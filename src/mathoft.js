@@ -33,6 +33,7 @@ class MathOfT{
   * @param {Number} [params.segmentDivisor] The number of segments to divide the range into when picking t values for evaluation.
   * @param {(Function|Array.<Function>|Array.<MathOfT>)} [params.terms=[]] A function that accepts a parameter t and returns a result of some operation on t
   * @param {boolean} [params.rangeoverride=false] if true, will override any range provided and set range equal to [0, params.segmentDivisor]
+  * @param {boolean} [params.harmonize=false] if true, will harmonize the domains of any MathOfT terms to that of the new parent instance @see range, @see segmentDivisor
   * @throws TypeError
   */
   constructor(params){
@@ -56,7 +57,9 @@ class MathOfT{
     let rangeoverride = (typeof params.rangeoverride === 'boolean')
     ? params.rangeoverride
     : false;
-
+    let harmonize = (typeof params.harmonize === 'boolean')
+    ? params.harmonize
+    : false;
     // create an evaluation range
     let range = (rangeoverride)
     ? [0, this.segmentDivisor]
@@ -83,7 +86,7 @@ class MathOfT{
     for(let termIndex in terms){
       const term = terms[termIndex];
       // console.log(term);``
-      this.addTerm(term);
+      this.addTerm(term, harmonize);
     }
     // console.log(params.opcode)
     // debugger;
@@ -108,7 +111,7 @@ class MathOfT{
   *   MathOfT
   * @param {boolean} [harmonize=false] if true, and term is a MathOfT
   *  instance, this overwrites the range and segmentDivisor of term to make them
-  *  equivalent for the same parameters of this instance.
+  *  reference the same-named parameters of this instance.
   * @returns {boolean} true if length of terms grew
   */
   addTerm(term, harmonize){
@@ -119,8 +122,15 @@ class MathOfT{
     } else if (term instanceof MathOfT){
       this.terms.push(term);
       if(harmonize){
-        term.range = this.range;
-        term.segmentDivisor = this.segmentDivisor;
+        // term.range = this.range;
+        // term.segmentDivisor = this.segmentDivisor;
+        const keys = ['_range', '_segmentDivisor'];
+        for (let key of keys) {
+          Object.defineProperty(term, key, {
+            get: ()=>this[key], //reference to parent
+            set: (value)=>Object.defineProperty(term, key, {value})//dareference from parent
+          });
+        }
       }
     }
     return numterms==this.terms.length-1;
@@ -534,15 +544,15 @@ class MathOfT{
   /**
   * oftOp - Calculate the value of performing an operation _op on the
   * values returned by calculating this MathOfT instance's terms for
-  * some evaluation value t.
+  * some evaluation value t. When given a parameter _acc, the calculation of _op will use _acc as its starting value.
   *
   * This is intended to facilitate convenient manipulation of terms and results.
   *
   * @see oft
   *
   * @param  {Number} t the t to evaluate
-  * @param  {number} [_acc=_op.base] an accumulator value to start with @see MathOfT.OPS -> base
-  * @param  {number} [_op=this.opcode]  an opcode to perform @see MathOfT.OPS
+  * @param  {(Number|Array.<Number>|Array.<Array>)} [_acc=_op.base] an accumulator value to start with @see MathOfT.OPS -> base
+  * @param  {string} [_op=this.opcode]  an opcode to perform @see MathOfT.OPS
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
   oftOp(t, _acc, _op){
@@ -553,14 +563,13 @@ class MathOfT{
     // debugger;
     _acc = (!_acc)
       ? op.base
-      : (MathOfT.ISNUMBER(_acc))
+      : (MathOfT.ARENUMBERS(_acc))
         ? _acc
         : NaN;
     // debugger;
 
 
     if(this.terms.length == 1){
-      // console.log('non')
       let _oft = this.oft(t);
       let result;
       if(!Array.isArray(_oft)^!Array.isArray(_acc)){

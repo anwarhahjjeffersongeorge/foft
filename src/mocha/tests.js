@@ -657,6 +657,112 @@ module.exports = {
             testParamsObj.terms[1](testVal).should.equal(testObj.terms[1](testVal))
             testParamsObj.terms[2](testVal).should.equal(testObj.terms[2](testVal))
           });
+          describe('key: rangeoverride', () => {
+            it('should when true, produce an instance whose range has a 0 lower bound and an upper bound equal to its segmentDivisor', () => {
+              let testSegmentDivisor = 111;
+              let overriddenrange = [0, testSegmentDivisor];
+              let testRange = [0, -PI];
+              let testParamsObj = {
+                terms: [(t)=>Math.sin(t)/5, (t)=>Math.cos(3*t)/7, (t)=>Math.sin(5*t)/9],
+                segmentDivisor: testSegmentDivisor,
+                range: testRange
+              };
+              let testParamsObj2 = {
+                terms: [(t)=>Math.sin(t)/5, (t)=>Math.cos(3*t)/7, (t)=>Math.sin(5*t)/9],
+                segmentDivisor: testSegmentDivisor,
+                range: testRange,
+                rangeoverride: true
+              };
+              let testObj = new MathOfT(testParamsObj);
+              testObj.range.should.be.array();
+              testObj.range.should.be.equalTo(testRange);
+              testObj = new MathOfT(testParamsObj2);
+              testObj.range.should.be.array();
+              testObj.range.should.be.equalTo(overriddenrange);
+            });
+          });
+          describe('key: harmonize', () => {
+            it('should when true, produce an instance whose MathOfT terms have range and segmentDivisor members that reference those of the parent instance until explicit reassignment', () => {
+              let overriddensegmentdivisor = 20;
+              let testSegmentDivisor = 111;
+              let newSegmentDivisor = 555,
+                newSegmentDivisor2 = 222;
+              let overriddenrange = [0, 66];
+              let testRange = [0, -PI];
+              let newRange = [33,31,33],
+                newRange2 = [22,21,22];
+              let testTerms = [
+                new MathOfT({
+                  segmentDivisor: overriddensegmentdivisor,
+                  range: overriddenrange,
+                  terms:[
+                  a => 9*a,
+                  a => 9/a,
+                  ]
+                }),
+                new MathOfT({
+                  segmentDivisor: overriddensegmentdivisor,
+                  range: overriddenrange,
+                  terms:[
+                  a => 3*a,
+                  a => 3/a,
+                  ]
+                })
+              ]
+              let testParamsObj = {
+                terms: testTerms,
+                segmentDivisor: testSegmentDivisor,
+                range: testRange
+              };
+              let testParamsObj2 = {
+                terms: testTerms,
+                segmentDivisor: testSegmentDivisor,
+                range: testRange,
+                harmonize: true
+              };
+              // sans harmonize
+              let testObj = new MathOfT(testParamsObj);
+              testObj.range.should.be.equalTo(testRange);
+              testObj.segmentDivisor.should.equal(testSegmentDivisor);
+              for (let term of testObj.terms) {
+                term.range.should.be.equalTo(overriddenrange);
+                term.segmentDivisor.should.equal(overriddensegmentdivisor);
+              }
+              // with harmonize
+              testObj = new MathOfT(testParamsObj2);
+              testObj.range.should.be.equalTo(testRange);
+              testObj.segmentDivisor.should.equal(testSegmentDivisor);
+              for (let term of testObj.terms) {
+                term.range.should.be.equalTo(testObj.range);
+                term.segmentDivisor.should.equal(testObj.segmentDivisor);
+              }
+              // mutate parent
+              testObj.range=newRange;
+              testObj.segmentDivisor=newSegmentDivisor;
+              for (let term of testObj.terms) {
+                term.range.should.be.equalTo(testObj.range);
+                term.segmentDivisor.should.equal(testObj.segmentDivisor);
+              }
+              // bad mutate attempt still throws
+
+              let badmut=()=>{
+                testObj.terms[0].range={};
+              };
+              badmut.should.throw();
+              let badmut2=()=>{
+                testObj.terms[0].segmentDivisor={};
+              };
+              badmut2.should.throw();
+              // mutate child...no longer bound
+              testObj.terms[0].range=newRange2;
+              testObj.terms[0].segmentDivisor=newSegmentDivisor2;
+              testObj.range=newRange;
+              testObj.segmentDivisor=newSegmentDivisor;
+              testObj.terms[0].range.should.not.be.equalTo(testObj.range);
+              testObj.terms[0].segmentDivisor.should.not.equal(testObj.segmentDivisor);
+
+            });
+          });
           describe('key: segmentDivisor', function() {
             it('should use default (fail gracefully) when provided NaN segment divisor', function() {
               let testParamsObj = {
@@ -1449,7 +1555,13 @@ module.exports = {
           before(function(){
             testObj = new MathOfT({
               range: [Math.random(), Math.random()],
-              terms: (t) => 55/+t
+              terms: [
+                (t) => 1000*t,
+                (t) => 100*t,
+                (t) => 10*t,
+                (t) => 1*t,
+              ],
+              opcode: '+'
             });
           });
           describe('for any given calculable t parameter', () => {
