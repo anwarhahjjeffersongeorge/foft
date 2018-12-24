@@ -144,7 +144,7 @@ function descriptions(){
       : /(?:Symbol\()(\w+)(?:\))/.exec(res.toString())[1]; //Symbol.description may be undefined, so use regexp
 }
 
-module.exports = {
-  envs: Envs,
+export {
+  Envs as envs,
   env, symbols, descriptions
 };

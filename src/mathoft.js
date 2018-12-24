@@ -83,8 +83,8 @@ class MathOfT{
     this._terms = [];
 
 
-    for(let termIndex in terms){
-      const term = terms[termIndex];
+    for(let term of terms){
+      // const term = terms[termIndex];
       // console.log(term);``
       this.addTerm(term, harmonize);
     }
@@ -551,11 +551,11 @@ class MathOfT{
   * @see oft
   *
   * @param  {Number} t the t to evaluate
-  * @param  {(Number|Array.<Number>|Array.<Array>)} [_acc=_op.base] an accumulator value to start with @see MathOfT.OPS -> base
   * @param  {string} [_op=this.opcode]  an opcode to perform @see MathOfT.OPS
+  * @param  {(Number|Array.<Number>|Array.<Array>)} [_acc=_op.base] an accumulator value to start with @see MathOfT.OPS -> base
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
-  oftOp(t, _acc, _op){
+  oftOp(t, _op, _acc){
     _op = (_op in MathOfT.OPS)
       ? _op
       : this.opcode;
@@ -692,14 +692,6 @@ class MathOfT{
     return [...this].map(callback, thisArg);
   }
 
-
-
-  /**
-   * @static R - dimensional labeling
-   */
-  static R =  ['x', 'y', 'z'];
-
-
   /**
    * @static CALC_PRECISION_WARN - give precision warning in the form of an object that can be converted to a primitive. Warning value is produced by a*1/a==1 test
    *
@@ -770,6 +762,7 @@ undefined
 >  console.log(Decimal.sin(Decimal('3.1415926535897932384626433832795028841971693993751')).toPrecision(80))
 5.8209749445923078164000000000000000000000000000000000000000000000000000000000000e-51
 undefined*/
+
   /**
    * @static ISNUMBER - return true IFF both of the following conditions are met
    *   1. there was ONE argument provided, and
@@ -778,7 +771,7 @@ undefined*/
    *
    * @return {boolean}
    */
-  static ISNUMBER = function(){
+  static ISNUMBER(){
     return (arguments.length == 1) && (typeof arguments[0] === 'number');
   }
 
@@ -794,7 +787,7 @@ undefined*/
    *
    * @return {boolean}  description
    */
-  static ISCALCULABLE = function(){
+  static ISCALCULABLE(){
     return (arguments.length == 1) && Number.isFinite(arguments[0]);
   }
 
@@ -813,7 +806,7 @@ undefined*/
    *  an Array thereof
    * @return {boolean}
    */
-  static ARENUMBERS = function(){
+  static ARENUMBERS(){
     if(arguments.length == 0){
       return false;
     } else {
@@ -841,7 +834,7 @@ undefined*/
    *  an Array thereof
    * @return {boolean}
    */
-  static ARECALCULABLES = function(){
+  static ARECALCULABLES(){
     if(arguments.length == 0){
       return false;
     } else {
@@ -870,7 +863,7 @@ undefined*/
    * @param  {Number} [mm] the optional end of the range
    * @return {boolean}
    */
-  static INRANGE = function(n, m, mm){
+  static INRANGE(n, m, mm){
     let test = (a, b, c)=>{
       // console.log(a,b,c)
       return (a > b)
@@ -1002,6 +995,37 @@ undefined*/
         : Math.floor(res * d);
   }
 
+
+  /**
+   * @static DIMENSION - return the dimensions of the given x
+   *
+   * @param  {(number|Array)} x description
+   * @return {type}   description
+   */
+  static DIMENSION(x){
+    let irregularflag=false;
+    let res = [];
+    if(MathOfT.ISNUMBER(x)) res.push(1);
+
+    if(Array.isArray(x)){
+      res.push(x.length);
+      let sublength=0, subsublength=0;
+      for(sub of x){
+        if(Array.isArray(sub)){
+          if(sub.length>=sublength){
+            sublength=sub.length
+          } else {
+            irregularflag=true;
+          }
+          // subsublength=
+        }
+      }
+    }
+
+
+    return res;
+  }
+
   /**
    * @static TTHIS_TEMPLATE - given a t and a MathOfT instance, produces an object with some keys for inter-instance communication corresponding to:
    * 1 the result of evaluating certain methods of the calling instance for t @see FUNCKEYS
@@ -1032,33 +1056,6 @@ undefined*/
   };
 
   /**
-   * @static FUNCKEYS - methods for inter-instance communication
-   * @see TTHIS_TEMPLATE
-   */
-  static FUNCKEYS = [
-    'normalizeT',
-    'antinormalizeT',
-    'i'
-  ];
-
-  /**
-   * @static OPDICT - members for inter-instance communication
-   * @see TTHIS_TEMPLATE
-   */
-  static MEMBERKEYS = [
-    'range',
-    'drange',
-    't0',
-    'segmentDivisor',
-  ];
-
-
-  /**
-   * @static OPDICT - an array of the ops that MathOfT class  can recognize
-   */
-  static OPDICT = [null, '+', '-', '*', '/', '**'];
-
-  /**
    * @static ISOP - given a string codeToParse, return true when code is found
    *  in MathOfT.OPDICT
    * @see MathOfT.OPDICT
@@ -1083,6 +1080,20 @@ undefined*/
           : MathOfT.OPS[null];
   }
 
+}
+
+Object.defineProperties(MathOfT, {
+  /**
+   * @static OPDICT - an array of valid op keys
+   * @see MathOfT.OPS
+   * @memberof MathOfT
+   */
+  'OPDICT': {
+    value: [null, '+', '-', '*', '/', '**'],
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  },
   /**
    * @static OPS - an object containing operations, or ops, that
    * perform mathematical functions corresponding to their keys
@@ -1091,174 +1102,242 @@ undefined*/
    * @see MathOfT.OPDICT
    * @see MathOfT.OPPARSE
    * @see MathOfT.ARENUMBERS
+   * @memberof MathOfT
    */
-  static OPS =  Object.defineProperties({}, {
-    'opfunc':{
-      value: (code) =>{
-        if (typeof code !== 'string') {
-          throw new TypeError('MathOfT.OPS.opfunc takes one string')
-        }else if (!MathOfT.OPDICT.includes(code)) {
-          throw new RangeError('MathOfT.OPS.opfunc takes one string in MathOfT.OPDICT')
-        }
-        return new Function('args',
-           `"use strict";return [...args].reduce((acc, c,i )=>{return(i==0) ? c: acc ${code} c; })`);
-      },
-      writable: false,
-      configurable: false,
-      enumerable: false,
-    },
-    'resfunc':{
-      value: (code, base, args) =>{
-        if (!MathOfT.ISCALCULABLE(base)) {
-          throw new TypeError('MathOfT.OPS.resfunc requires a calculable base parameter');
-        }
-        if (!(Object.getOwnPropertySymbols(args).includes(Symbol.iterator)||Array.isArray(args)||ArrayBuffer.isView(args))) {
-          throw new TypeError('MathOfT.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter');
-        }
-        let opfunc = MathOfT.OPS.opfunc;
-        if (MathOfT.ARENUMBERS(...args)){
-          return opfunc(code)(args);
-        }
-        let filtered = [...args].map(v=>(v==null)?base:v)
-        if(MathOfT.ARENUMBERS(filtered)){
-          return opfunc(code)(filtered);
-        }
-        return NaN;
-      },
-      writable: false,
-      configurable: false,
-      enumerable: false,
-    },
-    [null]:{
-      get: () => {
-        let code = null, base = null;
-        return Object.assign(
-          function(){
-            return [...arguments];
-          },
-          {
-            code,
-            base
+  'OPS':{
+    value: Object.defineProperties({},{
+      'opfunc':{
+        value: (code) =>{
+          if (typeof code !== 'string') {
+            throw new TypeError('MathOfT.OPS.opfunc takes one string')
+          }else if (!MathOfT.OPDICT.includes(code)) {
+            throw new RangeError('MathOfT.OPS.opfunc takes one string in MathOfT.OPDICT')
           }
-        );
+          return new Function('args',
+             `"use strict";return [...args].reduce((acc, c,i )=>{return(i==0) ? c: acc ${code} c; })`);
+        },
+        writable: false,
+        configurable: false,
+        enumerable: false,
       },
-      set: () => null,
-    },
-    '+':{
-      get: () => {
-        let base = 0, code = '+';
-        return Object.assign(
-          function(){
-            return MathOfT.OPS.resfunc(code, base, arguments);
-          }, {
-            code,
-            base
+      'resfunc':{
+        value: (code, base, args) =>{
+          if (!MathOfT.ISCALCULABLE(base)) {
+            throw new TypeError('MathOfT.OPS.resfunc requires a calculable base parameter');
           }
-        );
-      },
-      set: () => '+'
-    },
-    '-':{
-      get: () => {
-        let base = 0, code = '-';
-        return Object.assign(
-          function(){
-            return MathOfT.OPS.resfunc(code, base, arguments);
-          },
-          {
-            code,
-            base
+          if (!(Object.getOwnPropertySymbols(args).includes(Symbol.iterator)||Array.isArray(args)||ArrayBuffer.isView(args))) {
+            throw new TypeError('MathOfT.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter');
           }
-        );
-      },
-      set: () => '-'
-    },
-    '*':{
-      get: () => {
-        let base = 1, code = '*';
-        return Object.assign(
-          function(){
-            return MathOfT.OPS.resfunc(code, base, arguments);
-          },
-          {
-            code,
-            base
+          let opfunc = MathOfT.OPS.opfunc;
+          if (MathOfT.ARENUMBERS(...args)){
+            return opfunc(code)(args);
           }
-        );
-      },
-      set: () => '*'
-    },
-    '/':{
-      get: () => {
-        let base = 1, code = '/';
-        return Object.assign(
-          function(){
-            return MathOfT.OPS.resfunc(code, base, arguments);
-          },
-          {
-            code,
-            base
+          let filtered = [...args].map(v=>(v==null)?base:v)
+          if(MathOfT.ARENUMBERS(filtered)){
+            return opfunc(code)(filtered);
           }
-        );
+          return NaN;
+        },
+        writable: false,
+        configurable: false,
+        enumerable: false,
       },
-      set: () => '/'
-    },
-    '**':{
-      get: () => {
-        let base = 1, code = '**';
-        return Object.assign(
-          function(){
-            return MathOfT.OPS.resfunc(code, base, arguments);
-          },
-          {
-            code,
-            base
-          }
-        );
+      [null]:{
+        enumerable: true,
+        get: () => {
+          let code = null, base = null;
+          return Object.assign(
+            function(){
+              return [...arguments];
+            },
+            {
+              code,
+              base
+            }
+          );
+        },
+        set: () => null,
       },
-      set: () => '**'
-    },
-    '...':{
-      get: () => {
-        let code = '...', base = [];
-        return Object.assign(
-          (a, b) => (Array.isArray(a))
-            ? a.concat(b)
-            : Array.isArray(b)
-            ? b.concat(a)
-            : [a,b],
-          {
-            code,
-            base
-          }
-        );
+      '+':{
+        enumerable: true,
+        get: () => {
+          let base = 0, code = '+';
+          return Object.assign(
+            function(){
+              return MathOfT.OPS.resfunc(code, base, arguments);
+            }, {
+              code,
+              base
+            }
+          );
+        },
+        set: () => '+'
       },
-      set: () => '...'
-    }
-  });
+      '-':{
+        enumerable: true,
+        get: () => {
+          let base = 0, code = '-';
+          return Object.assign(
+            function(){
+              return MathOfT.OPS.resfunc(code, base, arguments);
+            },
+            {
+              code,
+              base
+            }
+          );
+        },
+        set: () => '-'
+      },
+      '*':{
+        enumerable: true,
+        get: () => {
+          let base = 1, code = '*';
+          return Object.assign(
+            function(){
+              return MathOfT.OPS.resfunc(code, base, arguments);
+            },
+            {
+              code,
+              base
+            }
+          );
+        },
+        set: () => '*'
+      },
+      '/':{
+        enumerable: true,
+        get: () => {
+          let base = 1, code = '/';
+          return Object.assign(
+            function(){
+              return MathOfT.OPS.resfunc(code, base, arguments);
+            },
+            {
+              code,
+              base
+            }
+          );
+        },
+        set: () => '/'
+      },
+      '**':{
+        enumerable: true,
+        get: () => {
+          let base = 1, code = '**';
+          return Object.assign(
+            function(){
+              return MathOfT.OPS.resfunc(code, base, arguments);
+            },
+            {
+              code,
+              base
+            }
+          );
+        },
+        set: () => '**'
+      },
+      '...':{
+        enumerable: true,
+        get: () => {
+          let code = '...', base = [];
+          return Object.assign(
+            (a, b) => (Array.isArray(a))
+              ? a.concat(b)
+              : Array.isArray(b)
+              ? b.concat(a)
+              : [a,b],
+            {
+              code,
+              base
+            }
+          );
+        },
+        set: () => '...'
+      }
 
+    }),
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  },
+  /**
+   * @static R - dimensional labeling
+   * @memberof MathOfT
+   */
+  'R': {
+    value: ['x', 'y', 'z'],
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  },
+  /**
+   * @static FUNCKEYS - methods for inter-instance communication
+   * @see TTHIS_TEMPLATE
+   * @memberof MathOfT
+   */
+  'FUNCKEYS': {
+    value: [
+      'normalizeT',
+      'antinormalizeT',
+      'i'
+    ],
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  },
+  /**
+   * @static MEMBERKEYS - members for inter-instance communication
+   * @see TTHIS_TEMPLATE
+   * @memberof MathOfT
+   */
+  'MEMBERKEYS': {
+    value: [
+      'range',
+      'drange',
+      't0',
+      'segmentDivisor',
+    ],
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  },
   /**
    * @static DEFAULT_SEGMENT_DIVISOR By default, MathOfT instances divide into
    * this many segments
    * @type {Number}
+   * @memberof MathOfT
    * @default 10
    */
-  static DEFAULT_SEGMENT_DIVISOR = 10;
+  'DEFAULT_SEGMENT_DIVISOR': {
+    value: 10,
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  },
   /**
-   * @static DEFAULT_RANGE By default, MathOfT instances evaluate functions over
-   * this range
-   * @type {Array.<Number>}
-   * @default [-1,1]
+   * @static MAX_SAFE_DIVISOR the maximum safe to use divisor
+   * @borrows MathOfT.CALC_PRECISION_WARN
+   * @memberof MathOfT
    */
-  static DEFAULT_RANGE = [-1,1];
-
-}
-
-module.exports = {
-  MathOfT: Object.defineProperty(MathOfT, 'MAX_SAFE_DIVISOR', {
+  'MAX_SAFE_DIVISOR': {
     value: MathOfT.CALC_PRECISION_WARN(),
     enumerable: true,
     configurable: false,
     writable: false,
-  }),
-}
+  },
+  /**
+   * @static DEFAULT_RANGE By default, MathOfT instances evaluate functions over this range
+   * @type {Array.<Number>}
+   * @default [-1,1]
+   * @memberof MathOfT
+   */
+  'DEFAULT_RANGE': {
+    value: [-1,1],
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  }
+});
+
+export { MathOfT };
