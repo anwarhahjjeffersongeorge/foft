@@ -3,9 +3,10 @@ import chai from 'chai';
 import chai_almost from 'chai-almost';
 import chai_arrays from 'chai-arrays';
 import chai_as_promised from 'chai-as-promised';
-chai.use(chai_as_promised);
 chai.use(chai_arrays);
 chai.use(chai_almost()); //chai.use(chai_almost(Number.EPSILON));
+chai.use(chai_as_promised);
+
 chai.config.includeStack = true; // turn on stack trace
 var should = chai.should();
 var expect = chai.expect;
@@ -31,6 +32,7 @@ function dotest(MathOfT){
         ISCALCULABLE: 'function',
         ARENUMBERS: 'function',
         ARECALCULABLES: 'function',
+        DIMENSIONS: 'function',
         OPDICT: 'Array',
         MEMBERKEYS: 'Array',
         FUNCKEYS: 'Array',
@@ -160,7 +162,8 @@ function dotest(MathOfT){
             MathOfT.ISNUMBER(3,3).should.be.false;
             MathOfT.ISNUMBER().should.be.false;
           });
-        })
+        });
+
 
         describe(`MathOfT.ARENUMBERS`,function(){
           it('returns true when ALL arguments are numbers(including NaN, Infinity)', function() {
@@ -289,6 +292,41 @@ function dotest(MathOfT){
           });
         });
 
+        describe(`MathOfT.DIMENSIONS`, function(){
+          it('identifies the dimensions of a Number as 0', function(){
+            return MathOfT.DIMENSIONS(3).should.eventually.be.equalTo([0]);
+          });
+          it('doesnt try to identify the dimensions of non-Array-like object', function(){
+            return MathOfT.DIMENSIONS({}).should.eventually.be.equalTo([]);
+          });
+          it('identifies the dimension of an empty Array-like object as 0', ()=>{
+            return MathOfT.DIMENSIONS([]).should.eventually.be.equalTo([0]);
+          })
+          it('identifies the dimension of a non-nested Array-like object as its length', function(){
+              return Promise.all([
+              MathOfT.DIMENSIONS([1,3]).should.eventually.be.equalTo([2]),
+              MathOfT.DIMENSIONS([1,2,null,3]).should.eventually.be.equalTo([4])
+            ]);
+          });
+          it('identifies the dimensions of a 2-D nested array correctly', ()=>{
+            return MathOfT.DIMENSIONS([
+              [1,2,4],
+              [1,3,4]
+            ]).should.eventually.be.equalTo([2,3]);
+          })
+          it('identifies the dimensions of a regular 3-D nested array correctly', ()=>{
+            return MathOfT.DIMENSIONS([
+              [
+                [1,2,4],
+                [1,3,4]
+              ],
+              [
+                [3,2,4],
+                [55,3,4]
+              ],
+            ]).should.eventually.be.equalTo([2,2,3]);
+          })
+        });
         describe('MathOfT.NORMALIZETORANGE', function(){
           let outofboundsA, outofboundsB, testRangeArr, dTestRangeArr;
           describe('for any t and range TT that has two elements',
@@ -606,6 +644,16 @@ function dotest(MathOfT){
                     MathOfT.OPS[key](1,null,3,4).should.equal(1**base**3**4);
                     MathOfT.OPS[key](1,2,3,NaN).should.be.NaN;
                   });
+                  break;
+                case 'magest':
+                  it('should identify the greatest magnitude in the given number operands', function(){
+                    MathOfT.OPS[key](1,2,3,4).should.equal(4);
+                    MathOfT.OPS[key](-100,2,3, 10).should.equal(100);
+                    MathOfT.OPS[key](-10,2,3, 10).should.equal(10);
+                  });
+                  it(`should return NaN when given operands aren't calculables`, ()=>{
+                    MathOfT.OPS[key](NaN, Infinity, NaN).should.be.NaN;
+                  })
                   break;
                 default:
                   break;
@@ -1575,7 +1623,7 @@ function dotest(MathOfT){
                 terms: (t) => [1000*t, [100*t, 10*t], 1*t],
                 opcode: '+'
               });
-              testObj4 = v = new MathOfT({
+              testObj4 = new MathOfT({
                 terms: [
                   (a) => [1*a, 2*a],
                   (a) => [3*a, 4*a]
@@ -1612,9 +1660,6 @@ function dotest(MathOfT){
         });
       });
     });
-
-
-
   });
   //TODO browser tests
   describe('browser Functionality', function() {

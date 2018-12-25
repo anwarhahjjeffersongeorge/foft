@@ -857,7 +857,7 @@ undefined*/
    *    4, [m, mm]
    *
    * @param  {Number} n the number to test
-   * @param  {(Number, Array<Number>)} [m] the end of the range starting with 0, or
+   * @param  {(Number|Array<Number>)} [m] the end of the range starting with 0, or
    *                                       the Array representing the range [m[0], m[last]]
    *                                       the begining of range ending in mm, or
    * @param  {Number} [mm] the optional end of the range
@@ -997,33 +997,59 @@ undefined*/
 
 
   /**
-   * @static DIMENSION - return the dimensions of the given x
+   * @static DIMENSIONS - return the size of the given x, where x can be a number or an Array
    *
-   * @param  {(number|Array)} x description
-   * @return {type}   description
+   * @param  {(number|Array)} x the structure to get dimensions of
+   * @return {Array}
    */
-  static DIMENSION(x){
-    let irregularflag=false;
-    let res = [];
-    if(MathOfT.ISNUMBER(x)) res.push(1);
-
-    if(Array.isArray(x)){
-      res.push(x.length);
-      let sublength=0, subsublength=0;
-      for(sub of x){
-        if(Array.isArray(sub)){
-          if(sub.length>=sublength){
-            sublength=sub.length
-          } else {
-            irregularflag=true;
-          }
-          // subsublength=
-        }
-      }
+  static DIMENSIONS(x){
+    if(MathOfT.ISNUMBER(x)){
+      return Promise.resolve([0]);
     }
 
-
-    return res;
+    let irregularflag=false;
+    return Promise.resolve().then(()=>{
+      // debugger;
+      let dim=Promise.resolve([]);
+      if(Array.isArray(x)){
+        if(x.length == 0){
+          return dim.then(dimarr=>dimarr.concat(0))
+        } else {
+          return dim
+            .then(dimarr=>{
+              console.log(x.length)
+              return dimarr.concat(x.length)
+            })
+            .then(dimarr=>{
+              // console.log(dimarr)
+              for(let elementindex in x){
+                let longestelementlength=0;
+                let element = x[elementindex];
+                if(Array.isArray(element)){
+                  if(element.length>=longestelementlength){
+                    longestelementlength=element.length;
+                  } else {
+                    irregularflag=true; // sparse element
+                  }
+                  return Promise
+                    .all(element.map(subelement => MathOfT.DIMENSIONS(subelement)))
+                    .then(nestedelementlengths => {
+                      let mag = MathOfT.OPS.magest(...nestedelementlengths);
+                      return (Number.isNaN(mag) || mag==0)
+                        ? []
+                        : mag;
+                    })
+                    .then(longestnestedelementlength => dimarr.concat(longestelementlength, longestnestedelementlength));
+                } else {
+                  return Promise.resolve(dimarr);
+                }
+              }
+          });
+        }
+      } else {
+        return dim;
+      }
+    });
   }
 
   /**
@@ -1089,7 +1115,7 @@ Object.defineProperties(MathOfT, {
    * @memberof MathOfT
    */
   'OPDICT': {
-    value: [null, '+', '-', '*', '/', '**'],
+    value: [null, '+', '-', '*', '/', '**', 'magest'],
     enumerable: true,
     configurable: false,
     writable: false,
@@ -1097,7 +1123,7 @@ Object.defineProperties(MathOfT, {
   /**
    * @static OPS - an object containing operations, or ops, that
    * perform mathematical functions corresponding to their keys
-   *
+   * @hamespace OPS
    * @see MathOfT.ISOP
    * @see MathOfT.OPDICT
    * @see MathOfT.OPPARSE
@@ -1254,6 +1280,40 @@ Object.defineProperties(MathOfT, {
           );
         },
         set: () => '...'
+      },
+      /**
+       * @name magest - given some values, return the one with the greatest magnitude
+       *
+       * @memberof OPS
+       * @params {(number|Array<number>)} arguments the numbers to test
+       * @return {number}
+       */
+      'magest':{
+        enumerable: true,
+        get: () => {
+          let code = 'magest', base = 0;
+          return Object.assign(
+            function(){
+              let max=base;
+              if(MathOfT.ARECALCULABLES(...arguments)){
+                for(var i=0; i<arguments.length; i++){
+                  let cur = Math.abs(arguments[i]);
+                  max = (cur > max)
+                    ? cur
+                    : max;
+                }
+                return max;
+              } else {
+                return NaN;
+              }
+            },
+            {
+              code,
+              base
+            }
+          );
+        },
+        set: () => 'magest'
       }
 
     }),
