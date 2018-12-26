@@ -333,32 +333,31 @@ function dotest(MathOfT){
         describe('MathOfT.EQUAL', () => {
           it('should return true for any number of congruent number arguments', () => {
             MathOfT.EQUAL(1,1,1,1).should.be.true;
-            MathOfT.EQUAL(NaN,NaN).should.be.true;
             MathOfT.EQUAL(Infinity,Infinity).should.be.true;
             MathOfT.EQUAL(0,0,0,0,0,7-7).should.be.true;
           });
           it('should return false for any number of incongruent number arguments', () => {
             MathOfT.EQUAL(1,3,1,1).should.be.false;
+            MathOfT.EQUAL(NaN,NaN).should.be.false;
             MathOfT.EQUAL(NaN,2).should.be.false;
             MathOfT.EQUAL(-Infinity,Infinity).should.be.false;
             MathOfT.EQUAL(0,0,0,0,0,7).should.be.false;
           });
           it('should return true for any number of congruent, non-nested array arguments of any lengths', () => {
             MathOfT.EQUAL([1,1],[1,1]).should.be.true;
-            MathOfT.EQUAL([NaN],[NaN]).should.be.true;
             MathOfT.EQUAL([Infinity,Infinity],[Infinity,Infinity]).should.be.true;
             MathOfT.EQUAL([0,0,0],[0,0,0],[0,0,7-7]).should.be.true;
           });
           it('should return false for any number of incongruent, non-nested array arguments of any lengths', () => {
             MathOfT.EQUAL([1,1],[1,1,1]).should.be.false;
             MathOfT.EQUAL([NaN],[111]).should.be.false;
+            MathOfT.EQUAL([NaN],[NaN]).should.be.false;
             MathOfT.EQUAL([Infinity,-Infinity],[Infinity,Infinity]).should.be.false;
             MathOfT.EQUAL([0,0,0],[0,0,0],[0,0,-7]).should.be.false;
           });
           it('should return true for any number of congruent, nested array arguments of any lengths', () => {
             MathOfT.EQUAL([[1,1],[1,1]],
               [[1,1],[1,1]]).should.be.true;
-            MathOfT.EQUAL([[NaN]],[[NaN]]).should.be.true;
             MathOfT.EQUAL([Infinity,[Infinity]],[Infinity,[Infinity]]).should.be.true;
             MathOfT.EQUAL([[0,0,0],[3,5,1]],
               [[0,0,0],[3,5,1]],
@@ -367,6 +366,7 @@ function dotest(MathOfT){
           it('should return false for any number of incongruent, nested array arguments of any lengths', () => {
             MathOfT.EQUAL([1,1],[1,1,1]).should.be.false;
             MathOfT.EQUAL([NaN],[111]).should.be.false;
+            MathOfT.EQUAL([[NaN]],[[NaN]]).should.be.false;
             MathOfT.EQUAL([Infinity,-Infinity],[Infinity,Infinity]).should.be.false;
             MathOfT.EQUAL([0,0,0],[0,0,0],[0,0,-7]).should.be.false;
           });
@@ -422,7 +422,7 @@ function dotest(MathOfT){
             // MathOfT.MATHTYPEOF().should.equal(MathOfT.MATHTYPES.arraylike);
           });
           it('should return null for unrecognized types', function(){
-            expect(MathOfT.MATHTYPEOF('3)).to.be.null;
+            expect(MathOfT.MATHTYPEOF('3')).to.be.null;
             expect(MathOfT.MATHTYPEOF({Infinity})).to.be.null;
             expect(MathOfT.MATHTYPEOF((a)=>a)).to.be.null;
           });
