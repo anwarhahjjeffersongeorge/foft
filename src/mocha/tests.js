@@ -33,6 +33,9 @@ function dotest(MathOfT){
         ARENUMBERS: 'function',
         ARECALCULABLES: 'function',
         DIMENSIONS: 'function',
+        EQUAL: 'function',
+        MATHTYPEOF: 'function',
+        MATHTYPES: 'Object',
         OPDICT: 'Array',
         MEMBERKEYS: 'Array',
         FUNCKEYS: 'Array',
@@ -327,6 +330,48 @@ function dotest(MathOfT){
             ]).should.eventually.be.equalTo([2,2,3]);
           })
         });
+        describe('MathOfT.EQUAL', () => {
+          it('should return true for any number of congruent number arguments', () => {
+            MathOfT.EQUAL(1,1,1,1).should.be.true;
+            MathOfT.EQUAL(NaN,NaN).should.be.true;
+            MathOfT.EQUAL(Infinity,Infinity).should.be.true;
+            MathOfT.EQUAL(0,0,0,0,0,7-7).should.be.true;
+          });
+          it('should return false for any number of incongruent number arguments', () => {
+            MathOfT.EQUAL(1,3,1,1).should.be.false;
+            MathOfT.EQUAL(NaN,2).should.be.false;
+            MathOfT.EQUAL(-Infinity,Infinity).should.be.false;
+            MathOfT.EQUAL(0,0,0,0,0,7).should.be.false;
+          });
+          it('should return true for any number of congruent, non-nested array arguments of any lengths', () => {
+            MathOfT.EQUAL([1,1],[1,1]).should.be.true;
+            MathOfT.EQUAL([NaN],[NaN]).should.be.true;
+            MathOfT.EQUAL([Infinity,Infinity],[Infinity,Infinity]).should.be.true;
+            MathOfT.EQUAL([0,0,0],[0,0,0],[0,0,7-7]).should.be.true;
+          });
+          it('should return false for any number of incongruent, non-nested array arguments of any lengths', () => {
+            MathOfT.EQUAL([1,1],[1,1,1]).should.be.false;
+            MathOfT.EQUAL([NaN],[111]).should.be.false;
+            MathOfT.EQUAL([Infinity,-Infinity],[Infinity,Infinity]).should.be.false;
+            MathOfT.EQUAL([0,0,0],[0,0,0],[0,0,-7]).should.be.false;
+          });
+          it('should return true for any number of congruent, nested array arguments of any lengths', () => {
+            MathOfT.EQUAL([[1,1],[1,1]],
+              [[1,1],[1,1]]).should.be.true;
+            MathOfT.EQUAL([[NaN]],[[NaN]]).should.be.true;
+            MathOfT.EQUAL([Infinity,[Infinity]],[Infinity,[Infinity]]).should.be.true;
+            MathOfT.EQUAL([[0,0,0],[3,5,1]],
+              [[0,0,0],[3,5,1]],
+              [[0,0,7-7],[6-3,0+5,1/1]]).should.be.true;
+          });
+          it('should return false for any number of incongruent, nested array arguments of any lengths', () => {
+            MathOfT.EQUAL([1,1],[1,1,1]).should.be.false;
+            MathOfT.EQUAL([NaN],[111]).should.be.false;
+            MathOfT.EQUAL([Infinity,-Infinity],[Infinity,Infinity]).should.be.false;
+            MathOfT.EQUAL([0,0,0],[0,0,0],[0,0,-7]).should.be.false;
+          });
+        });
+
         describe('MathOfT.NORMALIZETORANGE', function(){
           let outofboundsA, outofboundsB, testRangeArr, dTestRangeArr;
           describe('for any t and range TT that has two elements',
@@ -363,6 +408,23 @@ function dotest(MathOfT){
               let testval = normt * dTestRangeArr() + testRangeArr[0]
               MathOfT.NORMALIZETORANGE(normt,testRangeArr,normarr).should.equal(35)
             });
+          });
+        });
+        describe('MathOfT.MATHTYPEOF', () => {
+          it('should recognize number-like types', function(){
+            MathOfT.MATHTYPEOF(3).should.equal(MathOfT.MATHTYPES.numberlike);
+            MathOfT.MATHTYPEOF(Infinity).should.equal(MathOfT.MATHTYPES.numberlike);
+            MathOfT.MATHTYPEOF(NaN).should.equal(MathOfT.MATHTYPES.numberlike);
+          });
+          it('should recognize array-like types', function(){
+            MathOfT.MATHTYPEOF([9]).should.equal(MathOfT.MATHTYPES.arraylike);
+            MathOfT.MATHTYPEOF([]).should.equal(MathOfT.MATHTYPES.arraylike);
+            // MathOfT.MATHTYPEOF().should.equal(MathOfT.MATHTYPES.arraylike);
+          });
+          it('should return null for unrecognized types', function(){
+            expect(MathOfT.MATHTYPEOF('3)).to.be.null;
+            expect(MathOfT.MATHTYPEOF({Infinity})).to.be.null;
+            expect(MathOfT.MATHTYPEOF((a)=>a)).to.be.null;
           });
         });
         describe('MathOfT.IINRANGE', () => {

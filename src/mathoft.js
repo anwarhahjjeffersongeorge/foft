@@ -1017,7 +1017,7 @@ undefined*/
         } else {
           return dim
             .then(dimarr=>{
-              console.log(x.length)
+              // console.log(x.length)
               return dimarr.concat(x.length)
             })
             .then(dimarr=>{
@@ -1050,6 +1050,42 @@ undefined*/
         return dim;
       }
     });
+  }
+
+
+  /**
+   * @static EQUAL - determine whether the given number or Array-like arguments are satisfying the conditions:
+   * 1) all of a single shared type,
+   * 2) if numbers, of equal value,
+   * 3) if arrays, composed of equal positional elements
+   *
+   * @params {?} [arguments]
+   * @return {boolean}
+   */
+  static EQUAL(){
+    if (arguments.length==0) {
+      return false;
+    }
+    const type = MathOfT.MATHTYPEOF(arguments[0]);
+    const dim = MathOfT.DIMENSIONS(arguments[0]);
+    for (let i = 1; i < arguments.length; i++) {
+      if()
+    }
+  }
+
+
+  /**
+   * @static MATHTYPEOF - tell whether the given argument a is of one of the types that MathOfT can do math with  and if so, which type
+   *
+   * @param  {?} [a]
+   * @return {(Symbol|null)}
+   */
+  static MATHTYPEOF(a){
+    return Array.isArray(a)
+      ? MathOfT.MATHTYPES.arraylike
+      : MathOfT.ISNUMBER(a)
+        ? MathOfT.MATHTYPES.numberlike
+        : null;
   }
 
   /**
@@ -1109,6 +1145,25 @@ undefined*/
 }
 
 Object.defineProperties(MathOfT, {
+  /**
+   * @static MATHTYPES - valid types that MathOfT can do math on
+   * @see MathOfT.MATHTYPEOF
+   * @memberof MathOfT
+   */
+  'MATHTYPES': {
+    value: (()=>{
+      let o = {};
+      [
+        'arraylike','numberlike'
+      ].map(function(e){
+        this[e]=Symbol(e), this[this[e]]=e;
+      }, o);
+      return o;
+    })(),
+    enumerable: true,
+    configurable: false,
+    writable: false,
+  },
   /**
    * @static OPDICT - an array of valid op keys
    * @see MathOfT.OPS
