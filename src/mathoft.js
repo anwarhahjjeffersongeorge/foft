@@ -1059,6 +1059,7 @@ undefined*/
    * 2) if numbers, of equal value,
    * 3) if arrays, composed of equal positional elements
    *
+   * When comparing values that are NaN or containing NaN in the same positions, the function will return false because NaN doesn't equal NaN
    * @params {?} [arguments]
    * @return {boolean}
    */
@@ -1066,11 +1067,32 @@ undefined*/
     if (arguments.length==0) {
       return false;
     }
-    const type = MathOfT.MATHTYPEOF(arguments[0]);
-    const dim = MathOfT.DIMENSIONS(arguments[0]);
-    for (let i = 1; i < arguments.length; i++) {
-      if()
+    if (arguments.length==1){
+      return true;
     }
+    const a0 = arguments[0]
+    const type = MathOfT.MATHTYPEOF(a0);
+    let res = true;
+    // const dim = MathOfT.DIMENSIONS(arguments[0]);
+    for (let i = 1; i < arguments.length; i++) {
+      let a = arguments[i];
+      if(MathOfT.MATHTYPEOF(a)!=type) return false;
+      switch (type) {
+        case MathOfT.MATHTYPES.arraylike:
+          if(a.length!=a0.length) return false;
+          for (let ai = 0; ai < a0.length; ai++) {
+            if(!MathOfT.EQUAL(a0[ai], a[ai])) return false;
+          }
+          break;
+        case MathOfT.MATHTYPES.numberlike:
+          // console.log(a)
+          res = res && (a==a0);
+          break;
+        default:
+          return false;
+      }
+    }
+    return res;
   }
 
 
