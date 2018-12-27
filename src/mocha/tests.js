@@ -33,6 +33,7 @@ function dotest(MathOfT){
         ARENUMBERS: 'function',
         ARECALCULABLES: 'function',
         DIMENSIONS: 'function',
+        ISARRAYLIKE: 'function',
         EQUAL: 'function',
         MATHTYPEOF: 'function',
         MATHTYPES: 'Object',
@@ -425,6 +426,23 @@ function dotest(MathOfT){
             expect(MathOfT.MATHTYPEOF('3')).to.be.null;
             expect(MathOfT.MATHTYPEOF({Infinity})).to.be.null;
             expect(MathOfT.MATHTYPEOF((a)=>a)).to.be.null;
+          });
+        });
+        describe('MathOfT.ISARRAYLIKE', () => {
+          it('should return true for Array types', function(){
+            MathOfT.ISARRAYLIKE([9]).should.be.true;
+            MathOfT.ISARRAYLIKE([]).should.be.true;
+            MathOfT.ISARRAYLIKE([[1,1],[3,3]]).should.be.true;
+          });
+          it('should return true for Array types', function(){
+            MathOfT.ISARRAYLIKE(new Float32Array([1,1,1,33,53])).should.be.true;
+            MathOfT.ISARRAYLIKE(new Int8Array()).should.be.true;
+            // MathOfT.ISARRAYLIKE([[1,1],[3,3]]).should.be.true;
+          });
+          it('should return false for non-Array-like types', function(){
+            expect(MathOfT.ISARRAYLIKE('3')).should.be.false;
+            expect(MathOfT.ISARRAYLIKE({Infinity})).should.be.false;
+            expect(MathOfT.ISARRAYLIKE((a)=>a)).should.be.false;
           });
         });
         describe('MathOfT.IINRANGE', () => {
@@ -983,7 +1001,7 @@ function dotest(MathOfT){
         testObj = new MathOfT();
       });
       describe('.addTerm(term)', function(){
-        it('should only add terms of type function or MathOfT', function(){
+        it('should only add terms of type function or MathOfT, returning boolean to indicate success or failure', function(){
           let badobj = {},
             goodobjA = dd=>dd,
             goodobjB = new MathOfT();
