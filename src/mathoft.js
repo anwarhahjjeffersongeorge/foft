@@ -464,14 +464,15 @@ class MathOfT{
       ? this.tthis
       : MathOfT.TTHIS_TEMPLATE(t, this);
     let result = [];
-    for(let _term of this._terms){
+    for(let i in this._terms){
+      let _term = this._terms[i];
       if(typeof _term === 'function'){
-        result.push(_term.call(tthis, t));
+        result[i]=_term.call(tthis, t);
       } else if(_term instanceof MathOfT){
         let subres = _term.isInRange(t)
           ? _term.oft.call(Object.assign(_term,{tthis}), t)
           : null;
-        result.push(subres); //OVERRIDE?
+        result[i]=subres; //OVERRIDE?
       }
     }
     result = (filterNulls)
