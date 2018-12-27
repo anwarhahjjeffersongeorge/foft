@@ -1680,7 +1680,7 @@ function dotest(MathOfT){
 
       describe('oftOp', () => {
         describe('for any given calculable t parameter', () => {
-          describe('for any invalid _op parameter should perform the instance op where', () => {
+          describe('for any multi-term instance and any invalid _op parameter should perform the instance op where', () => {
             let testObj, testObj2, testObj3, testObj4;
             before(function(){
               testObj = new MathOfT({
@@ -1700,7 +1700,10 @@ function dotest(MathOfT){
                 opcode: '+'
               });
               testObj3 = new MathOfT({
-                terms: (t) => [1000*t, [100*t, 10*t], 1*t],
+                terms: [
+                  (t) => [1000*t, [100*t, 10*t], 1*t],
+                  (t) => [2000*t, [200*t, 20*t], 2*t]
+                ],
                 opcode: '+'
               });
               testObj4 = new MathOfT({
@@ -1725,11 +1728,11 @@ function dotest(MathOfT){
               testResult.should.be.equalTo([6000,600,60,6]);
             });
 
-            // it('the result is equivalent to performing said op on the #-D array member results of the evaluations of the instance\'s terms for the given t', ()=>{
-            //   let testResult = testObj3.oftOp(3, 'bad code')
-            //   testResult.should.be.an('array');
-            //   testResult.should.be.equalTo([3000,[300,30],3]);
-            // });
+            it('the result is equivalent to performing said op on the #-D array member results of the evaluations of the instance\'s terms for the given t', ()=>{
+              let testResult = testObj3.oftOp(3, 'bad code')
+              testResult.should.be.an('array');
+              testResult.should.be.equalTo([9000,[900,90],9]);
+            });
           });
           describe('for any valid _op parameter should perform _op in MathOfT.OPS where', () => {
             it('the result is equivalent to performing _op on the results of the evaluations of the instance\'s terms for the given t');
