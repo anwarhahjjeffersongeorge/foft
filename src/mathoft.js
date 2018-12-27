@@ -563,76 +563,53 @@ class MathOfT{
     const op=MathOfT.OPS[_op];
     // debugger;
     _acc = (!_acc)
-      ? _op.base
+      ? op.base
       : (MathOfT.ARENUMBERS(_acc))
         ? _acc
         : NaN;
     // debugger;
-    let oft = this.oft(t);
-    let transform = (val,acc)=>{
-      let res;
+
+    const transform = (acc,val)=>{
+      // let res;
+      // console.log(acc,val);
       switch (MathOfT.MATHTYPEOF(val)) {
         case MathOfT.MATHTYPES.numberlike:
           if (MathOfT.ISARRAYLIKE(acc)) {
-            
+            throw new ValueError('Can\'t apply an arraylike accumulator to a scalar.' )
           }
-          return op(val, acc);
+          if(MathOfT.ISNUMBER(acc)){
+            return op(acc, val);
+          }
           break;
         case MathOfT.MATHTYPES.arraylike:
-
+          if(MathOfT.ISARRAYLIKE(acc)){
+            if(acc.length!=val.length){ //size mismatch
+              throw new ValueError('Can\'t apply an op to arraylike values of dissimilar lengths.');
+            }
+            for(let i = 0; i < val.length; i++){
+              val[i] = transform(acc[i], val[i]); //overwrite in place
+            }
+          }
+          if(MathOfT.ISNUMBER(acc)){
+            for(let i = 0; i < val.length; i++){
+              val[i] = transform(acc, val[i]); //overwrite in place
+            }
+          }
+          return val;
           break;
-        default:
-
       }
     };
 
-    // if(this.terms.length == 1){
-    //   let _oft = this.oft(t);
-    //   let result;
-    //   if(!MathOfT.ISARRAYLIKE(_oft)^!MathOfT.ISARRAYLIKE(_acc)){
-    //     if(!MathOfT.ISARRAYLIKE(_acc)){
-    //       result = _oft.map((v,i)=>op(v, _acc));
-    //     } else if (!MathOfT.ISARRAYLIKE(_oft)){
-    //       result = _acc.map((v,i)=>op(v, _oft));
-    //     }
-    //   } else if(MathOfT.ISARRAYLIKE(_oft) && MathOfT.ISARRAYLIKE(_acc)){
-    //     result = _oft.map((v,i)=>op(v, _acc[i]));
-    //   } else {
-    //     result = op(v,_acc);
-    //   }
-    //   // debugger;
-    //   return result;
-    // } else {
-    //   return this.oft(t).reduce((acc,valarray,i,arr)=>{
-    //     if((i==0)){
-    //       // console.warn(valarray, acc)
-    //       return valarray;
-    //     }
-    //     // console.info(valarray, acc)
-    //     let result;
-    //     // debugger;
-    //     if(!MathOfT.ISARRAYLIKE(valarray)^!MathOfT.ISARRAYLIKE(acc)){
-    //       valarray = MathOfT.ISARRAYLIKE(valarray)
-    //       ? valarray
-    //       : Array(MathOfT.R.length).fill(valarray);
-    //       let accvec = MathOfT.ISARRAYLIKE(acc)
-    //       ? acc
-    //       : Array(MathOfT.R.length).fill(acc);
-    //       result = valarray.map((vv,ii) => op(accvec[ii], vv));
-    //     } else if (MathOfT.ISARRAYLIKE(valarray)&&MathOfT.ISARRAYLIKE(acc)) {
-    //       result = valarray.map((vv,ii) => op(acc[ii], vv));
-    //     } else {
-    //       let valnum = (MathOfT.ISCALCULABLE(valarray))
-    //       ? valarray
-    //       : NaN;
-    //       result = (Number.isNaN(valnum) || Number.isNaN(acc))
-    //       ? NaN
-    //       : op(acc, valnum);
-    //     }
-    //     return result;
-    //   }, _acc);
-    //
-    // }
+    let _oft = this.oft(_t);
+    // console.log(_oft)
+    switch (this.terms.length) {
+      case 1:
+        return transform(_acc, _oft);
+        break;
+      default:
+        return _oft.reduce(transform, _acc);
+        break;
+    }
   }
 
 

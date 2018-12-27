@@ -23,6 +23,10 @@ function dotest(MathOfT){
       // console.log(MathOfT);
       // (Math.sin(PI)).should.be.almost.equalTo(0)
     });
+    it('test chai-array', ()=>{
+      [1,2,3,4].should.be.equalTo([1,2,3,4])
+      // [[1,2],3,4].should.be.equalTo([[1,2],3,4])
+    })
     describe('Has static members of specified types', function(){
       //these are the static properties and types that should be in MathOfT
       const staticpropsandtypes={
