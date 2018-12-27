@@ -440,9 +440,9 @@ function dotest(MathOfT){
             // MathOfT.ISARRAYLIKE([[1,1],[3,3]]).should.be.true;
           });
           it('should return false for non-Array-like types', function(){
-            expect(MathOfT.ISARRAYLIKE('3')).should.be.false;
-            expect(MathOfT.ISARRAYLIKE({Infinity})).should.be.false;
-            expect(MathOfT.ISARRAYLIKE((a)=>a)).should.be.false;
+            MathOfT.ISARRAYLIKE('3').should.be.false;
+            MathOfT.ISARRAYLIKE({Infinity}).should.be.false;
+            MathOfT.ISARRAYLIKE((a)=>a).should.be.false;
           });
         });
         describe('MathOfT.IINRANGE', () => {

@@ -43,7 +43,7 @@ class MathOfT{
       params = {
         terms: thefunc
       };
-    } else if(Array.isArray(params)){
+    } else if(MathOfT.ISARRAYLIKE(params)){
       let thearray = params;
       params = {
         range: thearray
@@ -67,7 +67,7 @@ class MathOfT{
     range = MathOfT.ISCALCULABLE(range)
     ? [-range, range]
     : range;
-    if(!Array.isArray(range)) throw new TypeError('range should be array');
+    if(!MathOfT.ISARRAYLIKE(range)) throw new TypeError('range should be array');
     // if(range.length!==2) throw new RangeError('range should have two elements')
     this.range = Array.from(range);
 
@@ -77,7 +77,7 @@ class MathOfT{
     terms = (typeof terms === 'function')
     ? [terms]
     : terms;
-    if(!Array.isArray(terms) && (typeof terms !== 'function') ){
+    if(!MathOfT.ISARRAYLIKE(terms) && (typeof terms !== 'function') ){
       throw new TypeError('params.terms should be array or function');
     }
     this._terms = [];
@@ -137,7 +137,7 @@ class MathOfT{
   }
 
   set segmentDivisor(segmentDivisor){
-    segmentDivisor = Array.isArray(segmentDivisor)
+    segmentDivisor = MathOfT.ISARRAYLIKE(segmentDivisor)
       ? segmentDivisor[0]
       : segmentDivisor;
     if(!MathOfT.ISCALCULABLE(segmentDivisor)){
@@ -573,13 +573,13 @@ class MathOfT{
     if(this.terms.length == 1){
       let _oft = this.oft(t);
       let result;
-      if(!Array.isArray(_oft)^!Array.isArray(_acc)){
-        if(!Array.isArray(_acc)){
+      if(!MathOfT.ISARRAYLIKE(_oft)^!MathOfT.ISARRAYLIKE(_acc)){
+        if(!MathOfT.ISARRAYLIKE(_acc)){
           result = _oft.map((v,i)=>op(v, _acc));
-        } else if (!Array.isArray(_oft)){
+        } else if (!MathOfT.ISARRAYLIKE(_oft)){
           result = _acc.map((v,i)=>op(v, _oft));
         }
-      } else if(Array.isArray(_oft) && Array.isArray(_acc)){
+      } else if(MathOfT.ISARRAYLIKE(_oft) && MathOfT.ISARRAYLIKE(_acc)){
         result = _oft.map((v,i)=>op(v, _acc[i]));
       } else {
         result = op(v,_acc);
@@ -595,15 +595,15 @@ class MathOfT{
         // console.info(valarray, acc)
         let result;
         // debugger;
-        if(!Array.isArray(valarray)^!Array.isArray(acc)){
-          valarray = Array.isArray(valarray)
+        if(!MathOfT.ISARRAYLIKE(valarray)^!MathOfT.ISARRAYLIKE(acc)){
+          valarray = MathOfT.ISARRAYLIKE(valarray)
           ? valarray
           : Array(MathOfT.R.length).fill(valarray);
-          let accvec = Array.isArray(acc)
+          let accvec = MathOfT.ISARRAYLIKE(acc)
           ? acc
           : Array(MathOfT.R.length).fill(acc);
           result = valarray.map((vv,ii) => op(accvec[ii], vv));
-        } else if (Array.isArray(valarray)&&Array.isArray(acc)) {
+        } else if (MathOfT.ISARRAYLIKE(valarray)&&MathOfT.ISARRAYLIKE(acc)) {
           result = valarray.map((vv,ii) => op(acc[ii], vv));
         } else {
           let valnum = (MathOfT.ISCALCULABLE(valarray))
@@ -792,6 +792,23 @@ undefined*/
     return (arguments.length == 1) && Number.isFinite(arguments[0]);
   }
 
+
+
+  /**
+   * @static ISARRAYLIKE - determine whether a given argument x is "like" an array for the purposees of MathOfT calculations and parsing, returning true IFF x satisfies one of the following conditions:
+   * 1 - It is an Array
+   * 2 - It is a TypedArray
+   * 3 - It provides a Symbol.iterator property
+   *
+   * The third condition allows for the parsing of various iterable objects, but it does not guarantee that such actions will produce calculable values.
+   *
+   * @param  {?} x
+   * @return {boolean}
+   */
+  static ISARRAYLIKE(x){
+    return x && (Object.getOwnPropertySymbols(x).includes(Symbol.iterator)||Array.isArray(x)||ArrayBuffer.isView(x));
+  }
+
   /**
    * @static ARENUMBERS return true IFF one of these conditions are met
    *   1. The provided arguments are ALL of Number type,
@@ -812,7 +829,7 @@ undefined*/
       return false;
     } else {
       return [...arguments].every(v => {
-        return Array.isArray(v)
+        return MathOfT.ISARRAYLIKE(v)
           ? MathOfT.ARENUMBERS(...v)
           : MathOfT.ISNUMBER(v);
       });
@@ -840,7 +857,7 @@ undefined*/
       return false;
     } else {
       return [...arguments].every(v => {
-        return Array.isArray(v)
+        return MathOfT.ISARRAYLIKE(v)
           ? MathOfT.ARECALCULABLES(...v)
           : MathOfT.ISCALCULABLE(v);
       });
@@ -878,7 +895,7 @@ undefined*/
     } else {
       if(arguments.length==1){
         return MathOfT.INRANGE(n, MathOfT.DEFAULT_RANGE);
-      }else if(Array.isArray(m)){
+      }else if(MathOfT.ISARRAYLIKE(m)){
         // console.log(n,m)
         return ( m.length == 1 )
           ? test(n, 0, m[0])
@@ -1012,7 +1029,7 @@ undefined*/
     return Promise.resolve().then(()=>{
       // debugger;
       let dim=Promise.resolve([]);
-      if(Array.isArray(x)){
+      if(MathOfT.ISARRAYLIKE(x)){
         if(x.length == 0){
           return dim.then(dimarr=>dimarr.concat(0))
         } else {
@@ -1026,7 +1043,7 @@ undefined*/
               for(let elementindex in x){
                 let longestelementlength=0;
                 let element = x[elementindex];
-                if(Array.isArray(element)){
+                if(MathOfT.ISARRAYLIKE(element)){
                   if(element.length>=longestelementlength){
                     longestelementlength=element.length;
                   } else {
@@ -1104,7 +1121,7 @@ undefined*/
    * @return {(Symbol|null)}
    */
   static MATHTYPEOF(a){
-    return Array.isArray(a)
+    return MathOfT.ISARRAYLIKE(a)
       ? MathOfT.MATHTYPES.arraylike
       : MathOfT.ISNUMBER(a)
         ? MathOfT.MATHTYPES.numberlike
@@ -1229,7 +1246,7 @@ Object.defineProperties(MathOfT, {
           if (!MathOfT.ISCALCULABLE(base)) {
             throw new TypeError('MathOfT.OPS.resfunc requires a calculable base parameter');
           }
-          if (!(Object.getOwnPropertySymbols(args).includes(Symbol.iterator)||Array.isArray(args)||ArrayBuffer.isView(args))) {
+          if (!MathOfT.ISARRAYLIKE(args)) {
             throw new TypeError('MathOfT.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter');
           }
           let opfunc = MathOfT.OPS.opfunc;
@@ -1346,9 +1363,9 @@ Object.defineProperties(MathOfT, {
         get: () => {
           let code = '...', base = [];
           return Object.assign(
-            (a, b) => (Array.isArray(a))
+            (a, b) => (MathOfT.ISARRAYLIKE(a))
               ? a.concat(b)
-              : Array.isArray(b)
+              : MathOfT.ISARRAYLIKE(b)
               ? b.concat(a)
               : [a,b],
             {
