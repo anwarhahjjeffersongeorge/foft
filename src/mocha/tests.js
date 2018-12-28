@@ -1,9 +1,7 @@
 'use strict';
 import chai from 'chai';
 import chai_almost from 'chai-almost';
-import chai_arrays from 'chai-arrays';
 import chai_as_promised from 'chai-as-promised';
-chai.use(chai_arrays);
 chai.use(chai_almost()); //chai.use(chai_almost(Number.EPSILON));
 chai.use(chai_as_promised);
 
@@ -23,10 +21,6 @@ function dotest(MathOfT){
       // console.log(MathOfT);
       // (Math.sin(PI)).should.be.almost.equalTo(0)
     });
-    it('test chai-array', ()=>{
-      [1,2,3,4].should.be.equalTo([1,2,3,4])
-      // [[1,2],3,4].should.be.equalTo([[1,2],3,4])
-    })
     describe('Has static members of specified types', function(){
       //these are the static properties and types that should be in MathOfT
       const staticpropsandtypes={
@@ -302,25 +296,25 @@ function dotest(MathOfT){
 
         describe(`MathOfT.DIMENSIONS`, function(){
           it('identifies the dimensions of a Number as 0', function(){
-            return MathOfT.DIMENSIONS(3).should.eventually.be.equalTo([0]);
+            return MathOfT.DIMENSIONS(3).should.eventually.deep.equal([0]);
           });
           it('doesnt try to identify the dimensions of non-Array-like object', function(){
-            return MathOfT.DIMENSIONS({}).should.eventually.be.equalTo([]);
+            return MathOfT.DIMENSIONS({}).should.eventually.deep.equal([]);
           });
           it('identifies the dimension of an empty Array-like object as 0', ()=>{
-            return MathOfT.DIMENSIONS([]).should.eventually.be.equalTo([0]);
+            return MathOfT.DIMENSIONS([]).should.eventually.deep.equal([0]);
           })
           it('identifies the dimension of a non-nested Array-like object as its length', function(){
               return Promise.all([
-              MathOfT.DIMENSIONS([1,3]).should.eventually.be.equalTo([2]),
-              MathOfT.DIMENSIONS([1,2,null,3]).should.eventually.be.equalTo([4])
+              MathOfT.DIMENSIONS([1,3]).should.eventually.deep.equal([2]),
+              MathOfT.DIMENSIONS([1,2,null,3]).should.eventually.deep.equal([4])
             ]);
           });
           it('identifies the dimensions of a 2-D nested array correctly', ()=>{
             return MathOfT.DIMENSIONS([
               [1,2,4],
               [1,3,4]
-            ]).should.eventually.be.equalTo([2,3]);
+            ]).should.eventually.deep.equal([2,3]);
           })
           it('identifies the dimensions of a regular 3-D nested array correctly', ()=>{
             return MathOfT.DIMENSIONS([
@@ -332,7 +326,7 @@ function dotest(MathOfT){
                 [3,2,4],
                 [55,3,4]
               ],
-            ]).should.eventually.be.equalTo([2,2,3]);
+            ]).should.eventually.deep.equal([2,2,3]);
           })
         });
         describe('MathOfT.EQUAL', () => {
@@ -572,7 +566,7 @@ function dotest(MathOfT){
               testTarget.should.be.a('function');
               let testResult = testTarget(...testargs)
               testResult.should.be.an('Array');
-              testResult.should.be.equalTo(testargs);
+              testResult.should.deep.equal(testargs);
             });
           });
         })
@@ -685,13 +679,13 @@ function dotest(MathOfT){
                   it(`should perform null operation on its operands, returning them unchanged in array format`, function(){
                     let testResult = MathOfT.OPS[key](1,2,3,4)
                     testResult.should.be.an('array');
-                    testResult.should.be.equalTo([1,2,3,4]);
+                    testResult.should.deep.equal([1,2,3,4]);
                     testResult = MathOfT.OPS[key](1,2,3,NaN);
                     testResult.should.be.an('array');
                     testResult[0].should.equal(1);
                     testResult[1].should.equal(2);
                     testResult[2].should.equal(3);
-                    //can't use should.be.equalTo because of NaN value (NaN !== NaN)
+                    //can't use should.deep.equal because of NaN value (NaN !== NaN)
                     testResult[3].should.be.NaN;
                   });
                   break;
@@ -764,8 +758,8 @@ function dotest(MathOfT){
         it('should accept Array.<Number> as paramter and set it to range array ', function() {
           let testArray = [0,44];
           let testObj = new MathOfT(testArray);
-          testObj.range.should.be.array();
-          testObj.range.should.be.equalTo(testArray);
+          testObj.range.should.be.an('array');
+          testObj.range.should.deep.equal(testArray);
         });
 
 
@@ -778,11 +772,11 @@ function dotest(MathOfT){
             range: [0, -PI]
           }
           let testObj = new MathOfT(testParamsObj);
-          testObj.range.should.be.array();
-          testObj.range.should.be.equalTo(testParamsObj.range);
+          testObj.range.should.be.an('array');
+          testObj.range.should.deep.equal(testParamsObj.range);
           testObj.segmentDivisor.should.equal(testParamsObj.segmentDivisor);
-          testObj.terms.should.be.array();
-          testObj.terms.should.be.ofSize(testParamsObj.terms.length);
+          testObj.terms.should.be.an('array');
+          testObj.terms.should.have.lengthOf(testParamsObj.terms.length);
           let testVal = Math.random();
           testParamsObj.terms[0](testVal).should.equal(testObj.terms[0](testVal))
           testParamsObj.terms[1](testVal).should.equal(testObj.terms[1](testVal))
@@ -805,11 +799,11 @@ function dotest(MathOfT){
               rangeoverride: true
             };
             let testObj = new MathOfT(testParamsObj);
-            testObj.range.should.be.array();
-            testObj.range.should.be.equalTo(testRange);
+            testObj.range.should.be.an('array');
+            testObj.range.should.deep.equal(testRange);
             testObj = new MathOfT(testParamsObj2);
-            testObj.range.should.be.array();
-            testObj.range.should.be.equalTo(overriddenrange);
+            testObj.range.should.be.an('array');
+            testObj.range.should.deep.equal(overriddenrange);
           });
         });
         describe('key: harmonize', () => {
@@ -853,25 +847,25 @@ function dotest(MathOfT){
             };
             // sans harmonize
             let testObj = new MathOfT(testParamsObj);
-            testObj.range.should.be.equalTo(testRange);
+            testObj.range.should.deep.equal(testRange);
             testObj.segmentDivisor.should.equal(testSegmentDivisor);
             for (let term of testObj.terms) {
-              term.range.should.be.equalTo(overriddenrange);
+              term.range.should.deep.equal(overriddenrange);
               term.segmentDivisor.should.equal(overriddensegmentdivisor);
             }
             // with harmonize
             testObj = new MathOfT(testParamsObj2);
-            testObj.range.should.be.equalTo(testRange);
+            testObj.range.should.deep.equal(testRange);
             testObj.segmentDivisor.should.equal(testSegmentDivisor);
             for (let term of testObj.terms) {
-              term.range.should.be.equalTo(testObj.range);
+              term.range.should.deep.equal(testObj.range);
               term.segmentDivisor.should.equal(testObj.segmentDivisor);
             }
             // mutate parent
             testObj.range=newRange;
             testObj.segmentDivisor=newSegmentDivisor;
             for (let term of testObj.terms) {
-              term.range.should.be.equalTo(testObj.range);
+              term.range.should.deep.equal(testObj.range);
               term.segmentDivisor.should.equal(testObj.segmentDivisor);
             }
             // bad mutate attempt still throws
@@ -889,7 +883,7 @@ function dotest(MathOfT){
             testObj.terms[0].segmentDivisor=newSegmentDivisor2;
             testObj.range=newRange;
             testObj.segmentDivisor=newSegmentDivisor;
-            testObj.terms[0].range.should.not.be.equalTo(testObj.range);
+            testObj.terms[0].range.should.not.deep.equal(testObj.range);
             testObj.terms[0].segmentDivisor.should.not.equal(testObj.segmentDivisor);
 
           });
@@ -927,17 +921,17 @@ function dotest(MathOfT){
       });
       describe('should start with default instance members', function(){
         it(`range (Array) MathOfT.DEFAULT_RANGE ${MathOfT.DEFAULT_RANGE}: `, function(){
-          testObj.range.should.be.array();
-          testObj.range.should.be.ofSize(2);
-          testObj.range.should.be.equalTo(MathOfT.DEFAULT_RANGE);
+          testObj.range.should.be.an('array');
+          testObj.range.should.have.lengthOf(2);
+          testObj.range.should.deep.equal(MathOfT.DEFAULT_RANGE);
         });
         it(`segmentDivisor (number): MathOfT.DEFAULT_SEGMENT_DIVISOR ${MathOfT.DEFAULT_SEGMENT_DIVISOR}` , function(){
           testObj.segmentDivisor.should.be.a('number');
           testObj.segmentDivisor.should.equal(MathOfT.DEFAULT_SEGMENT_DIVISOR);
         });
         it('terms (Array): [ x => x ]', function(){
-          testObj.terms.should.be.array();
-          testObj.terms.should.be.ofSize(1);
+          testObj.terms.should.be.an('array');
+          testObj.terms.should.have.lengthOf(1);
           let testFunc = testObj.terms[0], testVal = Math.random();
           testFunc.should.be.a('function');
           testFunc(testVal).should.equal(testVal);
@@ -956,17 +950,17 @@ function dotest(MathOfT){
       });
       describe('should start with range set to given Array', function(){
         it(`range (Array) MathOfT.DEFAULT_RANGE ${MathOfT.DEFAULT_RANGE}`, function(){
-          testObj.range.should.be.array();
-          testObj.range.should.be.ofSize(2);
-          testObj.range.should.be.equalTo(MathOfT.DEFAULT_RANGE);
+          testObj.range.should.be.an('array');
+          testObj.range.should.have.lengthOf(2);
+          testObj.range.should.deep.equal(MathOfT.DEFAULT_RANGE);
         });
         it(`segmentDivisor (number): MathOfT.DEFAULT_SEGMENT_DIVISOR ${MathOfT.DEFAULT_SEGMENT_DIVISOR}` , function(){
           testObj.segmentDivisor.should.be.a('number');
           testObj.segmentDivisor.should.equal(MathOfT.DEFAULT_SEGMENT_DIVISOR);
         });
         it('terms (Array): [function]', function(){
-          testObj.terms.should.be.array();
-          testObj.terms.should.be.ofSize(1);
+          testObj.terms.should.be.an('array');
+          testObj.terms.should.have.lengthOf(1);
           let testFunc = testObj.terms[0], testVal = Math.random();
           testFunc.should.be.a('function');
           testFunc(testVal).should.equal(testRangeFunc(testVal));
@@ -981,17 +975,17 @@ function dotest(MathOfT){
       });
       describe('should start with range set to given Array', function(){
         it(`range (Array): [0,1]`, function(){
-          testObj.range.should.be.array();
-          testObj.range.should.be.ofSize(2);
-          testObj.range.should.be.equalTo(testRangeArr);
+          testObj.range.should.be.an('array');
+          testObj.range.should.have.lengthOf(2);
+          testObj.range.should.deep.equal(testRangeArr);
         });
         it(`segmentDivisor (number): MathOfT.DEFAULT_SEGMENT_DIVISOR ${MathOfT.DEFAULT_SEGMENT_DIVISOR}` , function(){
           testObj.segmentDivisor.should.be.a('number');
           testObj.segmentDivisor.should.equal(MathOfT.DEFAULT_SEGMENT_DIVISOR);
         });
         it('terms (Array): [ x => x ]', function(){
-          testObj.terms.should.be.array();
-          testObj.terms.should.be.ofSize(1);
+          testObj.terms.should.be.an('array');
+          testObj.terms.should.have.lengthOf(1);
           let testFunc = testObj.terms[0], testVal = Math.random();
           testFunc.should.be.a('function');
           testFunc(testVal).should.equal(testVal);
@@ -1023,7 +1017,7 @@ function dotest(MathOfT){
               range: [11,3],
               terms: (a)=>a+33
             });
-            testTerm.range.should.not.be.equalTo(testObj.range)
+            testTerm.range.should.not.deep.equal(testObj.range)
             testObj.addTerm(testTerm)
           });
         });
@@ -1219,12 +1213,12 @@ function dotest(MathOfT){
           });
           it('should when given a t beyond the all bounds of the range, return null-filled array', function(){
             let correctres = [ null, null ]
-            testObj.i(-10).should.be.equalTo(correctres);
-            testObj.i(200).should.be.equalTo(correctres);
+            testObj.i(-10).should.deep.equal(correctres);
+            testObj.i(200).should.deep.equal(correctres);
           });
           it('should when given a t within the bounds of some of the subranges, return an appropriately populated array of length one less than range length', function(){
             testObj.i(10).length.should.equal(2);
-            testObj.i(11).should.be.equalTo([5,null]);
+            testObj.i(11).should.deep.equal([5,null]);
           });
         });
 
@@ -1270,32 +1264,32 @@ function dotest(MathOfT){
           it('should when given parameter t return array of normalized values for each element-pair-subrange in MathOfT instance range array', function(){
             let res = testObj.normalizeT(-1) //less than Math.random in testRangeArr
             res.should.be.an('array');
-            res.should.be.ofSize(testRangeArr.length-1)
+            res.should.have.lengthOf(testRangeArr.length-1)
             res.every(v => v==-Infinity || v==Infinity ).should.be.true;
             //explicit tValues
             testObj = new MathOfT([0,1,2,0]);
             res =  testObj.normalizeT(.5);
-            res.should.be.equalTo([0,-Infinity,.5]);
+            res.should.deep.equal([0,-Infinity,.5]);
             res =  testObj.normalizeT(-.5);
-            res.should.be.equalTo([-Infinity,-Infinity, Infinity]);
+            res.should.deep.equal([-Infinity,-Infinity, Infinity]);
 
             testObj = new MathOfT([0,-1,-2,0]);
             res =  testObj.normalizeT(.5);
-            res.should.be.equalTo([-Infinity,-Infinity,Infinity]);
+            res.should.deep.equal([-Infinity,-Infinity,Infinity]);
             res =  testObj.normalizeT(-.5);
-            res.should.be.equalTo([0,-Infinity,.5]);
+            res.should.deep.equal([0,-Infinity,.5]);
 
             testObj = new MathOfT([0,2,1,0]);
             res =  testObj.normalizeT(.5);
-            res.should.be.equalTo([-.5,Infinity,0]);
+            res.should.deep.equal([-.5,Infinity,0]);
             res =  testObj.normalizeT(-.5);
-            res.should.be.equalTo([-Infinity,Infinity, Infinity]);
+            res.should.deep.equal([-Infinity,Infinity, Infinity]);
 
             testObj = new MathOfT([0,2,1,0]);
             res =  testObj.normalizeT(.25);
-            res.should.be.equalTo([-.75,Infinity,.5]);
+            res.should.deep.equal([-.75,Infinity,.5]);
             res =  testObj.normalizeT(-.25);
-            res.should.be.equalTo([-Infinity,Infinity, Infinity]);
+            res.should.deep.equal([-Infinity,Infinity, Infinity]);
 
           });
         });
@@ -1303,9 +1297,9 @@ function dotest(MathOfT){
           it('should return the appropriate anti-normalized T', function(){
             testObj = new MathOfT([0, 100, -100, 100])
             let res = testObj.normalizeT(25)
-            res.should.be.equalTo([-.5,-.25, .25])
+            res.should.deep.equal([-.5,-.25, .25])
             res = testObj.normalizeT(25, true);
-            res.should.be.equalTo([1.5,1.25,.75])
+            res.should.deep.equal([1.5,1.25,.75])
           });
 
         });
@@ -1350,32 +1344,32 @@ function dotest(MathOfT){
           it('should when given parameter t return array of normalized values for each element-pair-subrange in MathOfT instance range array', function(){
             let res = testObj.antinormalizeT(-1) //less than Math.random in testRangeArr
             res.should.be.an('array');
-            res.should.be.ofSize(testRangeArr.length-1)
+            res.should.have.lengthOf(testRangeArr.length-1)
             res.every(v => v==-Infinity || v==Infinity ).should.be.true;
             //explicit tValues
             testObj = new MathOfT([0,1,2,0]);
             res =  testObj.antinormalizeT(.5);
-            res.should.be.equalTo([1,Infinity,.5]);
+            res.should.deep.equal([1,Infinity,.5]);
             res =  testObj.antinormalizeT(-.5);
-            res.should.be.equalTo([Infinity,Infinity, -Infinity]);
+            res.should.deep.equal([Infinity,Infinity, -Infinity]);
 
             testObj = new MathOfT([0,-1,-2,0]);
             res =  testObj.antinormalizeT(.5);
-            res.should.be.equalTo([Infinity,Infinity,-Infinity]);
+            res.should.deep.equal([Infinity,Infinity,-Infinity]);
             res =  testObj.antinormalizeT(-.5);
-            res.should.be.equalTo([1,Infinity,.5]);
+            res.should.deep.equal([1,Infinity,.5]);
 
             testObj = new MathOfT([0,2,1,0]);
             res =  testObj.antinormalizeT(.5);
-            res.should.be.equalTo([1.5,-Infinity,1]);
+            res.should.deep.equal([1.5,-Infinity,1]);
             res =  testObj.antinormalizeT(-.5);
-            res.should.be.equalTo([Infinity, -Infinity, -Infinity]);
+            res.should.deep.equal([Infinity, -Infinity, -Infinity]);
 
             testObj = new MathOfT([0,2,1,0]);
             res =  testObj.antinormalizeT(.25);
-            res.should.be.equalTo([1.75,-Infinity,.5]);
+            res.should.deep.equal([1.75,-Infinity,.5]);
             res =  testObj.antinormalizeT(-.25);
-            res.should.be.equalTo([Infinity, -Infinity, -Infinity]);
+            res.should.deep.equal([Infinity, -Infinity, -Infinity]);
 
           });
         });
@@ -1410,7 +1404,7 @@ function dotest(MathOfT){
               ]
             });
             testObj.oft(3).should.be.an('array');
-            testObj.oft(3).should.be.equalTo([27,3]);
+            testObj.oft(3).should.deep.equal([27,3]);
             testObj = new MathOfT({
               terms:[
                 new MathOfT({
@@ -1430,8 +1424,8 @@ function dotest(MathOfT){
               ]
             });
             testObj.oft(3).should.be.an('array');
-            testObj.oft(3)[0].should.be.equalTo([27,3]);
-            testObj.oft(3)[1].should.be.equalTo([81,9]);
+            testObj.oft(3)[0].should.deep.equal([27,3]);
+            testObj.oft(3)[1].should.deep.equal([81,9]);
           });
           it('should for a MathOfT instance with nested function or MathOfT terms provide the nested Array whose elements and subelements are the values of the terms in the correct order', ()=> {
             testObj = new MathOfT({
@@ -1454,7 +1448,7 @@ function dotest(MathOfT){
             ];
             res.should.be.an("array");
             for (let i in res) {
-              res[i].should.be.equalTo(correctres[i])
+              res[i].should.deep.equal(correctres[i])
             }
 
             testObj = new MathOfT({
@@ -1482,7 +1476,7 @@ function dotest(MathOfT){
             ];
             res.should.be.an("array");
             for (let i in res) {
-              res[i].should.be.equalTo(correctres[i])
+              res[i].should.deep.equal(correctres[i])
             }
 
             testObj = new MathOfT((a)=>[
@@ -1502,7 +1496,7 @@ function dotest(MathOfT){
             ];
             res.should.be.an("array");
             for (let i in res) {
-              res[i].should.be.equalTo(correctres[i])
+              res[i].should.deep.equal(correctres[i])
             }
           });
         });
@@ -1532,7 +1526,7 @@ function dotest(MathOfT){
         describe('should when called with no parameters', ()=>{
           it('default to returning the value of the term for the instance t0 range bound', function () {
             testObj = new MathOfT((t)=> [t*2, t*5])
-            testObj.oft().should.be.equalTo([
+            testObj.oft().should.deep.equal([
               MathOfT.DEFAULT_RANGE[0]*2,
               MathOfT.DEFAULT_RANGE[0]*5
             ]);
@@ -1564,9 +1558,9 @@ function dotest(MathOfT){
               ]
             });
             testObj.oft(3).should.be.an('array');
-            testObj.oft(3).should.be.equalTo([27, null, 81]);
+            testObj.oft(3).should.deep.equal([27, null, 81]);
             testObj.oft(10).should.be.an('array');
-            testObj.oft(10).should.be.equalTo([null, 30, 270]);
+            testObj.oft(10).should.deep.equal([null, 30, 270]);
           });
           it('should when given a true second parameter filter from its result all null values corresponding to those MathOfT terms whose evaluation ranges exclude t', () => {
             testObj = new MathOfT({
@@ -1592,9 +1586,9 @@ function dotest(MathOfT){
               ]
             });
             testObj.oft(3, true).should.be.an('array');
-            testObj.oft(3, true).should.be.equalTo([27, 81]);
+            testObj.oft(3, true).should.deep.equal([27, 81]);
             testObj.oft(10, true).should.be.an('array');
-            testObj.oft(10, true).should.be.equalTo([30, 270]);
+            testObj.oft(10, true).should.deep.equal([30, 270]);
           });
         });
       });
@@ -1640,7 +1634,7 @@ function dotest(MathOfT){
         it('should return the value for middle of range  when given non-number tNormal', function(){
           let correctres =[ Math.cos(0), Math.sin(0)];
           let res = testObj.oftNormal('sfdafhurkysjerky');
-          res.should.be.equalTo(correctres);
+          res.should.deep.equal(correctres);
         });
         it('should correctly calculate values for any given tNormal', function() {
           let ttargets = [-1, -.75, -.5, -.25, 0];
@@ -1655,17 +1649,17 @@ function dotest(MathOfT){
             let t = ttargets[i];
             let res = testObj.oftNormal(t);
             let thet = PI*t;
-            res.should.be.equalTo([ Math.cos(thet), Math.sin(thet)]);
+            res.should.deep.equal([ Math.cos(thet), Math.sin(thet)]);
             // res.should.be.almost.equalTo(correctres[i]);
           }
         });
         it('should know when to provide start-of-range computation after receiving -Infinity', function () {
           let res = testObj.oftNormal(-Infinity);
-          res.should.be.equalTo(testObj.ofFirstt);
+          res.should.deep.equal(testObj.ofFirstt);
         });
         it('should know when to provide end-of-range computation after receiving +Infinity', function () {
           let res = testObj.oftNormal(Infinity);
-          res.should.be.equalTo(testObj.ofLastt);
+          res.should.deep.equal(testObj.ofLastt);
         });
         it('should know when to provide NaN after receiving NaN', function () {
           testObj.oftNormal(NaN).should.be.NaN;
@@ -1729,13 +1723,13 @@ function dotest(MathOfT){
             it('the result is equivalent to performing said op on the 1-D array member results of the evaluations of the instance\'s terms for the given t', ()=>{
               let testResult = testObj2.oftOp(3, 'bad code')
               testResult.should.be.an('array');
-              testResult.should.be.equalTo([6000,600,60,6]);
+              testResult.should.deep.equal([6000,600,60,6]);
             });
 
             it('the result is equivalent to performing said op on the #-D array member results of the evaluations of the instance\'s terms for the given t', ()=>{
               let testResult = testObj3.oftOp(3, 'bad code')
               testResult.should.be.an('array');
-              testResult.should.be.equalTo([9000,[900,90],9]);
+              testResult.should.deep.equal([9000,[900,90],9]);
             });
           });
           describe('for any valid _op parameter should perform _op in MathOfT.OPS where', () => {
