@@ -61,13 +61,29 @@ function dotest(MathOfT){
 
       describe('with the functionalities such that', function() {
         describe(`MathOfT.CALC_PRECISION_WARN`, function(){
-          it('should return an object that can collapse to a number or string that includes said number', ()=>{
-            let res = MathOfT.CALC_PRECISION_WARN();
-            res.should.be.an('object');
-            (+res).should.be.a('number');
-            (''+res).should.be.a('string');
-            (''+res).includes(+res).should.be.true;
+          let res;
+          before(function(){
+            res = MathOfT.CALC_PRECISION_WARN();
           });
+          describe('should return an object that', ()=>{
+            it('can collapse to a number or string that includes said number', ()=>{
+              res.should.be.an('object');
+              (+res).should.be.a('number');
+              (''+res).should.be.a('string');
+              (''+res).includes(+res).should.be.true;
+            });
+            it('has own property inaccurateDivisors with array members', ()=>{
+              res.should.have.own.property('inaccurateDivisors').that.is.an('object');
+              for(let prop of ['all','errors','excessive','deficient']){
+                res.inaccurateDivisors.should.have.own.property(prop).that.is.an('array');
+              }
+            })
+            it('is iterable producing the same array as its own inaccurateDivisors.all', ()=>{
+              Object.getOwnPropertySymbols(res).should.include(Symbol.iterator);
+              [...res].should.deep.equal(res.inaccurateDivisors.all);
+            });
+          })
+
         });
 
         describe(`MathOfT.MAX_SAFE_DIVISOR`, function(){

@@ -687,33 +687,71 @@ class MathOfT{
   }
 
   /**
-   * @static CALC_PRECISION_WARN - give precision warning in the form of an object that can be converted to a primitive. Warning value is produced by a*1/a==1 test
+   * @static CALC_PRECISION_WARN - give precision warning in the form of an object that can be converted to a primitive.
    *
+   * Floating point math has inherent imprecisions. This function is useful for quantifying them and identifying potentially problematic operations. It uses a few different tests to highlight sources of error, including:
+   *  1. a*\frac{1}{a} // Multiplicative Identity
+   *  2. \sum_{i=1}^{a} 1/a // Sum of Inverses
    * @return {object}  the object with primitive values:
    *         {number}  the maximum value for which no precision is lost
    *         {string}  as brief message
    */
-  static CALC_PRECISION_WARN(){
-    let msg, res;
+  static CALC_PRECISION_WARN(maxtestnum){
+    let res;
     let getmsg = (e) => `Maximum safe unit divisor: ${e}`;
-    let test = (a)=>((1/a)*a==1);
+    let tests = [
+      (a)=>((1/a)*a==1), //  multiplicative identity
+      (a)=>Array(a).fill(1/a).reduce((acc,val)=>acc+val, 0), //sum of inverses
+
+    ];
+    //only do so many tests
     let testnum=0;
-    const maxtest=144;
+    const maxtest=MathOfT.ISCALCULABLE(maxtestnum)
+      ? maxtestnum
+      : 144;
+    //tests[0]
+    let lastgoodmultidendivisor,msg;
+    //tests[1]
+    let roundinaccura = []; // all divisors for which rounding error causes failure
+    let rounddeltas = []; // the difference between erroneous rounding and 1
+    let roundexcesses = []; // divisors for which rounding error causes excess failure
+    let rounddeficits = []; // divisors for which rounding error causes deficiency failure
+
     while (testnum < maxtest) {
-      if(!test(++testnum)){
-        let final = testnum - 1;
-        msg = getmsg(final);
-        res = {
-          [Symbol.toPrimitive]:(hint)=>{
-            if (hint === 'number') return final;
-            return msg;
-          },
-        };
-        break;
+      //tests[0]
+      if(!tests[0](++testnum)){
+        lastgoodmultidendivisor = testnum - 1;
+        msg = getmsg(lastgoodmultidendivisor);
       }
-    }
+      //tests[1]
+      const test1result = tests[1](testnum) // testnum has been incremented already
+      if(test1result != 1){
+        roundinaccura.push(testnum);
+        rounddeltas.push(test1result-1);
+        if(test1result < 1) rounddeficits.push(testnum);
+        if(test1result > 1) roundexcesses.push(testnum);
+      }
+    };
+    res = {
+      [Symbol.toPrimitive]:(hint)=>{
+        if (hint === 'number') return lastgoodmultidendivisor;
+        return msg;
+      },
+      inaccurateDivisors: {
+        all: roundinaccura,
+        errors: rounddeltas,
+        excessive: roundexcesses,
+        deficient: rounddeficits,
+      },
+      [Symbol.iterator]: function*(){
+          yield* roundinaccura;
+      },
+    };
+
     return res;
   }
+
+
   //TODO: static SIN_OF_PI_WARN
 /*js: (0=== Math.sin(-Math.PI))=false
 
