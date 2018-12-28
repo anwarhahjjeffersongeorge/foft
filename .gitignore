@@ -1,3 +1,4 @@
+.backup
 .ftp*
 /node_modules/*
 /.nyc_output/*
