@@ -553,7 +553,7 @@ class MathOfT{
   *
   * @param  {Number} t the t to evaluate
   * @param  {string} [_op=this.opcode]  an opcode to perform @see MathOfT.OPS
-  * @param  {(Number|Array.<Number>|Array.<Array>)} [_acc=_op.base] an accumulator value to start with @see MathOfT.OPS -> base
+  * @param  {(Number|Array.<Number>|Array.<Array>)} [_acc=null] an accumulator value to start with @see MathOfT.OPS -> base
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
   oftOp(_t, _op, _acc){
@@ -563,7 +563,7 @@ class MathOfT{
     const op=MathOfT.OPS[_op];
     // debugger;
     _acc = (!_acc)
-      ? op.base
+      ? null //op.base
       : (MathOfT.ARENUMBERS(_acc))
         ? _acc
         : NaN;
@@ -576,10 +576,10 @@ class MathOfT{
         case MathOfT.MATHTYPES.numberlike:
           if (MathOfT.ISARRAYLIKE(acc)) {
             throw new ValueError('Can\'t apply an arraylike accumulator to a scalar.' )
-          }
-          if(MathOfT.ISNUMBER(acc)){
+          }else if(MathOfT.ISNUMBER(acc)){
             return op(acc, val);
           }
+          return val;
           break;
         case MathOfT.MATHTYPES.arraylike:
           if(MathOfT.ISARRAYLIKE(acc)){
@@ -589,8 +589,7 @@ class MathOfT{
             for(let i = 0; i < val.length; i++){
               val[i] = transform(acc[i], val[i]); //overwrite in place
             }
-          }
-          if(MathOfT.ISNUMBER(acc)){
+          }else if(MathOfT.ISNUMBER(acc)){
             for(let i = 0; i < val.length; i++){
               val[i] = transform(acc, val[i]); //overwrite in place
             }
@@ -604,10 +603,14 @@ class MathOfT{
     // console.log(_oft)
     switch (this.terms.length) {
       case 1:
-        return transform(_acc, _oft);
+        return (_acc)
+          ? transform(_acc, _oft)
+          : _oft;
         break;
       default:
-        return _oft.reduce(transform, _acc);
+        return (_acc)
+          ? _oft.reduce(transform, _acc)
+          : _oft.reduce(transform);
         break;
     }
   }
