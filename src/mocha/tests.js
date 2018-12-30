@@ -1282,7 +1282,7 @@ function dotest(MathOfT){
             res.should.be.an('array');
             res.should.have.lengthOf(testRangeArr.length-1)
             res.every(v => v==-Infinity || v==Infinity ).should.be.true;
-            //explicit tValues
+            //explicit tTypes
             testObj = new MathOfT([0,1,2,0]);
             res =  testObj.normalizeT(.5);
             res.should.deep.equal([0,-Infinity,.5]);
@@ -1362,7 +1362,7 @@ function dotest(MathOfT){
             res.should.be.an('array');
             res.should.have.lengthOf(testRangeArr.length-1)
             res.every(v => v==-Infinity || v==Infinity ).should.be.true;
-            //explicit tValues
+            //explicit values
             testObj = new MathOfT([0,1,2,0]);
             res =  testObj.antinormalizeT(.5);
             res.should.deep.equal([1,Infinity,.5]);
@@ -1770,7 +1770,93 @@ function dotest(MathOfT){
                   opcode: '**'
                 });
               });
-              it('for numberlike term result should throw error', () => {
+              it('for numberlike term(mismatch) result should throw TypeError', () => {
+                let acc = [0,31,52.8];
+                let badFunc = ()=>testObj.oftOp(5,'-',acc);
+                badFunc.should.throw(TypeError);
+                // res = testObj.oftOp(420,'-',222);
+                // res.should.deep.equal(testObj.oft(420));
+              });
+              it('for arraylike term result should produce the same as applying op to an array whose members are all acc and the result of calling oft with said t', () => {
+                let acc = 420;
+                let res = testObj2.oftOp(5,'-',acc);
+                res.should.deep.equal(testObj2.oft(5).map(v=>acc-v));
+                res = testObj2.oftOp(55,'badcode',acc);
+                res.should.deep.equal(testObj2.oft(55).map(v=>acc**v));
+                // res = testObj2.oftOp(420,'-',222);
+                // res.should.deep.equal(testObj2.oft(420));
+              });
+            });
+          });
+          describe('for any multi-term instance',()=>{
+            let testObj, testObj2, testObj3, testObj4;
+            // let a,b,c,i,j,k;
+            describe('for all valid or invalid _op parameter and null _acc parameter', () => {
+              before(() => {
+                testObj = new MathOfT({
+                  terms: [
+                    (a)=>1/a+a,
+                    (b)=>3/b-b,
+                    (c)=>5/c+c,
+                  ],
+                  opcode: '+'
+                });
+                testObj2 = new MathOfT({
+                  terms: [
+                    (i)=>testObj.oft(i),
+                    (j)=>testObj.oft(j),
+                  ],
+                  opcode: '+'
+                });
+              });
+              it('for numberlike terms, result should produce the same as calling oft with said t and sequentially applying op to the resulting array\'s members', () => {
+                let t = 5;
+                let ans = testObj.terms[0](t) - testObj.terms[1](t) - testObj.terms[2](t);
+                let res = testObj.oftOp(t, '-');
+                res.should.deep.equal(ans);
+                t = 55;
+                ans = testObj.terms[0](t) + testObj.terms[1](t) + testObj.terms[2](t);
+                res = testObj.oftOp(55,'badcode');
+                res.should.deep.equal(ans);
+              });
+              it('for arraylike term result should produce the same as calling oft with said t and sequentially applying op to the resulting nested array\'s members', () => {
+                let t = 5;
+                let ans = testObj2.terms[0](t).map((v,abc)=>{
+                   v.map((vv,ij)=>{
+                     vv - testObj2.terms[1](t)[abc][ij];
+                   });
+                });
+                let res = testObj2.oftOp(5, '-');
+                res.should.deep.equal(ans);
+                t = 55;
+                ans = testObj2.terms[0](t).map((v,abc)=>{
+                   v.map((vv,ij)=>{
+                     vv + testObj2.terms[1](t)[abc][ij];
+                   });
+                });
+                res = testObj2.oftOp(55,'badcode');
+                res.should.deep.equal(ans);
+              });
+            });
+            describe('for all valid or invalid _op parameter and any _acc parameter', () => {
+              before(() => {
+                testObj = new MathOfT({
+                  terms: [
+                    (a)=>1/a+a,
+                    (b)=>3/b-b,
+                    (c)=>5/c+c,
+                  ],
+                  opcode: '+'
+                });
+                testObj2 = new MathOfT({
+                  terms: [
+                    (i)=>testObj.oft(i),
+                    (j)=>testObj.oft(j),
+                  ],
+                  opcode: '+'
+                });
+              });
+              it('for numberlike term result should produce the same as applying op to acc and the result of calling oft with said t', () => {
                 let acc = 4;
                 let res = testObj.oftOp(5,'-',acc);
                 res.should.equal(acc-testObj.oft(5));
@@ -1789,9 +1875,41 @@ function dotest(MathOfT){
                 // res.should.deep.equal(testObj2.oft(420));
               });
             });
-          });
-          describe('for any multi-term instance',()=>{
-            let testObj, testObj2, testObj3, testObj4;
+            describe('for all valid or invalid _op parameter and arraylike _acc parameter', () => {
+              before(() => {
+                testObj = new MathOfT({
+                  terms: [
+                    (a)=>1/a+a,
+                    (b)=>3/b-b,
+                    (c)=>5/c+c,
+                  ],
+                  opcode: '+'
+                });
+                testObj2 = new MathOfT({
+                  terms: [
+                    (i)=>testObj.oft(i),
+                    (j)=>testObj.oft(j),
+                  ],
+                  opcode: '+'
+                });
+              });
+              it('for numberlike term(mismatch) result should throw TypeError', () => {
+                let acc = [0,31,52.8];
+                let badFunc = ()=>testObj.oftOp(5,'-',acc);
+                badFunc.should.throw(TypeError);
+                // res = testObj.oftOp(420,'-',222);
+                // res.should.deep.equal(testObj.oft(420));
+              });
+              it('for arraylike term result should produce the same as applying op to an array whose members are all acc and the result of calling oft with said t', () => {
+                let acc = 420;
+                let res = testObj2.oftOp(5,'-',acc);
+                res.should.deep.equal(testObj2.oft(5).map(v=>acc-v));
+                res = testObj2.oftOp(55,'badcode',acc);
+                res.should.deep.equal(testObj2.oft(55).map(v=>acc**v));
+                // res = testObj2.oftOp(420,'-',222);
+                // res.should.deep.equal(testObj2.oft(420));
+              });
+            });
             describe('for any invalid _op parameter should perform the instance op where', () => {
               before(function(){
                 testObj = new MathOfT({

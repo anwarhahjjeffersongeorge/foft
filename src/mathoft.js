@@ -575,7 +575,7 @@ class MathOfT{
       switch (MathOfT.MATHTYPEOF(val)) {
         case MathOfT.MATHTYPES.numberlike:
           if (MathOfT.ISARRAYLIKE(acc)) {
-            throw new ValueError('Can\'t apply an arraylike accumulator to a scalar.' )
+            throw new TypeError('Can\'t apply an arraylike accumulator to a scalar.' )
           }else if(MathOfT.ISNUMBER(acc)){
             return op(acc, val);
           }
@@ -584,7 +584,7 @@ class MathOfT{
         case MathOfT.MATHTYPES.arraylike:
           if(MathOfT.ISARRAYLIKE(acc)){
             if(acc.length!=val.length){ //size mismatch
-              throw new ValueError('Can\'t apply an op to arraylike values of dissimilar lengths.');
+              throw new TypeError('Can\'t apply an op to arraylike values of dissimilar lengths.');
             }
             for(let i = 0; i < val.length; i++){
               val[i] = transform(acc[i], val[i]); //overwrite in place
