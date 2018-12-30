@@ -1694,58 +1694,156 @@ function dotest(MathOfT){
 
       describe('oftOp', () => {
         describe('for any given calculable t parameter', () => {
-          describe('for any multi-term instance and any invalid _op parameter should perform the instance op where', () => {
+          describe('for any single-term instance', () => {
             let testObj, testObj2, testObj3, testObj4;
-            before(function(){
-              testObj = new MathOfT({
-                terms: [
-                  (t) => 1000*t,
-                  (t) => 100*t,
-                  (t) => 10*t,
-                  (t) => 1*t,
-                ],
-                opcode: '+'
+            describe('for all valid or invalid _op parameter and null _acc parameter', () => {
+              before(() => {
+                testObj = new MathOfT({
+                  terms: (d)=>1/d+d,
+                  opcode: '**'
+                });
+                testObj2 = new MathOfT({
+                  terms: (d)=>[
+                    1/d+d,
+                    3/d-d
+                  ],
+                  opcode: '**'
+                });
               });
-              testObj2 = new MathOfT({
-                terms: [
-                  (t) => [1000*t, 100*t, 10*t, 1*t],
-                  (t) => [1000*t, 100*t, 10*t, 1*t]
-                ],
-                opcode: '+'
+              it('for numberlike term result should produce the same as calling oft with said t', () => {
+                let res = testObj.oftOp(5, '-');
+                res.should.equal(testObj.oft(5));
+                res = testObj.oftOp(55,'badcode');
+                res.should.deep.equal(testObj.oft(55));
               });
-              testObj3 = new MathOfT({
-                terms: [
-                  (t) => [1000*t, [100*t, 10*t], 1*t],
-                  (t) => [2000*t, [200*t, 20*t], 2*t]
-                ],
-                opcode: '+'
-              });
-              testObj4 = new MathOfT({
-                terms: [
-                  (a) => [1*a, 2*a],
-                  (a) => [3*a, 4*a]
-                ],
-                opcode: '**'
+              it('for arraylike term result should produce the same as calling oft with said t', () => {
+                let res = testObj2.oftOp(5, '-');
+                res.should.deep.equal(testObj2.oft(5));
+                res = testObj2.oftOp(55,'badcode');
+                res.should.deep.equal(testObj2.oft(55));
               });
             });
-            it('the result is equivalent to performing said op on the individual results of the evaluations of the instance\'s terms for the given t', ()=>{
-              let testResult = testObj.oftOp(3, 'bad code')
-              testResult.should.equal(3333)
-              let testT = Math.random()*199;
-              testResult = testObj.oftOp(testT, 'bad code')
-              testResult.should.almost.equal(1111*testT)
+            describe('for all valid or invalid _op parameter and any _acc parameter', () => {
+              before(() => {
+                testObj = new MathOfT({
+                  terms: (d)=>1/d+d,
+                  opcode: '**'
+                });
+                testObj2 = new MathOfT({
+                  terms: (d)=>[
+                    1/d+d,
+                    3/d-d
+                  ],
+                  opcode: '**'
+                });
+              });
+              it('for numberlike term result should produce the same as applying op to acc and the result of calling oft with said t', () => {
+                let acc = 4;
+                let res = testObj.oftOp(5,'-',acc);
+                res.should.equal(acc-testObj.oft(5));
+                res = testObj.oftOp(55,'badcode',acc);
+                res.should.deep.equal(acc**testObj.oft(55));
+                // res = testObj.oftOp(420,'-',222);
+                // res.should.deep.equal(testObj.oft(420));
+              });
+              it('for arraylike term result should produce the same as applying op to an array whose members are all acc and the result of calling oft with said t', () => {
+                let acc = 420;
+                let res = testObj2.oftOp(5,'-',acc);
+                res.should.deep.equal(testObj2.oft(5).map(v=>acc-v));
+                res = testObj2.oftOp(55,'badcode',acc);
+                res.should.deep.equal(testObj2.oft(55).map(v=>acc**v));
+                // res = testObj2.oftOp(420,'-',222);
+                // res.should.deep.equal(testObj2.oft(420));
+              });
             });
+            describe('for all valid or invalid _op parameter and arraylike _acc parameter', () => {
+              before(() => {
+                testObj = new MathOfT({
+                  terms: (d)=>1/d+d,
+                  opcode: '**'
+                });
+                testObj2 = new MathOfT({
+                  terms: (d)=>[
+                    1/d+d,
+                    3/d-d
+                  ],
+                  opcode: '**'
+                });
+              });
+              it('for numberlike term result should throw error', () => {
+                let acc = 4;
+                let res = testObj.oftOp(5,'-',acc);
+                res.should.equal(acc-testObj.oft(5));
+                res = testObj.oftOp(55,'badcode',acc);
+                res.should.deep.equal(acc**testObj.oft(55));
+                // res = testObj.oftOp(420,'-',222);
+                // res.should.deep.equal(testObj.oft(420));
+              });
+              it('for arraylike term result should produce the same as applying op to an array whose members are all acc and the result of calling oft with said t', () => {
+                let acc = 420;
+                let res = testObj2.oftOp(5,'-',acc);
+                res.should.deep.equal(testObj2.oft(5).map(v=>acc-v));
+                res = testObj2.oftOp(55,'badcode',acc);
+                res.should.deep.equal(testObj2.oft(55).map(v=>acc**v));
+                // res = testObj2.oftOp(420,'-',222);
+                // res.should.deep.equal(testObj2.oft(420));
+              });
+            });
+          });
+          describe('for any multi-term instance',()=>{
+            let testObj, testObj2, testObj3, testObj4;
+            describe('for any invalid _op parameter should perform the instance op where', () => {
+              before(function(){
+                testObj = new MathOfT({
+                  terms: [
+                    (t) => 1000*t,
+                    (t) => 100*t,
+                    (t) => 10*t,
+                    (t) => 1*t,
+                  ],
+                  opcode: '+'
+                });
+                testObj2 = new MathOfT({
+                  terms: [
+                    (t) => [1000*t, 100*t, 10*t, 1*t],
+                    (t) => [1000*t, 100*t, 10*t, 1*t]
+                  ],
+                  opcode: '+'
+                });
+                testObj3 = new MathOfT({
+                  terms: [
+                    (t) => [1000*t, [100*t, 10*t], 1*t],
+                    (t) => [2000*t, [200*t, 20*t], 2*t]
+                  ],
+                  opcode: '-'
+                });
+                testObj4 = new MathOfT({
+                  terms: [
+                    (a) => [1*a, 2*a],
+                    (a) => [3*a, 4*a]
+                  ],
+                  opcode: '**'
+                });
+              });
+              it('the result is equivalent to performing said op on the individual results of the evaluations of the instance\'s terms for the given t', ()=>{
+                let testResult = testObj.oftOp(3, 'bad code')
+                testResult.should.equal(3333)
+                let testT = Math.random()*199;
+                testResult = testObj.oftOp(testT, 'bad code')
+                testResult.should.almost.equal(1111*testT)
+              });
 
-            it('the result is equivalent to performing said op on the 1-D array member results of the evaluations of the instance\'s terms for the given t', ()=>{
-              let testResult = testObj2.oftOp(3, 'bad code')
-              testResult.should.be.an('array');
-              testResult.should.deep.equal([6000,600,60,6]);
-            });
+              it('the result is equivalent to performing said op on the 1-D array member results of the evaluations of the instance\'s terms for the given t', ()=>{
+                let testResult = testObj2.oftOp(3, 'bad code')
+                testResult.should.be.an('array');
+                testResult.should.deep.equal([6000,600,60,6]);
+              });
 
-            it('the result is equivalent to performing said op on the #-D array member results of the evaluations of the instance\'s terms for the given t', ()=>{
-              let testResult = testObj3.oftOp(3, 'bad code')
-              testResult.should.be.an('array');
-              testResult.should.deep.equal([9000,[900,90],9]);
+              it('the result is equivalent to performing said op on the #-D array member results of the evaluations of the instance\'s terms for the given t', ()=>{
+                let testResult = testObj3.oftOp(3, 'bad code')
+                testResult.should.be.an('array');
+                testResult.should.deep.equal([-3000,[-300,-30],-3]);
+              });
             });
           });
           describe('for any valid _op parameter should perform _op in MathOfT.OPS where', () => {
