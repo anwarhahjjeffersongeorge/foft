@@ -1709,7 +1709,6 @@ function dotest(MathOfT){
                   ],
                   opcode: '**'
                 });
-<<<<<<< HEAD
               });
               it('for numberlike term result should produce the same as calling oft with said t', () => {
                 let res = testObj.oftOp(5, '-');
@@ -1753,27 +1752,10 @@ function dotest(MathOfT){
                 res.should.deep.equal(testObj2.oft(5).map(v=>acc-v));
                 res = testObj2.oftOp(55,'badcode',acc);
                 res.should.deep.equal(testObj2.oft(55).map(v=>acc**v));
-=======
-              });
-              it('for numberlike term result should produce the same as calling oft with said t', () => {
-                let res = testObj.oftOp(5);
-                res.should.equal(testObj.oft(5));
-                res = testObj.oftOp(55,'badcode');
-                res.should.deep.equal(testObj.oft(55));
-                // res = testObj.oftOp(420,'-',222);
-                // res.should.deep.equal(testObj.oft(420));
-              });
-              it('for arraylike term result should produce the same as calling oft with said t', () => {
-                let res = testObj2.oftOp(5);
-                res.should.deep.equal(testObj2.oft(5));
-                res = testObj2.oftOp(55,'badcode');
-                res.should.deep.equal(testObj2.oft(55));
->>>>>>> 27ee9de245b122924877310cfe4844d1c85a30fe
                 // res = testObj2.oftOp(420,'-',222);
                 // res.should.deep.equal(testObj2.oft(420));
               });
             });
-<<<<<<< HEAD
             describe('for all valid or invalid _op parameter and arraylike _acc parameter', () => {
               before(() => {
                 testObj = new MathOfT({
@@ -1807,8 +1789,6 @@ function dotest(MathOfT){
                 // res.should.deep.equal(testObj2.oft(420));
               });
             });
-=======
->>>>>>> 27ee9de245b122924877310cfe4844d1c85a30fe
           });
           describe('for any multi-term instance',()=>{
             let testObj, testObj2, testObj3, testObj4;
