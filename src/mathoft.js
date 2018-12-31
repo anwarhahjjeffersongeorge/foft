@@ -582,17 +582,22 @@ class MathOfT{
           return val;
           break;
         case MathOfT.MATHTYPES.arraylike:
+          let isNested = MathOfT.ISARRAYLIKE(val[0]);
           if(MathOfT.ISARRAYLIKE(acc)){
-            if(acc.length!=val.length){ //size mismatch?
-              let areMismatched=(MathOfT.ISARRAYLIKE(val[0]))
+            if(acc.length!=val.length){
+              let areMismatched=(isNested)
                 ? acc.length!=val[0].length
-                : false;
+                : true;
               if(areMismatched) {
                 throw new TypeError('Can\'t apply an op to arraylike values of dissimilar lengths.');
               }
             }
-            for(let i = 0; i < val.length; i++){
-              val[i] = transform(acc[i], val[i]); //overwrite in place
+            if(isNested){
+              return val.reduce(transform,acc);
+            } else {
+              for(let i = 0; i < val.length; i++){
+                val[i] = transform(acc[i], val[i]); //overwrite in place
+              }
             }
           }else if(MathOfT.ISNUMBER(acc)){
             for(let i = 0; i < val.length; i++){
@@ -614,7 +619,7 @@ class MathOfT{
         break;
       default:
         return (_acc)
-          ? MathOfT.ISARRAYLIKE(_acc) 
+          ? MathOfT.ISARRAYLIKE(_acc)
             ? transform(_acc, _oft)
             : _oft.reduce(transform, _acc)
           : _oft.reduce(transform);

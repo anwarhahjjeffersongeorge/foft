@@ -1995,13 +1995,10 @@ function dotest(MathOfT){
               });
             });
           });
-          describe('for any valid _op parameter should perform _op in MathOfT.OPS where', () => {
-            it('the result is equivalent to performing _op on the results of the evaluations of the instance\'s terms for the given t');
-          });
-          describe('for any given numeric _acc parameter and an invalid _op parameter', () => {
-            it('');
-          });
         });
+      });
+      describe('ofAllT', () => {
+
       });
     });
   });
