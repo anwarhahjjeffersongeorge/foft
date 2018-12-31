@@ -1998,15 +1998,114 @@ function dotest(MathOfT){
         });
       });
       describe('ofAlltT', () => {
-        it('should return a generator function that yields the results of calling oft on all elements t in this.T as Array ordered pairs, or [t, oft(t)]', () => {
-          let testObj = new MathOfT(a=>5*a);
-          let res = [...testObj.ofAlltT()];
-          let T = [...testObj.T()];
-          T.should.have.lengthOf(res.length);
-          for (var i in T) {
-            let t = T[i];
-            res[i].should.deep.equal([t,testObj.oft(t)]);
-          }
+        describe('returns a generator function that yields the results of calling oft on all elements t in this.T as Array ordered pairs, or [t, oft(t)]', () => {
+          it('should hold true for single-term instance ', () => {
+            let testObj = new MathOfT(a=>5*a);
+            let res = [...testObj.ofAlltT()];
+            let T = [...testObj.T()];
+            T.should.have.lengthOf(res.length);
+            for (var i in T) {
+              let t = T[i];
+              res[i].should.deep.equal([t,testObj.oft(t)]);
+            }
+          });
+          it('should hold true for multi -term instance ', () => {
+            let testObj = new MathOfT({
+              terms: [
+                a => a/(2**a),
+                b => b/(4**b),
+                c => c/(8**c)
+              ]
+            });
+            let res = [...testObj.ofAlltT()];
+            let T = [...testObj.T()];
+            T.should.have.lengthOf(res.length);
+            for (var i in T) {
+              let t = T[i];
+              res[i].should.deep.equal([t,testObj.oft(t)]);
+            }
+          });
+          it('should hold true for multiterm nested instance ', () => {
+            let testObj = new MathOfT({
+              terms: [
+                a => [
+                  a/(2**a),
+                  a*(2**a)
+                ],
+                b => [
+                  b/(4**b),
+                  b*(4**b)
+                ],
+                c => [
+                  c*(8**c),
+                  c/(8**c)
+                ]
+              ]
+            });
+            let res = [...testObj.ofAlltT()];
+            let T = [...testObj.T()];
+            T.should.have.lengthOf(res.length);
+            for (var i in T) {
+              let t = T[i];
+              res[i].should.deep.equal([t,testObj.oft(t)]);
+            }
+          });
+        });
+
+      });
+      describe('[Symbol.iterator]', () => {
+        describe('returns a generator function that yields the results of calling oft on all elements t in this.T, i.e. [oft(t0)...oft(tt)]', () => {
+          it('should hold true for single-term instance ', () => {
+            let testObj = new MathOfT(a=>a/33);
+            let res = [...testObj];
+            let T = [...testObj.T()];
+            T.should.have.lengthOf(res.length);
+            for (var i in T) {
+              let t = T[i];
+              res[i].should.deep.equal(testObj.oft(t));
+            }
+          });
+          it('should hold true for multi-term instance ', () => {
+            let testObj = new MathOfT({
+              terms: [
+                a => a/(3**a),
+                b => b/(9**b),
+                c => c/(27**c)
+              ]
+            });
+            let res = [...testObj];
+            let T = [...testObj.T()];
+            T.should.have.lengthOf(res.length);
+            for (var i in T) {
+              let t = T[i];
+              res[i].should.deep.equal(testObj.oft(t));
+            }
+          });
+          it('should hold true for multiterm nested instance ', () => {
+            let testObj = new MathOfT({
+              terms: [
+                a => [
+                  a/(3**a),
+                  a*(3**a)
+                ],
+                b => [
+                  b/(9**b),
+                  b*(9**b)
+                ],
+                c => [
+                  c*(27**c),
+                  c/(27**c)
+                ]
+              ]
+            });
+            let res = [...testObj.ofAlltT()];
+            let T = [...testObj.T()];
+            T.should.have.lengthOf(res.length);
+            for (var i in T) {
+              let t = T[i];
+              res[i].should.deep.equal([t,testObj.oft(t)]);
+            }
+          });
         });
       });
     });
