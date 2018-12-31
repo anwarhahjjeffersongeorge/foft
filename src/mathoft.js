@@ -583,8 +583,13 @@ class MathOfT{
           break;
         case MathOfT.MATHTYPES.arraylike:
           if(MathOfT.ISARRAYLIKE(acc)){
-            if(acc.length!=val.length){ //size mismatch
-              throw new TypeError('Can\'t apply an op to arraylike values of dissimilar lengths.');
+            if(acc.length!=val.length){ //size mismatch?
+              let areMismatched=(MathOfT.ISARRAYLIKE(val[0]))
+                ? acc.length!=val[0].length
+                : false;
+              if(areMismatched) {
+                throw new TypeError('Can\'t apply an op to arraylike values of dissimilar lengths.');
+              }
             }
             for(let i = 0; i < val.length; i++){
               val[i] = transform(acc[i], val[i]); //overwrite in place
@@ -609,7 +614,9 @@ class MathOfT{
         break;
       default:
         return (_acc)
-          ? _oft.reduce(transform, _acc)
+          ? MathOfT.ISARRAYLIKE(_acc) 
+            ? transform(_acc, _oft)
+            : _oft.reduce(transform, _acc)
           : _oft.reduce(transform);
         break;
     }

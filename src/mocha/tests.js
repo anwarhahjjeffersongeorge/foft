@@ -1773,7 +1773,7 @@ function dotest(MathOfT){
               it('for numberlike term(mismatch) result should throw TypeError', () => {
                 let acc = [0,31,52.8];
                 let badFunc = ()=>testObj.oftOp(5,'-',acc);
-                badFunc.should.throw(TypeError);
+                badFunc.should.throw(TypeError, 'Can\'t apply an arraylike accumulator to a scalar.');
                 // res = testObj.oftOp(420,'-',222);
                 // res.should.deep.equal(testObj.oft(420));
               });
@@ -1809,7 +1809,7 @@ function dotest(MathOfT){
                   opcode: '+'
                 });
               });
-              it('for numberlike terms, result should produce the same as calling oft with said t and sequentially applying op to the resulting array\'s members', () => {
+              it('for array of number-producing terms, result should produce the same as calling oft with said t and sequentially applying op to the resulting array\'s members', () => {
                 let t = 5;
                 let ans = testObj.terms[0](t) - testObj.terms[1](t) - testObj.terms[2](t);
                 let res = testObj.oftOp(t, '-');
@@ -1821,19 +1821,11 @@ function dotest(MathOfT){
               });
               it('for arraylike term result should produce the same as calling oft with said t and sequentially applying op to the resulting nested array\'s members', () => {
                 let t = 5;
-                let ans = testObj2.terms[0](t).map((v,abc)=>{
-                   v.map((vv,ij)=>{
-                     vv - testObj2.terms[1](t)[abc][ij];
-                   });
-                });
+                let ans = testObj2.terms[0](t).map((v,abc)=> v - testObj2.terms[1](t)[abc]);
                 let res = testObj2.oftOp(5, '-');
                 res.should.deep.equal(ans);
                 t = 55;
-                ans = testObj2.terms[0](t).map((v,abc)=>{
-                   v.map((vv,ij)=>{
-                     vv + testObj2.terms[1](t)[abc][ij];
-                   });
-                });
+                ans = testObj2.terms[0](t).map((v,abc)=> v+ testObj2.terms[1](t)[abc]);
                 res = testObj2.oftOp(55,'badcode');
                 res.should.deep.equal(ans);
               });
@@ -1856,22 +1848,34 @@ function dotest(MathOfT){
                   opcode: '+'
                 });
               });
-              it('for numberlike term result should produce the same as applying op to acc and the result of calling oft with said t', () => {
+              it('for arraylike of numberlike term result should produce the same as applying op to acc and then sequentially to the results of calling oft with said t', () => {
                 let acc = 4;
-                let res = testObj.oftOp(5,'-',acc);
-                res.should.equal(acc-testObj.oft(5));
+                let t = 5;
+                let ans = acc - testObj.terms[0](t) - testObj.terms[1](t) - testObj.terms[2](t);
+                let res = testObj.oftOp(t, '-',acc);
+                res.should.deep.equal(ans);
+                t = 55;
+                ans = acc + testObj.terms[0](t) + testObj.terms[1](t) + testObj.terms[2](t);
                 res = testObj.oftOp(55,'badcode',acc);
-                res.should.deep.equal(acc**testObj.oft(55));
-                // res = testObj.oftOp(420,'-',222);
-                // res.should.deep.equal(testObj.oft(420));
+                res.should.deep.equal(ans);
               });
-              it('for arraylike term result should produce the same as applying op to an array whose members are all acc and the result of calling oft with said t', () => {
+              it('for arraylike of arraylike term result should produce the same as applying op to an array whose members are all acc and the result of calling oft with said t', () => {
                 let acc = 420;
-                let res = testObj2.oftOp(5,'-',acc);
-                res.should.deep.equal(testObj2.oft(5).map(v=>acc-v));
+                let t = 5;
+                let ans = Array(testObj.terms.length)
+                  .fill(acc)
+                  .map((v,abc)=> v - testObj2.terms[0](t)[abc])
+                  .map((v,abc)=> v - testObj2.terms[1](t)[abc]);
+                let res = testObj2.oftOp(5, '-',acc);
+                res.should.deep.equal(ans);
+                t = 55;
+                ans = Array(testObj.terms.length)
+                  .fill(acc)
+                  .map((v,abc)=> v + testObj2.terms[0](t)[abc])
+                  .map((v,abc)=> v + testObj2.terms[1](t)[abc]);
                 res = testObj2.oftOp(55,'badcode',acc);
-                res.should.deep.equal(testObj2.oft(55).map(v=>acc**v));
-                // res = testObj2.oftOp(420,'-',222);
+                res.should.deep.equal(ans);
+                // res = testObj2.oftOp(420,'-',222);\\\\\\\
                 // res.should.deep.equal(testObj2.oft(420));
               });
             });
@@ -1893,19 +1897,46 @@ function dotest(MathOfT){
                   opcode: '+'
                 });
               });
-              it('for numberlike term(mismatch) result should throw TypeError', () => {
-                let acc = [0,31,52.8];
+              it('for arraylike acc of different dimensions than arraylike term, result should throw TypeError', () => {
+                let acc = [0,31,52,3];
                 let badFunc = ()=>testObj.oftOp(5,'-',acc);
-                badFunc.should.throw(TypeError);
+                badFunc.should.throw(TypeError, 'Can\'t apply an op to arraylike values of dissimilar lengths.');
                 // res = testObj.oftOp(420,'-',222);
                 // res.should.deep.equal(testObj.oft(420));
               });
-              it('for arraylike term result should produce the same as applying op to an array whose members are all acc and the result of calling oft with said t', () => {
-                let acc = 420;
-                let res = testObj2.oftOp(5,'-',acc);
-                res.should.deep.equal(testObj2.oft(5).map(v=>acc-v));
+              it('for arraylike acc of same dimensions as arraylike term, result should equal op applied to oft and not throw TypeError' , () => {
+                let acc = [10,300,52.8];
+                let t = 5;
+                let ans = acc
+                  .map((v,abc)=> v - testObj.terms[abc](t));
+                let res = testObj.oftOp(t, '-',acc);
+                res.should.deep.equal(ans);
+                t = 55;
+                ans = acc
+                  .map((v,abc)=> v + testObj.terms[abc](t));
+                res = testObj.oftOp(55,'badcode',acc);
+                res.should.deep.equal(ans);
+                // res = testObj.oftOp(420,'-',222);
+                // res.should.deep.equal(testObj.oft(420));
+              });
+              it('for arraylike term result should produce the same as applying op to acc and the result of calling oft with said t', () => {
+                // let res = testObj2.oftOp(5,'-',acc);
+                // res.should.deep.equal(testObj2.oft(5).map(v=>acc-v));
+                // res = testObj2.oftOp(55,'badcode',acc);
+                // res.should.deep.equal(testObj2.oft(55).map(v=>acc**v));
+                let acc = [420,2020,888];
+                let t = 5;
+                let ans = acc
+                  .map((v,abc)=> v - testObj2.terms[0](t)[abc])
+                  .map((v,abc)=> v - testObj2.terms[1](t)[abc]);
+                let res = testObj2.oftOp(5, '-',acc);
+                res.should.deep.equal(ans);
+                t = 55;
+                ans = acc
+                  .map((v,abc)=> v + testObj2.terms[0](t)[abc])
+                  .map((v,abc)=> v + testObj2.terms[1](t)[abc]);
                 res = testObj2.oftOp(55,'badcode',acc);
-                res.should.deep.equal(testObj2.oft(55).map(v=>acc**v));
+                res.should.deep.equal(ans);
                 // res = testObj2.oftOp(420,'-',222);
                 // res.should.deep.equal(testObj2.oft(420));
               });
