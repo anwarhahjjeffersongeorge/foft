@@ -630,12 +630,14 @@ class MathOfT{
 
 
   /**
-  * get ofAllT - get a Generator that yields
+  * get ofAlltT - get a Generator that yields
   * all Array=[t, this.oft(t)] for t in evaluation range
+  * in form [t, this.oft(t)]
+  *
   * @see oft
-  * @return {Generator} yielding Array in form [t, this.oft(t)]
+  * @return {Generator}
   */
-  get ofAllT(){
+  get ofAlltT(){
     return function*(){
       for(let t of [...this.T()]){
         yield [

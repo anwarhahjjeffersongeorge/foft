@@ -1997,8 +1997,17 @@ function dotest(MathOfT){
           });
         });
       });
-      describe('ofAllT', () => {
-
+      describe('ofAlltT', () => {
+        it('should return a generator function that yields the results of calling oft on all elements t in this.T as Array ordered pairs, or [t, oft(t)]', () => {
+          let testObj = new MathOfT(a=>5*a);
+          let res = [...testObj.ofAlltT()];
+          let T = [...testObj.T()];
+          T.should.have.lengthOf(res.length);
+          for (var i in T) {
+            let t = T[i];
+            res[i].should.deep.equal([t,testObj.oft(t)]);
+          }
+        });
       });
     });
   });
