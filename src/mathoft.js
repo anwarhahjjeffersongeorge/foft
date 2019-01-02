@@ -1,4 +1,21 @@
 "use strict";
+// https://stackoverflow.com/questions/36871299/how-to-extend-function-with-es6-classes
+// https://stackoverflow.com/questions/23807805/why-is-mutating-the-prototype-of-an-object-bad-for-performance7
+// https://stackoverflow.com/questions/32444575/whats-the-performance-impact-of-setprototypeof-on-a-new-object
+// https://esdiscuss.org/topic/setprototypeof-vs-obj-proto-assignment#content-5
+class ExtensibleFunction2 extends Function{
+  constructor(){
+    super('...args','return this.__call__(args)');
+    return this.bind(this);
+  }
+
+}
+
+class ExtensibleFunction extends Function {
+  constructor(f) {
+    return Object.setPrototypeOf(f, new.target.prototype);
+  }
+}
 /**
 * @class MathOfT is a class that evaluates the
 * properties of Function or MathOfT objects that
@@ -22,7 +39,7 @@
 * of the Function or MathOfT objects in its terms
 * @see MathOfT.oft
 */
-class MathOfT{
+class MathOfT extends ExtensibleFunction2{
 
   // static #test=1;//@babel/plugin-proposal-class-properties
   /**
@@ -37,8 +54,38 @@ class MathOfT{
   * @throws TypeError
   */
   constructor(params){
+    super();
+
+    Object.defineProperties(this,
+      {
+        '_range': {
+          value: [],
+          enumerable: false,
+          configurable: true,
+          writable: true,
+        },
+        '_terms': {
+          value: [],
+          enumerable: false,
+          configurable: false,
+          writable: true,
+        },
+        '_segmentDivisor': {
+          value: [],
+          enumerable: false,
+          configurable: true,
+          writable: true,
+        },
+
+
+      }
+    );
+
+
     params = params || {};
-    if (typeof params === 'function'){
+
+
+    if ((typeof params === 'function') || (params instanceof MathOfT)){
       let thefunc = params;
       params = {
         terms: thefunc
@@ -73,16 +120,15 @@ class MathOfT{
 
     // this MathOfT can use these terms
     // define terms
+    this._terms=[]
     let terms = params.terms || [(t)=>t];
-    terms = (typeof terms === 'function')
+    terms = ( typeof terms === 'function'
+      || (false))
     ? [terms]
     : terms;
     if(!MathOfT.ISARRAYLIKE(terms) && (typeof terms !== 'function') ){
       throw new TypeError('params.terms should be array or function');
     }
-    this._terms = [];
-
-
     for(let term of terms){
       // const term = terms[termIndex];
       // console.log(term);``
@@ -91,6 +137,12 @@ class MathOfT{
     // console.log(params.opcode)
     // debugger;
     this.opcode = params.opcode;
+    // return this.bind(this);
+  }
+
+
+  __call__(...args){
+    return this.oft.call(this,...args);
   }
 
 
@@ -117,7 +169,7 @@ class MathOfT{
   addTerm(term, harmonize){
     let numterms = this.terms.length;
     harmonize = (typeof harmonize === 'boolean') ? harmonize : false;
-    if(typeof term === 'function'){
+    if(typeof term === 'function' && !(term instanceof MathOfT)){
       this.terms.push(term);
     } else if (term instanceof MathOfT){
       this.terms.push(term);
@@ -455,7 +507,7 @@ class MathOfT{
   oft(t, filterNulls){
     t = MathOfT.ISCALCULABLE(t)
     ? t
-    : this.t0;
+    : this._range[0];
     filterNulls = (typeof filterNulls === 'boolean')
     ? filterNulls
     : false;
@@ -466,7 +518,7 @@ class MathOfT{
     let result = [];
     for(let i in this._terms){
       let _term = this._terms[i];
-      if(typeof _term === 'function'){
+      if((typeof _term === 'function') && !(_term instanceof MathOfT)){
         result[i]=_term.call(tthis, t);
       } else if(_term instanceof MathOfT){
         let subres = _term.isInRange(t)

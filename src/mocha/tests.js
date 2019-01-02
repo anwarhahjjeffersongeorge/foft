@@ -1014,6 +1014,17 @@ function dotest(MathOfT){
       before(function(){
         testObj = new MathOfT();
       });
+      describe('function call', ()=>{
+        it('should be callable as a function and not throw', () => {
+          let goodfunc = ()=>testObj();
+          goodfunc.should.not.throw();
+        });
+        it('calling it as a function with the argument t should return the same value as calling the instance oft method with t', () => {
+          let t = .733;
+          let res = testObj(t);
+          res.should.equal(testObj.oft(t));
+        });
+      });
       describe('.addTerm(term)', function(){
         it('should only add terms of type function or MathOfT, returning boolean to indicate success or failure', function(){
           let badobj = {},
@@ -1407,10 +1418,13 @@ function dotest(MathOfT){
           it('should provide the value of the term for any given t', () => {
             testObj = new MathOfT(a => 9*a);
             testObj.oft(3).should.equal(27);
+          });
+          it('should provide the value of the MathOfT term for any given t', () => {
             testObj = new MathOfT(new MathOfT(a => 9*a));
             testObj.oft(.5).should.equal(4.5);
           });
         });
+
         describe('for a MathOfT instance with multiple function or MathOfT terms', () => {
           it('should provide the Array whose elements are the values of the terms for any given t ', ()=>{
             testObj = new MathOfT({
