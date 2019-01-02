@@ -5,10 +5,52 @@
 // https://esdiscuss.org/topic/setprototypeof-vs-obj-proto-assignment#content-5
 class ExtensibleFunction2 extends Function{
   constructor(){
-    super('...args','return this.__call__(args)');
+    super('...args','return this.__call__(...args)');
+    Object.defineProperties(this,
+      {
+        'range': {
+          // value: [],
+          get: ()=>null,
+          set: ()=>null,
+          enumerable: false,
+          configurable: true,
+          // writable: true,
+        },
+        'terms': {
+          // value: [],
+          get: ()=>null,
+          set: ()=>null,
+          enumerable: false,
+          configurable: false,
+          // writable: true,
+        },
+        'segmentDivisor': {
+          // value: [],
+          get: ()=>null,
+          set: ()=>null,
+          enumerable: false,
+          configurable: true,
+          // writable: true,
+        },
+        // '__call__':{
+        //   value: (...args)=>{
+        //     console.log(this)
+        //     return this.oft.call(this,...args);
+        //   },
+        //   enumerable: false,
+        //   configurable: true,
+        //   writable: true,
+        // }
+
+      }
+    );
+
     return this.bind(this);
   }
 
+  __call__(...args){
+    throw new Error(`please override before calling with ${args}`)
+  }
 }
 
 class ExtensibleFunction extends Function {
@@ -39,7 +81,8 @@ class ExtensibleFunction extends Function {
 * of the Function or MathOfT objects in its terms
 * @see MathOfT.oft
 */
-class MathOfT extends ExtensibleFunction2{
+class MathOfT extends ExtensibleFunction{
+// class MathOfT extends ExtensibleFunction2{
 
   // static #test=1;//@babel/plugin-proposal-class-properties
   /**
@@ -54,32 +97,8 @@ class MathOfT extends ExtensibleFunction2{
   * @throws TypeError
   */
   constructor(params){
-    super();
-
-    Object.defineProperties(this,
-      {
-        '_range': {
-          value: [],
-          enumerable: false,
-          configurable: true,
-          writable: true,
-        },
-        '_terms': {
-          value: [],
-          enumerable: false,
-          configurable: false,
-          writable: true,
-        },
-        '_segmentDivisor': {
-          value: [],
-          enumerable: false,
-          configurable: true,
-          writable: true,
-        },
-
-
-      }
-    );
+    // super();
+    super((...args)=>this.oft(...args))
 
 
     params = params || {};
@@ -138,12 +157,17 @@ class MathOfT extends ExtensibleFunction2{
     // debugger;
     this.opcode = params.opcode;
     // return this.bind(this);
+    // this['__call__']=(...args)=>{
+    //   console.log('__call__', this._range)
+    //   return this.oft.call(...args);
+    // }
   }
 
-
-  __call__(...args){
-    return this.oft.call(this,...args);
-  }
+  //
+  // '__call__'(t, filterNulls){
+  //   console.log('__call__', this.range)
+  //   return this.oft(t, filterNulls,false);
+  // }
 
 
   /**
@@ -504,20 +528,27 @@ class MathOfT extends ExtensibleFunction2{
   * @param {boolean} [filterNulls=false]
   * @return {(Number|Array.<Number>|Array<Array>)}
   */
-  oft(t, filterNulls){
+  oft(t, filterNulls,dotthis){
+    // console.log(this)
     t = MathOfT.ISCALCULABLE(t)
     ? t
-    : this._range[0];
+    : this.t0;
     filterNulls = (typeof filterNulls === 'boolean')
     ? filterNulls
     : false;
+    dotthis = (typeof dotthis === 'boolean')
+    ? dotthis
+    : true;
     // debugger;
-    let tthis = (typeof this.tthis === 'object')
-      ? this.tthis
-      : MathOfT.TTHIS_TEMPLATE(t, this);
+    let tthis = null;
+    if (dotthis) {
+      tthis=(typeof this.tthis === 'object')
+        ? this.tthis
+        : MathOfT.TTHIS_TEMPLATE(t, this);
+    }
     let result = [];
-    for(let i in this._terms){
-      let _term = this._terms[i];
+    for(let i in this.terms){
+      let _term = this.terms[i];
       if((typeof _term === 'function') && !(_term instanceof MathOfT)){
         result[i]=_term.call(tthis, t);
       } else if(_term instanceof MathOfT){
