@@ -141,10 +141,9 @@ class MathOfT extends ExtensibleFunction{
     // define terms
     this._terms=[]
     let terms = params.terms || [(t)=>t];
-    terms = ( typeof terms === 'function'
-      || (false))
-    ? [terms]
-    : terms;
+    terms = ( typeof terms === 'function')
+      ? [terms]
+      : terms;
     if(!MathOfT.ISARRAYLIKE(terms) && (typeof terms !== 'function') ){
       throw new TypeError('params.terms should be array or function');
     }
@@ -192,11 +191,15 @@ class MathOfT extends ExtensibleFunction{
   */
   addTerm(term, harmonize){
     let numterms = this.terms.length;
+    const push=(_term)=>{
+      this.terms.push(_term);
+      this[numterms]=this.terms[numterms];
+    };
     harmonize = (typeof harmonize === 'boolean') ? harmonize : false;
     if(typeof term === 'function' && !(term instanceof MathOfT)){
-      this.terms.push(term);
+      push(term);
     } else if (term instanceof MathOfT){
-      this.terms.push(term);
+      push(term);
       if(harmonize){
         // term.range = this.range;
         // term.segmentDivisor = this.segmentDivisor;
@@ -209,6 +212,8 @@ class MathOfT extends ExtensibleFunction{
         }
       }
     }
+
+
     return numterms==this.terms.length-1;
   }
 
@@ -654,7 +659,7 @@ class MathOfT extends ExtensibleFunction{
 
     const transform = (acc,val)=>{
       // let res;
-      // console.log(acc,val);
+      console.log(acc,val);
       switch (MathOfT.MATHTYPEOF(val)) {
         case MathOfT.MATHTYPES.numberlike:
           if (MathOfT.ISARRAYLIKE(acc)) {
@@ -744,16 +749,16 @@ class MathOfT extends ExtensibleFunction{
   }
 
   /**
-  * get ofAllTOp - get a Generator that yields all
-  * this.oftOp(_t, _acc, _op) for _t in evaluation range,
+  * get ofAlltTOp - get a Generator that yields all
+  * this.oftOp(_t, _acc, _op) for _t in T,
   * _acc, _op provided by user
   *
-  * @see ofAllTOp
+  * @see ofAlltTOp
   * @return {Generator}  description
   */
-  get ofAllTOp(){
+  get ofAlltTOp(){
     return function*(_acc, _op){
-      yield* [...this.T()].map((_t,i)=>this.oftOp(_t,_acc,_op))
+      yield* [...this.T()].map((_t)=>this.oftOp(_t,_op,_acc))
     }
   }
 

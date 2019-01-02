@@ -999,13 +999,13 @@ function dotest(MathOfT){
           testObj.segmentDivisor.should.be.a('number');
           testObj.segmentDivisor.should.equal(MathOfT.DEFAULT_SEGMENT_DIVISOR);
         });
-        it('terms (Array): [ x => x ]', function(){
-          testObj.terms.should.be.an('array');
-          testObj.terms.should.have.lengthOf(1);
-          let testFunc = testObj.terms[0], testVal = Math.random();
-          testFunc.should.be.a('function');
-          testFunc(testVal).should.equal(testVal);
-        });
+        // it('terms (Array): [ x => x ]', function(){
+        //   testObj.terms.should.be.an('array');
+        //   testObj.terms.should.have.lengthOf(1);
+        //   let testFunc = testObj.terms[0], testVal = Math.random();
+        //   testFunc.should.be.a('function');
+        //   testFunc(testVal).should.equal(testVal);
+        // });
       });
     });
     describe('MathOfT instance', function(){
@@ -1034,6 +1034,18 @@ function dotest(MathOfT){
           testObj.addTerm(goodobjA).should.be.true;
           testObj.addTerm(goodobjB).should.be.true;
         });
+        // it('array notation should reference the added terms in corresponding order to their array positions', ()=>{
+        //
+        //   testObj = new MathOfT();
+        //   let badobj = {},
+        //     goodobjA = dd=>dd,
+        //     goodobjB = new MathOfT();
+        //   testObj.addTerm(badobj).should.be.false;
+        //   testObj.addTerm(goodobjA).should.be.true;
+        //   testObj.addTerm(goodobjB).should.be.true;
+        //   testObj[0].should.equal(testObj.terms[0]);
+        //   testObj[1].should.equal(goodobjB);
+        // });
         describe('when provided a true boolean parameter harmonize and a MathOfT instance as term parameter', () => {
           it('should add a modified version of the term whose range and segmentDivisor are set to those of the receiving term and the ', () => {
             testObj = new MathOfT({
@@ -2122,7 +2134,62 @@ function dotest(MathOfT){
           });
         });
       });
-      
+      describe('ofAlltOp', () => {
+        describe('returns a generator function that yields the results of calling oftOp on all elements t in this.T as Array ordered pairs, or [t, oft(t)]', () => {
+          it('should hold true for single-term instance ', () => {
+            let testObj = new MathOfT(a=>5.33/a);
+            let res = [...testObj.ofAlltTOp()];
+            let T = [...testObj.T()];
+            T.should.have.lengthOf(res.length);
+            for (var i in T) {
+              let t = T[i];
+              res[i].should.deep.equal(testObj.oftOp(t));
+            }
+          });
+          it('should hold true for multi -term instance ', () => {
+            let testObj = new MathOfT({
+              terms: [
+                a => a/(2**a),
+                b => b/(4**b),
+                c => c/(8**c)
+              ]
+            });
+            let res = [...testObj.ofAlltTOp()];
+            let T = [...testObj.T()];
+            T.should.have.lengthOf(res.length);
+            for (var i in T) {
+              let t = T[i];
+              res[i].should.deep.equal(testObj.oftOp(t));
+            }
+          });
+          it('should hold true for multiterm nested instance ', () => {
+            let testObj = new MathOfT({
+              terms: [
+                a => [
+                  a/(2**a),
+                  a*(2**a)
+                ],
+                b => [
+                  b/(4**b),
+                  b*(4**b)
+                ],
+                c => [
+                  c*(8**c),
+                  c/(8**c)
+                ]
+              ]
+            });
+            let res = [...testObj.ofAlltTOp()];
+            let T = [...testObj.T()];
+            T.should.have.lengthOf(res.length);
+            for (var i in T) {
+              let t = T[i];
+              res[i].should.deep.equal(testObj.oftOp(t));
+            }
+          });
+        });
+
+      });
     });
   });
   //TODO browser tests
