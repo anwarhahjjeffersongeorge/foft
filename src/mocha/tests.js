@@ -2152,7 +2152,8 @@ function dotest(MathOfT){
                 a => a/(2**a),
                 b => b/(4**b),
                 c => c/(8**c)
-              ]
+              ],
+              opcode: '+'
             });
             let res = [...testObj.ofAlltTOp()];
             let T = [...testObj.T()];
@@ -2177,7 +2178,7 @@ function dotest(MathOfT){
                   c*(8**c),
                   c/(8**c)
                 ]
-              ]
+              ],
             });
             let res = [...testObj.ofAlltTOp()];
             let T = [...testObj.T()];
@@ -2188,7 +2189,68 @@ function dotest(MathOfT){
             }
           });
         });
-
+      });
+      describe('mapT', () => {
+        it('should throw TypeError when not given a valid function as callback parameter', () => {
+          let testObj = new MathOfT(a=>5.33/a);
+          let badfunc = ()=>testObj.mapT({});
+          badfunc.should.throw(TypeError);
+        });
+        it('for single-term instance, should  apply valid function callback parameter to all evaluation results', () => {
+          let testObj = new MathOfT(a=>5.33/a);
+          let res = testObj.mapT(v=>v*8);
+          let T = [...testObj.T()];
+          for (let i in T) {
+            let t = T[i];
+            res[i].should.equal(testObj.oft(t)*8);
+          }
+        });
+        it('for multiterm instance, should  apply valid function callback parameter to all evaluation results', () => {
+          let testObj = new MathOfT({
+            terms: [
+              a => a/(2**a),
+              b => b/(4**b),
+              c => c/(8**c)
+            ]
+          });
+          let res = testObj.mapT(v=>v);
+          let T = [...testObj.T()];
+          for (let i in T) {
+            let t = T[i];
+            res[i].should.deep.equal(testObj.oft(t));
+          }
+        });
+      });
+      describe('mapTOp', () => {
+        it('should throw TypeError when not given a valid function as callback parameter', () => {
+          let testObj = new MathOfT(a=>5.33/a);
+          let badfunc = ()=>testObj.mapTOp({});
+          badfunc.should.throw(TypeError);
+        });
+        it('for single-term instance, should  apply valid function callback parameter to all evaluation results', () => {
+          let testObj = new MathOfT(a=>5.33/a);
+          let res = testObj.mapTOp(v=>v*8);
+          let T = [...testObj.T()];
+          for (let i in T) {
+            let t = T[i];
+            res[i].should.equal(testObj.oftOp(t)*8);
+          }
+        });
+        it('for multiterm instance, should  apply valid function callback parameter to all evaluation results', () => {
+          let testObj = new MathOfT({
+            terms: [
+              a => a/(2**a),
+              b => b/(4**b),
+              c => c/(8**c)
+            ]
+          });
+          let res = testObj.mapTOp(v=>v);
+          let T = [...testObj.T()];
+          for (let i in T) {
+            let t = T[i];
+            res[i].should.deep.equal(testObj.oftOp(t));
+          }
+        });
       });
     });
   });

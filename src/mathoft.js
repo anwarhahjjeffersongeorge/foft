@@ -656,10 +656,9 @@ class MathOfT extends ExtensibleFunction{
         ? _acc
         : NaN;
     // debugger;
-
     const transform = (acc,val)=>{
       // let res;
-      console.log(acc,val);
+      // console.log(acc,val);
       switch (MathOfT.MATHTYPEOF(val)) {
         case MathOfT.MATHTYPES.numberlike:
           if (MathOfT.ISARRAYLIKE(acc)) {
@@ -698,6 +697,10 @@ class MathOfT extends ExtensibleFunction{
     };
 
     let _oft = this.oft(_t);
+    //
+    if(!_op){
+      return op(_oft)
+    }
     // console.log(_oft)
     switch (this.terms.length) {
       case 1:
@@ -763,6 +766,20 @@ class MathOfT extends ExtensibleFunction{
   }
 
   /**
+  * map - apply the Array.map native function to the elements yielded by
+  * this[Symbol.iterator] with the given callback function and this argument
+  *    *
+  * @see get [Symbol.iterator]
+  * @param  {Function} [callback] callback to apply
+  * @param  {Object} [thisArg]  this argument
+  * @return {Array}         map result
+  */
+  mapT(callback, thisArg){
+    if(!(callback instanceof Function)) throw new TypeError('map needs Function callback');
+    return [...this].map(callback, thisArg);
+  }
+
+  /**
   * mapTOp - apply the Array.map native function to the elements of
   * this.ofAllTOp() with the given callback function and this argument
   * @see Array.map
@@ -773,22 +790,7 @@ class MathOfT extends ExtensibleFunction{
   */
   mapTOp(callback, thisArg){
     if(!(callback instanceof Function)) throw new TypeError('map needs Function callback');
-    return [...this.ofAllTOp()].map(callback, thisArg);
-  }
-
-
-  /**
-  * map - apply the Array.map native function to the elements yielded by
-  * this[Symbol.iterator] with the given callback function and this argument
-  *    *
-  * @see get [Symbol.iterator]
-  * @param  {Function} [callback] callback to apply
-  * @param  {Object} [thisArg]  this argument
-  * @return {Array}         map result
-  */
-  map(callback, thisArg){
-    if(!(callback instanceof Function)) throw new TypeError('map needs Function callback');
-    return [...this].map(callback, thisArg);
+    return [...this.ofAlltTOp()].map(callback, thisArg);
   }
 
   /**
