@@ -1,61 +1,22 @@
-"use strict";
+'use strict'
 // https://stackoverflow.com/questions/36871299/how-to-extend-function-with-es6-classes
 // https://stackoverflow.com/questions/23807805/why-is-mutating-the-prototype-of-an-object-bad-for-performance7
 // https://stackoverflow.com/questions/32444575/whats-the-performance-impact-of-setprototypeof-on-a-new-object
 // https://esdiscuss.org/topic/setprototypeof-vs-obj-proto-assignment#content-5
-class ExtensibleFunction2 extends Function{
-  constructor(){
-    super('...args','return this.__call__(...args)');
-    Object.defineProperties(this,
-      {
-        'range': {
-          // value: [],
-          get: ()=>null,
-          set: ()=>null,
-          enumerable: false,
-          configurable: true,
-          // writable: true,
-        },
-        'terms': {
-          // value: [],
-          get: ()=>null,
-          set: ()=>null,
-          enumerable: false,
-          configurable: false,
-          // writable: true,
-        },
-        'segmentDivisor': {
-          // value: [],
-          get: ()=>null,
-          set: ()=>null,
-          enumerable: false,
-          configurable: true,
-          // writable: true,
-        },
-        // '__call__':{
-        //   value: (...args)=>{
-        //     console.log(this)
-        //     return this.oft.call(this,...args);
-        //   },
-        //   enumerable: false,
-        //   configurable: true,
-        //   writable: true,
-        // }
-
-      }
-    );
-
-    return this.bind(this);
-  }
-
-  __call__(...args){
-    throw new Error(`please override before calling with ${args}`)
-  }
-}
-
+// only works with members defined in parent class
+// class ExtensibleFunction2 extends Function{
+//   constructor(){
+//     super('...args','return this.__call__(...args)');
+//     return this.bind(this);
+//   }
+//
+//   __call__(...args){
+//     throw new Error(`please override before calling with ${args}`)
+//   }
+// }
 class ExtensibleFunction extends Function {
-  constructor(f) {
-    return Object.setPrototypeOf(f, new.target.prototype);
+  constructor (f) {
+    return Object.setPrototypeOf(f, new.target.prototype)
   }
 }
 /**
@@ -81,7 +42,7 @@ class ExtensibleFunction extends Function {
 * of the Function or MathOfT objects in its terms
 * @see MathOfT.oft
 */
-class MathOfT extends ExtensibleFunction{
+class MathOfT extends ExtensibleFunction {
 // class MathOfT extends ExtensibleFunction2{
 
   // static #test=1;//@babel/plugin-proposal-class-properties
@@ -96,65 +57,63 @@ class MathOfT extends ExtensibleFunction{
   * @param {boolean} [params.harmonize=false] if true, will harmonize the domains of any MathOfT terms to that of the new parent instance @see range, @see segmentDivisor
   * @throws TypeError
   */
-  constructor(params){
+  constructor (params) {
     // super();
-    super((...args)=>this.oft(...args))
+    super((...args) => this.oft(...args))
 
+    params = params || {}
 
-    params = params || {};
-
-
-    if ((typeof params === 'function') || (params instanceof MathOfT)){
-      let thefunc = params;
+    if ((typeof params === 'function') || (params instanceof MathOfT)) {
+      let thefunc = params
       params = {
         terms: thefunc
-      };
-    } else if(MathOfT.ISARRAYLIKE(params)){
-      let thearray = params;
+      }
+    } else if (MathOfT.ISARRAYLIKE(params)) {
+      let thearray = params
       params = {
         range: thearray
       }
     }
 
     // define the division of the evaluation range
-    const segmentDivisor = params.segmentDivisor || MathOfT.DEFAULT_SEGMENT_DIVISOR;
-    this.segmentDivisor = segmentDivisor;
+    const segmentDivisor = params.segmentDivisor || MathOfT.DEFAULT_SEGMENT_DIVISOR
+    this.segmentDivisor = segmentDivisor
 
     let rangeoverride = (typeof params.rangeoverride === 'boolean')
-    ? params.rangeoverride
-    : false;
+      ? params.rangeoverride
+      : false
     let harmonize = (typeof params.harmonize === 'boolean')
-    ? params.harmonize
-    : false;
+      ? params.harmonize
+      : false
     // create an evaluation range
     let range = (rangeoverride)
-    ? [0, this.segmentDivisor]
-    : params.range || MathOfT.DEFAULT_RANGE;
+      ? [0, this.segmentDivisor]
+      : params.range || MathOfT.DEFAULT_RANGE
     range = MathOfT.ISCALCULABLE(range)
-    ? [-range, range]
-    : range;
-    if(!MathOfT.ISARRAYLIKE(range)) throw new TypeError('range should be array');
+      ? [-range, range]
+      : range
+    if (!MathOfT.ISARRAYLIKE(range)) throw new TypeError('range should be array')
     // if(range.length!==2) throw new RangeError('range should have two elements')
-    this.range = Array.from(range);
+    this.range = Array.from(range)
 
     // this MathOfT can use these terms
     // define terms
-    this._terms=[]
-    let terms = params.terms || [(t)=>t];
-    terms = ( typeof terms === 'function')
+    this._terms = []
+    let terms = params.terms || [(t) => t]
+    terms = (typeof terms === 'function')
       ? [terms]
-      : terms;
-    if(!MathOfT.ISARRAYLIKE(terms) && (typeof terms !== 'function') ){
-      throw new TypeError('params.terms should be array or function');
+      : terms
+    if (!MathOfT.ISARRAYLIKE(terms) && (typeof terms !== 'function')) {
+      throw new TypeError('params.terms should be array or function')
     }
-    for(let term of terms){
+    for (let term of terms) {
       // const term = terms[termIndex];
       // console.log(term);``
-      this.addTerm(term, harmonize);
+      this.addTerm(term, harmonize)
     }
     // console.log(params.opcode)
     // debugger;
-    this.opcode = params.opcode;
+    this.opcode = params.opcode
     // return this.bind(this);
     // this['__call__']=(...args)=>{
     //   console.log('__call__', this._range)
@@ -168,16 +127,14 @@ class MathOfT extends ExtensibleFunction{
   //   return this.oft(t, filterNulls,false);
   // }
 
-
   /**
   * get terms - the Function terms of this MathOfT object
   *
   * @return {Array}
   */
-  get terms(){
-    return this._terms;
+  get terms () {
+    return this._terms
   }
-
 
   /**
   * addTerm - add a term to the terms of this MathOfT instance
@@ -189,43 +146,42 @@ class MathOfT extends ExtensibleFunction{
   *  reference the same-named parameters of this instance.
   * @returns {boolean} true if length of terms grew
   */
-  addTerm(term, harmonize){
-    let numterms = this.terms.length;
-    const push=(_term)=>{
-      this.terms.push(_term);
-      this[numterms]=this.terms[numterms];
-    };
-    harmonize = (typeof harmonize === 'boolean') ? harmonize : false;
-    if(typeof term === 'function' && !(term instanceof MathOfT)){
-      push(term);
-    } else if (term instanceof MathOfT){
-      push(term);
-      if(harmonize){
+  addTerm (term, harmonize) {
+    let numterms = this.terms.length
+    const push = (_term) => {
+      this.terms.push(_term)
+      this[numterms] = this.terms[numterms]
+    }
+    harmonize = (typeof harmonize === 'boolean') ? harmonize : false
+    if (typeof term === 'function' && !(term instanceof MathOfT)) {
+      push(term)
+    } else if (term instanceof MathOfT) {
+      push(term)
+      if (harmonize) {
         // term.range = this.range;
         // term.segmentDivisor = this.segmentDivisor;
-        const keys = ['_range', '_segmentDivisor'];
+        const keys = ['_range', '_segmentDivisor']
         for (let key of keys) {
           Object.defineProperty(term, key, {
-            get: ()=>this[key], //reference to parent
-            set: (value)=>Object.defineProperty(term, key, {value})//dareference from parent
-          });
+            get: () => this[key], // reference to parent
+            set: (value) => Object.defineProperty(term, key, { value })// dareference from parent
+          })
         }
       }
     }
 
-
-    return numterms==this.terms.length-1;
+    return numterms === this.terms.length - 1
   }
 
-  set segmentDivisor(segmentDivisor){
+  set segmentDivisor (segmentDivisor) {
     segmentDivisor = MathOfT.ISARRAYLIKE(segmentDivisor)
       ? segmentDivisor[0]
-      : segmentDivisor;
-    if(!MathOfT.ISCALCULABLE(segmentDivisor)){
+      : segmentDivisor
+    if (!MathOfT.ISCALCULABLE(segmentDivisor)) {
       // console.log('NaN segment Divisor')
-      throw new TypeError('segmentDivisor should be non-NaN number, not: '+ segmentDivisor);
+      throw new TypeError('segmentDivisor should be non-NaN number, not: ' + segmentDivisor)
     } else {
-      this._segmentDivisor = [segmentDivisor];
+      this._segmentDivisor = [segmentDivisor]
     }
   }
   /**
@@ -235,8 +191,8 @@ class MathOfT extends ExtensibleFunction{
   *
   * @return {Number}
   */
-  get segmentDivisor(){
-    return this._segmentDivisor[0];
+  get segmentDivisor () {
+    return this._segmentDivisor[0]
   }
 
   /**
@@ -244,19 +200,19 @@ class MathOfT extends ExtensibleFunction{
    *
    * @return {Number}
    */
-  get numSegments(){
-    return this.segmentDivisor+1;
+  get numSegments () {
+    return this.segmentDivisor + 1
   }
-  get dt(){
-    return this.drange/this.segmentDivisor;
+  get dt () {
+    return this.drange / this.segmentDivisor
   }
 
-  set range(range){
-    if(!MathOfT.ARENUMBERS(...range)) throw new TypeError('range values should be Array of numbers')
-    this._range = Array(range.length);
+  set range (range) {
+    if (!MathOfT.ARENUMBERS(...range)) throw new TypeError('range values should be Array of numbers')
+    this._range = Array(range.length)
 
-    for(let rangeIndex in range){
-      this._range[rangeIndex] = range[rangeIndex];
+    for (let rangeIndex in range) {
+      this._range[rangeIndex] = range[rangeIndex]
     }
   }
   /**
@@ -264,8 +220,8 @@ class MathOfT extends ExtensibleFunction{
   *
   * @return {Array.<Number>}
   */
-  get range(){
-    return this._range;
+  get range () {
+    return this._range
   }
 
   /**
@@ -273,8 +229,8 @@ class MathOfT extends ExtensibleFunction{
   * @see T
   * @return {Number}
   */
-  get t0(){
-    return this.range[0];
+  get t0 () {
+    return this.range[0]
   }
 
   /**
@@ -282,8 +238,8 @@ class MathOfT extends ExtensibleFunction{
   * @see T
   * @return {Number}
   */
-  get tt(){
-    return this.range[this.range.length - 1 ];
+  get tt () {
+    return this.range[this.range.length - 1]
   }
 
   /**
@@ -297,8 +253,8 @@ class MathOfT extends ExtensibleFunction{
   * @see terms
   * @return {string} @see MathOfT.OPS
   */
-  get opcode(){
-    return this._opcode;
+  get opcode () {
+    return this._opcode
   }
 
   /**
@@ -307,10 +263,10 @@ class MathOfT extends ExtensibleFunction{
   *
   * @param  {string} [opcode=null] @see MathOfT.OPS
   */
-  set opcode(opcode){
+  set opcode (opcode) {
     this._opcode = (MathOfT.ISOP(opcode))
       ? opcode
-      : null;
+      : null
   }
 
   /**
@@ -325,26 +281,26 @@ class MathOfT extends ExtensibleFunction{
    * @return {Number}
    * @throws {TypeError} when given non-number parameter
    */
-  dSubrange(n, nn){
+  dSubrange (n, nn) {
     n = MathOfT.ISNUMBER(n)
       ? n
-      : 0;
-    if(nn && !MathOfT.ISNUMBER(nn)){
-       throw new TypeError(`MathOfT.dSubRange only accepts Numbers, given ${[...arguments]}`);
+      : 0
+    if (nn && !MathOfT.ISNUMBER(nn)) {
+      throw new TypeError(`MathOfT.dSubRange only accepts Numbers, given ${[...arguments]}`)
     }
-    n = n%this.range.length;
-    if(!Number.isInteger(n)){
+    n = n % this.range.length
+    if (!Number.isInteger(n)) {
       throw new RangeError(`MathOfT.dSubRange only accepts Integers, given ${[...arguments]}`)
     }
     // for this conditional, we use the explicit ISNUMBER to avoid logical
     // error for zero case: if(0) is falsy
     nn = MathOfT.ISNUMBER(nn)
-      ? nn%this.range.length
-      : (n+1)%this.range.length;
-    if(!Number.isInteger(nn)){
+      ? nn % this.range.length
+      : (n + 1) % this.range.length
+    if (!Number.isInteger(nn)) {
       throw new RangeError(`MathOfT.dSubRange only accepts Integers, given ${[...arguments]}`)
     }
-    return this.range[nn]-this.range[n];
+    return this.range[nn] - this.range[n]
   }
 
   /**
@@ -352,8 +308,8 @@ class MathOfT extends ExtensibleFunction{
   *
   * @return {Number}
   */
-  get drange(){
-    return this.range[this.range.length-1] - this.range[0];
+  get drange () {
+    return this.range[this.range.length - 1] - this.range[0]
   }
   /**
   * get dabsrange - the absolute value of the delta
@@ -361,10 +317,9 @@ class MathOfT extends ExtensibleFunction{
   *
   * @return {Number}
   */
-  get dabsrange(){
-    return Math.abs(this.drange);
+  get dabsrange () {
+    return Math.abs(this.drange)
   }
-
 
   /**
    * subT - get a generator function that yields segmentDivisor+1 values of t spanning the range [this.range[n], this.range[n+1]], where if n or n+1 fall beyond the bounds of this.range.length, they are constrained to fit
@@ -375,27 +330,28 @@ class MathOfT extends ExtensibleFunction{
    *
    * @return {type}   description
    */
-  subT(n, omitLast){
+  subT (n, omitLast) {
     omitLast = (typeof omitLast === 'boolean')
       ? omitLast
-      : false;
-    let defaultN = 0;
+      : false
+    let defaultN = 0
     n = MathOfT.ISNUMBER(n)
       ? n % this.range.length
-      : defaultN;
-    let a = this.range[n],
-      b = this.range[(n+1) % this.range.length];
+      : defaultN
+    let a = this.range[n]
+
+    let b = this.range[(n + 1) % this.range.length]
     let tsubmax = (omitLast)
-      ? this.segmentDivisor-1
-      : this.segmentDivisor;
-    let dt = (b-a)/this.segmentDivisor;
+      ? this.segmentDivisor - 1
+      : this.segmentDivisor
+    let dt = (b - a) / this.segmentDivisor
 
     /**
     * @yields {Number}
     */
-    return function*(){
-      for(let tsubindex = 0; tsubindex <= tsubmax; tsubindex ++){
-        yield a + tsubindex*dt;
+    return function * () {
+      for (let tsubindex = 0; tsubindex <= tsubmax; tsubindex++) {
+        yield a + tsubindex * dt
       }
     }
   }
@@ -413,21 +369,19 @@ class MathOfT extends ExtensibleFunction{
   * let T = [...MoT.T()]
   * @return {Generator<Number>}
   */
-  get T(){
-    let rangelimit = this.range.length-2;
+  get T () {
+    let rangelimit = this.range.length - 2
     /**
     * @yields {Number}
     */
-    return function*(){
-      for(let rangeIndex = 0; rangeIndex <= rangelimit; rangeIndex++){
-        yield* (rangeIndex == rangelimit)
+    return function * () {
+      for (let rangeIndex = 0; rangeIndex <= rangelimit; rangeIndex++) {
+        yield * (rangeIndex === rangelimit)
           ? this.subT(rangeIndex)()
-          : this.subT(rangeIndex,true)(); //chop last to eliminate double values
+          : this.subT(rangeIndex, true)() // chop last to eliminate double values
       }
     }
   }
-
-
 
   /**
   * normalizeT - given a Number t, return a normalized (to MathOfT.DEFAULT_RANGE)
@@ -446,25 +400,24 @@ class MathOfT extends ExtensibleFunction{
   * @param {boolean} [doAnti=false]
   * @return {Number|Array<Number>}
   */
-  normalizeT(t, doAnti){
-    doAnti =  (typeof doAnti === 'boolean')
+  normalizeT (t, doAnti) {
+    doAnti = (typeof doAnti === 'boolean')
       ? doAnti
-      : false;
+      : false
     let func = (doAnti)
-        ? MathOfT.ANTINORMALIZETORANGE
-        : MathOfT.NORMALIZETORANGE;
-    let arr = Array(this.range.length-1);
-    for(let r = 0; r<arr.length; r++){
+      ? MathOfT.ANTINORMALIZETORANGE
+      : MathOfT.NORMALIZETORANGE
+    let arr = Array(this.range.length - 1)
+    for (let r = 0; r < arr.length; r++) {
       arr[r] = func(t, [
         this.range[r],
-        this.range[r+1]
-      ]);
+        this.range[r + 1]
+      ])
     }
-    return (arr.length==1)
+    return (arr.length === 1)
       ? arr[0]
-      : arr;
+      : arr
   }
-
 
   /**
    * antinormalizeT - given a number t return a normalized representation of the ratio of a quantity n to the delta of the instance evaluation range such that the ratio of t to the delta of the evaluation range N satisfies
@@ -479,8 +432,8 @@ class MathOfT extends ExtensibleFunction{
    * @param  {number} t
    * @return {number} n
    */
-  antinormalizeT(t){
-    return this.normalizeT(t,true)
+  antinormalizeT (t) {
+    return this.normalizeT(t, true)
   }
 
   /**
@@ -498,19 +451,18 @@ class MathOfT extends ExtensibleFunction{
    * @param  {Number} t
    * @return {Number|null|Array<number|null>} [0, segmentDivisor]
    */
-  i(t){
-    let arr = Array(this.range.length-1);
-    for(let r = 0; r<arr.length; r++){
+  i (t) {
+    let arr = Array(this.range.length - 1)
+    for (let r = 0; r < arr.length; r++) {
       arr[r] = MathOfT.IINRANGE(t, [
         this.range[r],
-        this.range[r+1]
-      ], this.segmentDivisor);
+        this.range[r + 1]
+      ], this.segmentDivisor)
     }
-    return (arr.length==1)
+    return (arr.length === 1)
       ? arr[0]
-      : arr;
+      : arr
   }
-
 
   /**
    * isInRange - return true IFF a given t falls within the evaluation range of this instance
@@ -518,8 +470,8 @@ class MathOfT extends ExtensibleFunction{
    * @param  {number} t
    * @return {boolean}
    */
-  isInRange(t){
-    return MathOfT.INRANGE(t, this.range);
+  isInRange (t) {
+    return MathOfT.INRANGE(t, this.range)
   }
   /**
   * oft - evaluate all of the terms held by this Mathoft for the
@@ -533,46 +485,43 @@ class MathOfT extends ExtensibleFunction{
   * @param {boolean} [filterNulls=false]
   * @return {(Number|Array.<Number>|Array<Array>)}
   */
-  oft(t, filterNulls,dotthis){
+  oft (t, filterNulls, dotthis) {
     // console.log(this)
     t = MathOfT.ISCALCULABLE(t)
-    ? t
-    : this.t0;
+      ? t
+      : this.t0
     filterNulls = (typeof filterNulls === 'boolean')
-    ? filterNulls
-    : false;
+      ? filterNulls
+      : false
     dotthis = (typeof dotthis === 'boolean')
-    ? dotthis
-    : true;
+      ? dotthis
+      : true
     // debugger;
-    let tthis = null;
+    let tthis = null
     if (dotthis) {
-      tthis=(typeof this.tthis === 'object')
+      tthis = (typeof this.tthis === 'object')
         ? this.tthis
-        : MathOfT.TTHIS_TEMPLATE(t, this);
+        : MathOfT.TTHIS_TEMPLATE(t, this)
     }
-    let result = [];
-    for(let i in this.terms){
-      let _term = this.terms[i];
-      if((typeof _term === 'function') && !(_term instanceof MathOfT)){
-        result[i]=_term.call(tthis, t);
-      } else if(_term instanceof MathOfT){
+    let result = []
+    for (let i in this.terms) {
+      let _term = this.terms[i]
+      if ((typeof _term === 'function') && !(_term instanceof MathOfT)) {
+        result[i] = _term.call(tthis, t)
+      } else if (_term instanceof MathOfT) {
         let subres = _term.isInRange(t)
-          ? _term.oft.call(Object.assign(_term,{tthis}), t)
-          : null;
-        result[i]=subres; //OVERRIDE?
+          ? _term.oft.call(Object.assign(_term, { tthis }), t)
+          : null
+        result[i] = subres // OVERRIDE?
       }
     }
     result = (filterNulls)
       ? result.filter((v) => v)
-      : result;
-    return (result.length == 1)
-    ? result[0]
-    : result;
+      : result
+    return (result.length === 1)
+      ? result[0]
+      : result
   }
-
-
-
 
   /**
   * get ofFirstt - return the oft for the first t in the evaluation range
@@ -581,8 +530,8 @@ class MathOfT extends ExtensibleFunction{
   * @see oft
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
-  get ofFirstt(){
-    return this.oft(this.t0);
+  get ofFirstt () {
+    return this.oft(this.t0)
   }
   /**
   * get ofLastt - return the oft for the final t in the evaluation range
@@ -591,8 +540,8 @@ class MathOfT extends ExtensibleFunction{
   * @see oft
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
-  get ofLastt(){
-    return this.oft(this.tt);
+  get ofLastt () {
+    return this.oft(this.tt)
   }
 
   /**
@@ -610,24 +559,24 @@ class MathOfT extends ExtensibleFunction{
   * @param  {Number} [tNormal=[-1,1]]
   * @return {(Number|Array.<Number>)}
   */
-  oftNormal(tNormal){
-    let dNormal = MathOfT.DEFAULT_RANGE[1]-MathOfT.DEFAULT_RANGE[0];
-    let midNormal  = MathOfT.DEFAULT_RANGE[0] + dNormal/2;
+  oftNormal (tNormal) {
+    let dNormal = MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0]
+    let midNormal = MathOfT.DEFAULT_RANGE[0] + dNormal / 2
     tNormal = MathOfT.ISNUMBER(tNormal)
       ? tNormal
-      : midNormal;
-    let t=undefined, midt = (this.tt-this.t0)/2 + this.t0;
-    if(MathOfT.ISCALCULABLE(tNormal)){
-      t = midt + (tNormal-midNormal) * this.drange/2;
+      : midNormal
+    let t; let midt = (this.tt - this.t0) / 2 + this.t0
+    if (MathOfT.ISCALCULABLE(tNormal)) {
+      t = midt + (tNormal - midNormal) * this.drange / 2
     }
     // debugger;
-    return ( t !== undefined)
+    return (t !== undefined)
       ? this.oft(t)
       : (Number.isNaN(tNormal))
         ? NaN
         : tNormal === -Infinity
           ? this.ofFirstt
-          : this.ofLastt;
+          : this.ofLastt
   }
 
   /**
@@ -644,81 +593,82 @@ class MathOfT extends ExtensibleFunction{
   * @param  {(Number|Array.<Number>|Array.<Array>)} [_acc=null] an accumulator value to start with @see MathOfT.OPS -> base
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
-  oftOp(_t, _op, _acc){
+  oftOp (_t, _op, _acc) {
     _op = (_op in MathOfT.OPS)
       ? _op
-      : this.opcode;
-    const op=MathOfT.OPS[_op];
+      : this.opcode
+    const op = MathOfT.OPS[_op]
     // debugger;
     _acc = (!_acc)
-      ? null //op.base
+      ? null // op.base
       : (MathOfT.ARENUMBERS(_acc))
         ? _acc
-        : NaN;
+        : NaN
     // debugger;
-    const transform = (acc,val)=>{
-      // let res;
+    const transform = (acc, val) => {
+      let transformRes
       // console.log(acc,val);
       switch (MathOfT.MATHTYPEOF(val)) {
         case MathOfT.MATHTYPES.numberlike:
           if (MathOfT.ISARRAYLIKE(acc)) {
-            throw new TypeError('Can\'t apply an arraylike accumulator to a scalar.' )
-          }else if(MathOfT.ISNUMBER(acc)){
-            return op(acc, val);
+            throw new TypeError('Can\'t apply an arraylike accumulator to a scalar.')
+          } else if (MathOfT.ISNUMBER(acc)) {
+            return op(acc, val)
           }
-          return val;
-          break;
+          transformRes = val
+          break
         case MathOfT.MATHTYPES.arraylike:
-          let isNested = MathOfT.ISARRAYLIKE(val[0]);
-          if(MathOfT.ISARRAYLIKE(acc)){
-            if(acc.length!=val.length){
-              let areMismatched=(isNested)
-                ? acc.length!=val[0].length
-                : true;
-              if(areMismatched) {
-                throw new TypeError('Can\'t apply an op to arraylike values of dissimilar lengths.');
+          let isNested = MathOfT.ISARRAYLIKE(val[0])
+          if (MathOfT.ISARRAYLIKE(acc)) {
+            if (acc.length !== val.length) {
+              let areMismatched = (isNested)
+                ? acc.length !== val[0].length
+                : true
+              if (areMismatched) {
+                throw new TypeError('Can\'t apply an op to arraylike values of dissimilar lengths.')
               }
             }
-            if(isNested){
-              return val.reduce(transform,acc);
+            if (isNested) {
+              return val.reduce(transform, acc)
             } else {
-              for(let i = 0; i < val.length; i++){
-                val[i] = transform(acc[i], val[i]); //overwrite in place
+              for (let i = 0; i < val.length; i++) {
+                val[i] = transform(acc[i], val[i]) // overwrite in place
               }
             }
-          }else if(MathOfT.ISNUMBER(acc)){
-            for(let i = 0; i < val.length; i++){
-              val[i] = transform(acc, val[i]); //overwrite in place
+          } else if (MathOfT.ISNUMBER(acc)) {
+            for (let i = 0; i < val.length; i++) {
+              val[i] = transform(acc, val[i]) // overwrite in place
             }
           }
-          return val;
-          break;
+          transformRes = val
+          break
       }
-    };
+      return transformRes
+    }
 
-    let _oft = this.oft(_t);
+    let _oft = this.oft(_t)
     //
-    if(!_op){
+    if (!_op) {
       return op(_oft)
     }
     // console.log(_oft)
+    let res
     switch (this.terms.length) {
       case 1:
-        return (_acc)
+        res = (_acc)
           ? transform(_acc, _oft)
-          : _oft;
-        break;
+          : _oft
+        break
       default:
-        return (_acc)
+        res = (_acc)
           ? MathOfT.ISARRAYLIKE(_acc)
             ? transform(_acc, _oft)
             : _oft.reduce(transform, _acc)
-          : _oft.reduce(transform);
-        break;
+          : _oft.reduce(transform)
+        break
     }
+    return res
   }
-
-
 
   /**
   * get ofAlltT - get a Generator that yields
@@ -728,13 +678,13 @@ class MathOfT extends ExtensibleFunction{
   * @see oft
   * @return {Generator}
   */
-  get ofAlltT(){
-    return function*(){
-      for(let t of [...this.T()]){
+  get ofAlltT () {
+    return function * () {
+      for (let t of [...this.T()]) {
         yield [
           t,
           this.oft(t)
-        ];
+        ]
       }
     }
   }
@@ -745,9 +695,9 @@ class MathOfT extends ExtensibleFunction{
   * @see oft
   * @return {Generator} Generator function yielding this.oft(t)
   */
-  get [Symbol.iterator](){
-    return function*(){
-      yield* [...this.T()].map((t,i)=>this.oft(t));
+  get [Symbol.iterator] () {
+    return function * () {
+      yield * [...this.T()].map((t, i) => this.oft(t))
     }
   }
 
@@ -759,9 +709,9 @@ class MathOfT extends ExtensibleFunction{
   * @see ofAlltTOp
   * @return {Generator}  description
   */
-  get ofAlltTOp(){
-    return function*(_acc, _op){
-      yield* [...this.T()].map((_t)=>this.oftOp(_t,_op,_acc))
+  get ofAlltTOp () {
+    return function * (_acc, _op) {
+      yield * [...this.T()].map((_t) => this.oftOp(_t, _op, _acc))
     }
   }
 
@@ -774,9 +724,9 @@ class MathOfT extends ExtensibleFunction{
   * @param  {Object} [thisArg]  this argument
   * @return {Array}         map result
   */
-  mapT(callback, thisArg){
-    if(!(callback instanceof Function)) throw new TypeError('map needs Function callback');
-    return [...this].map(callback, thisArg);
+  mapT (callback, thisArg) {
+    if (!(callback instanceof Function)) throw new TypeError('map needs Function callback')
+    return [...this].map(callback, thisArg)
   }
 
   /**
@@ -788,9 +738,9 @@ class MathOfT extends ExtensibleFunction{
   * @param  {Object} [thisArg]  this argument
   * @return {Array}         map result
   */
-  mapTOp(callback, thisArg){
-    if(!(callback instanceof Function)) throw new TypeError('map needs Function callback');
-    return [...this.ofAlltTOp()].map(callback, thisArg);
+  mapTOp (callback, thisArg) {
+    if (!(callback instanceof Function)) throw new TypeError('map needs Function callback')
+    return [...this.ofAlltTOp()].map(callback, thisArg)
   }
 
   /**
@@ -803,64 +753,63 @@ class MathOfT extends ExtensibleFunction{
    *         {number}  the maximum value for which no precision is lost
    *         {string}  as brief message
    */
-  static CALC_PRECISION_WARN(maxtestnum){
-    let res;
-    let getmsg = (e) => `Maximum safe unit divisor: ${e}`;
+  static CALC_PRECISION_WARN (maxtestnum) {
+    let res
+    let getmsg = (e) => `Maximum safe unit divisor: ${e}`
     let tests = [
-      (a)=>((1/a)*a==1), //  multiplicative identity
-      (a)=>Array(a).fill(1/a).reduce((acc,val)=>acc+val, 0), //sum of inverses
+      (a) => ((1 / a) * a === 1), //  multiplicative identity
+      (a) => Array(a).fill(1 / a).reduce((acc, val) => acc + val, 0) // sum of inverses
 
-    ];
-    //only do so many tests
-    let testnum=0;
-    const maxtest=MathOfT.ISCALCULABLE(maxtestnum)
+    ]
+    // only do so many tests
+    let testnum = 0
+    const maxtest = MathOfT.ISCALCULABLE(maxtestnum)
       ? maxtestnum
-      : 144;
-    //tests[0]
-    let lastgoodmultidendivisor,msg;
-    //tests[1]
-    let roundinaccura = []; // all divisors for which rounding error causes failure
-    let rounddeltas = []; // the difference between erroneous rounding and 1
-    let roundexcesses = []; // divisors for which rounding error causes excess failure
-    let rounddeficits = []; // divisors for which rounding error causes deficiency failure
+      : 144
+    // tests[0]
+    let lastgoodmultidendivisor, msg
+    // tests[1]
+    let roundinaccura = [] // all divisors for which rounding error causes failure
+    let rounddeltas = [] // the difference between erroneous rounding and 1
+    let roundexcesses = [] // divisors for which rounding error causes excess failure
+    let rounddeficits = [] // divisors for which rounding error causes deficiency failure
 
     while (testnum < maxtest) {
-      //tests[0]
-      if(!tests[0](++testnum)){
-        lastgoodmultidendivisor = testnum - 1;
-        msg = getmsg(lastgoodmultidendivisor);
+      // tests[0]
+      if (!tests[0](++testnum)) {
+        lastgoodmultidendivisor = testnum - 1
+        msg = getmsg(lastgoodmultidendivisor)
       }
-      //tests[1]
+      // tests[1]
       const test1result = tests[1](testnum) // testnum has been incremented already
-      if(test1result != 1){
-        roundinaccura.push(testnum);
-        rounddeltas.push(test1result-1);
-        if(test1result < 1) rounddeficits.push(testnum);
-        if(test1result > 1) roundexcesses.push(testnum);
+      if (test1result !== 1) {
+        roundinaccura.push(testnum)
+        rounddeltas.push(test1result - 1)
+        if (test1result < 1) rounddeficits.push(testnum)
+        if (test1result > 1) roundexcesses.push(testnum)
       }
     };
     res = {
-      [Symbol.toPrimitive]:(hint)=>{
-        if (hint === 'number') return lastgoodmultidendivisor;
-        return msg;
+      [Symbol.toPrimitive]: (hint) => {
+        if (hint === 'number') return lastgoodmultidendivisor
+        return msg
       },
       inaccurateDivisors: {
         all: roundinaccura,
         errors: rounddeltas,
         excessive: roundexcesses,
-        deficient: rounddeficits,
+        deficient: rounddeficits
       },
-      [Symbol.iterator]: function*(){
-          yield* roundinaccura;
-      },
-    };
+      [Symbol.iterator]: function * () {
+        yield * roundinaccura
+      }
+    }
 
-    return res;
+    return res
   }
 
-
-  //TODO: static SIN_OF_PI_WARN
-/*js: (0=== Math.sin(-Math.PI))=false
+  // TODO: static SIN_OF_PI_WARN
+  /* js: (0=== Math.sin(-Math.PI))=false
 
 in electron:
 
@@ -900,7 +849,7 @@ undefined
 undefined
 >  console.log(Decimal.sin(Decimal('3.1415926535897932384626433832795028841971693993751')).toPrecision(80))
 5.8209749445923078164000000000000000000000000000000000000000000000000000000000000e-51
-undefined*/
+undefined */
 
   /**
    * @static ISNUMBER - return true IFF both of the following conditions are met
@@ -910,8 +859,8 @@ undefined*/
    *
    * @return {boolean}
    */
-  static ISNUMBER(){
-    return (arguments.length == 1) && (typeof arguments[0] === 'number');
+  static ISNUMBER () {
+    return (arguments.length === 1) && (typeof arguments[0] === 'number')
   }
 
   /**
@@ -926,11 +875,9 @@ undefined*/
    *
    * @return {boolean}  description
    */
-  static ISCALCULABLE(){
-    return (arguments.length == 1) && Number.isFinite(arguments[0]);
+  static ISCALCULABLE () {
+    return (arguments.length === 1) && Number.isFinite(arguments[0])
   }
-
-
 
   /**
    * @static ISARRAYLIKE - determine whether a given argument x is "like" an array for the purposees of MathOfT calculations and parsing, returning true IFF x satisfies one of the following conditions:
@@ -943,8 +890,8 @@ undefined*/
    * @param  {?} x
    * @return {boolean}
    */
-  static ISARRAYLIKE(x){
-    return x && (Object.getOwnPropertySymbols(x).includes(Symbol.iterator)||Array.isArray(x)||ArrayBuffer.isView(x));
+  static ISARRAYLIKE (x) {
+    return x && (Object.getOwnPropertySymbols(x).includes(Symbol.iterator) || Array.isArray(x) || ArrayBuffer.isView(x))
   }
 
   /**
@@ -962,15 +909,15 @@ undefined*/
    *  an Array thereof
    * @return {boolean}
    */
-  static ARENUMBERS(){
-    if(arguments.length == 0){
-      return false;
+  static ARENUMBERS () {
+    if (arguments.length === 0) {
+      return false
     } else {
       return [...arguments].every(v => {
         return MathOfT.ISARRAYLIKE(v)
           ? MathOfT.ARENUMBERS(...v)
-          : MathOfT.ISNUMBER(v);
-      });
+          : MathOfT.ISNUMBER(v)
+      })
     }
   };
 
@@ -990,18 +937,17 @@ undefined*/
    *  an Array thereof
    * @return {boolean}
    */
-  static ARECALCULABLES(){
-    if(arguments.length == 0){
-      return false;
+  static ARECALCULABLES () {
+    if (arguments.length === 0) {
+      return false
     } else {
       return [...arguments].every(v => {
         return MathOfT.ISARRAYLIKE(v)
           ? MathOfT.ARECALCULABLES(...v)
-          : MathOfT.ISCALCULABLE(v);
-      });
+          : MathOfT.ISCALCULABLE(v)
+      })
     }
   };
-
 
   /**
    * @static INRANGE - determine whether a given number n falls
@@ -1019,33 +965,33 @@ undefined*/
    * @param  {Number} [mm] the optional end of the range
    * @return {boolean}
    */
-  static INRANGE(n, m, mm){
-    let test = (a, b, c)=>{
+  static INRANGE (n, m, mm) {
+    let test = (a, b, c) => {
       // console.log(a,b,c)
       return (a > b)
         ? a <= c
         : (a < b)
           ? a >= c
-          : true; // a == b
+          : true // a === b
     }
-    if(!(MathOfT.ARENUMBERS(...arguments) && MathOfT.ISNUMBER(n))) {
-      return false;
+    if (!(MathOfT.ARENUMBERS(...arguments) && MathOfT.ISNUMBER(n))) {
+      return false
     } else {
-      if(arguments.length==1){
-        return MathOfT.INRANGE(n, MathOfT.DEFAULT_RANGE);
-      }else if(MathOfT.ISARRAYLIKE(m)){
+      if (arguments.length === 1) {
+        return MathOfT.INRANGE(n, MathOfT.DEFAULT_RANGE)
+      } else if (MathOfT.ISARRAYLIKE(m)) {
         // console.log(n,m)
-        return ( m.length == 1 )
+        return (m.length === 1)
           ? test(n, 0, m[0])
-          : test(n, m[0], m[m.length-1]);
-      } else if(MathOfT.ISNUMBER(m)){
-        if(!MathOfT.ISNUMBER(mm)){
-          return test(n, 0, m);
-        } else if(MathOfT.ISNUMBER(mm)){
-          return test(n, m, mm);
+          : test(n, m[0], m[m.length - 1])
+      } else if (MathOfT.ISNUMBER(m)) {
+        if (!MathOfT.ISNUMBER(mm)) {
+          return test(n, 0, m)
+        } else if (MathOfT.ISNUMBER(mm)) {
+          return test(n, m, mm)
         }
       } else {
-        return false;
+        return false
       }
     }
   }
@@ -1067,34 +1013,33 @@ undefined*/
    * @param  {Array<number>} [TT=DEFAULT_RANGE] the range in which to test for TT
    * @param  {Array<number>} [NN=DEFAULT_RANGE] the target normalization range * @return {number}
    */
-  static NORMALIZETORANGE(t, TT, NN){
-    if(!MathOfT.ISNUMBER(t)){
-      t = 0;
+  static NORMALIZETORANGE (t, TT, NN) {
+    if (!MathOfT.ISNUMBER(t)) {
+      t = 0
     }
-    if(!MathOfT.ARENUMBERS(NN)){
-      NN = MathOfT.DEFAULT_RANGE;
+    if (!MathOfT.ARENUMBERS(NN)) {
+      NN = MathOfT.DEFAULT_RANGE
     }
-    if(!MathOfT.ARENUMBERS(TT)){
-      TT = MathOfT.DEFAULT_RANGE;
+    if (!MathOfT.ARENUMBERS(TT)) {
+      TT = MathOfT.DEFAULT_RANGE
     }
-    let [normA, normB] = NN;
+    let [normA, normB] = NN
     let minNorm = (normA < normB)
       ? normA
-      : normB;
-    let maxNorm = (normB > normA)
-      ? normB
-      : normA;
-    let res = (t - TT[0]) / (TT[1] - TT[0]); //[0-1]
-    res = normA + (normB - normA)*res; //[normA, normB]
+      : normB
+    // let maxNorm = (normB > normA)
+    //   ? normB
+    //   : normA
+    let res = (t - TT[0]) / (TT[1] - TT[0]) // [0-1]
+    res = normA + (normB - normA) * res // [normA, normB]
 
-    if(!MathOfT.INRANGE(res, normA, normB)){
+    if (!MathOfT.INRANGE(res, normA, normB)) {
       res = (res < minNorm)
         ? -Infinity
-        : Infinity;
+        : Infinity
     }
 
-    return res;
-
+    return res
   }
 
   /**
@@ -1113,20 +1058,20 @@ undefined*/
    * @param  {Array<number>} [TT=DEFAULT_RANGE] the range in which to test for TT
    * @return {number}
    */
-  static ANTINORMALIZETORANGE(t, TT, NN){
-    if(!MathOfT.ISNUMBER(t)){
-      t = 0;
+  static ANTINORMALIZETORANGE (t, TT, NN) {
+    if (!MathOfT.ISNUMBER(t)) {
+      t = 0
     }
-    if(!MathOfT.ARENUMBERS(TT)){
-      TT = MathOfT.DEFAULT_RANGE;
+    if (!MathOfT.ARENUMBERS(TT)) {
+      TT = MathOfT.DEFAULT_RANGE
     }
-    if(!MathOfT.ARENUMBERS(NN)){
-      NN = MathOfT.DEFAULT_RANGE;
+    if (!MathOfT.ARENUMBERS(NN)) {
+      NN = MathOfT.DEFAULT_RANGE
     }
-    let res = MathOfT.NORMALIZETORANGE(t, TT, NN);
+    let res = MathOfT.NORMALIZETORANGE(t, TT, NN)
     return (Math.abs(res) === Infinity)
       ? -res
-      : NN[NN.length-1]-res
+      : NN[NN.length - 1] - res
   }
 
   /**
@@ -1139,18 +1084,17 @@ undefined*/
    * @param  {type} d  divisor
    * @return {null|number}
    */
-  static IINRANGE(t, TT, d){
+  static IINRANGE (t, TT, d) {
     d = (MathOfT.ISNUMBER(d))
       ? Math.floor(d)
-      : MathOfT.DEFAULT_SEGMENT_DIVISOR;
-    let res = MathOfT.NORMALIZETORANGE(t, TT, [0, 1]);
-    return (res == Infinity)
+      : MathOfT.DEFAULT_SEGMENT_DIVISOR
+    let res = MathOfT.NORMALIZETORANGE(t, TT, [0, 1])
+    return (res === Infinity)
       ? null
-      : (res == -Infinity)
+      : (res === -Infinity)
         ? null
-        : Math.floor(res * d);
+        : Math.floor(res * d)
   }
-
 
   /**
    * @static DIMENSIONS - return the size of the given x, where x can be a number or an Array
@@ -1158,56 +1102,55 @@ undefined*/
    * @param  {(number|Array)} x the structure to get dimensions of
    * @return {Array}
    */
-  static DIMENSIONS(x){
-    if(MathOfT.ISNUMBER(x)){
-      return Promise.resolve([0]);
+  static DIMENSIONS (x) {
+    if (MathOfT.ISNUMBER(x)) {
+      return Promise.resolve([0])
     }
 
-    let irregularflag=false;
-    return Promise.resolve().then(()=>{
+    // let irregularflag = false
+    return Promise.resolve().then(() => {
       // debugger;
-      let dim=Promise.resolve([]);
-      if(MathOfT.ISARRAYLIKE(x)){
-        if(x.length == 0){
-          return dim.then(dimarr=>dimarr.concat(0))
+      let dim = Promise.resolve([])
+      if (MathOfT.ISARRAYLIKE(x)) {
+        if (x.length === 0) {
+          return dim.then(dimarr => dimarr.concat(0))
         } else {
           return dim
-            .then(dimarr=>{
+            .then(dimarr => {
               // console.log(x.length)
               return dimarr.concat(x.length)
             })
-            .then(dimarr=>{
+            .then(dimarr => {
               // console.log(dimarr)
-              for(let elementindex in x){
-                let longestelementlength=0;
-                let element = x[elementindex];
-                if(MathOfT.ISARRAYLIKE(element)){
-                  if(element.length>=longestelementlength){
-                    longestelementlength=element.length;
+              for (let elementindex in x) {
+                let longestelementlength = 0
+                let element = x[elementindex]
+                if (MathOfT.ISARRAYLIKE(element)) {
+                  if (element.length >= longestelementlength) {
+                    longestelementlength = element.length
                   } else {
-                    irregularflag=true; // sparse element
+                    // irregularflag = true // sparse element
                   }
                   return Promise
                     .all(element.map(subelement => MathOfT.DIMENSIONS(subelement)))
                     .then(nestedelementlengths => {
-                      let mag = MathOfT.OPS.magest(...nestedelementlengths);
-                      return (Number.isNaN(mag) || mag==0)
+                      let mag = MathOfT.OPS.magest(...nestedelementlengths)
+                      return (Number.isNaN(mag) || mag === 0)
                         ? []
-                        : mag;
+                        : mag
                     })
-                    .then(longestnestedelementlength => dimarr.concat(longestelementlength, longestnestedelementlength));
+                    .then(longestnestedelementlength => dimarr.concat(longestelementlength, longestnestedelementlength))
                 } else {
-                  return Promise.resolve(dimarr);
+                  return Promise.resolve(dimarr)
                 }
               }
-          });
+            })
         }
       } else {
-        return dim;
+        return dim
       }
-    });
+    })
   }
-
 
   /**
    * @static EQUAL - determine whether the given number or Array-like arguments are satisfying the conditions:
@@ -1219,38 +1162,37 @@ undefined*/
    * @params {?} [arguments]
    * @return {boolean}
    */
-  static EQUAL(){
-    if (arguments.length==0) {
-      return false;
+  static EQUAL () {
+    if (arguments.length === 0) {
+      return false
     }
-    if (arguments.length==1){
-      return true;
+    if (arguments.length === 1) {
+      return true
     }
     const a0 = arguments[0]
-    const type = MathOfT.MATHTYPEOF(a0);
-    let res = true;
+    const type = MathOfT.MATHTYPEOF(a0)
+    let res = true
     // const dim = MathOfT.DIMENSIONS(arguments[0]);
     for (let i = 1; i < arguments.length; i++) {
-      let a = arguments[i];
-      if(MathOfT.MATHTYPEOF(a)!=type) return false;
+      let a = arguments[i]
+      if (MathOfT.MATHTYPEOF(a) !== type) return false
       switch (type) {
         case MathOfT.MATHTYPES.arraylike:
-          if(a.length!=a0.length) return false;
+          if (a.length !== a0.length) return false
           for (let ai = 0; ai < a0.length; ai++) {
-            if(!MathOfT.EQUAL(a0[ai], a[ai])) return false;
+            if (!MathOfT.EQUAL(a0[ai], a[ai])) return false
           }
-          break;
+          break
         case MathOfT.MATHTYPES.numberlike:
           // console.log(a)
-          res = res && (a==a0);
-          break;
+          res = res && (a === a0)
+          break
         default:
-          return false;
+          return false
       }
     }
-    return res;
+    return res
   }
-
 
   /**
    * @static MATHTYPEOF - tell whether the given argument a is of one of the types that MathOfT can do math with  and if so, which type
@@ -1258,12 +1200,12 @@ undefined*/
    * @param  {?} [a]
    * @return {(Symbol|null)}
    */
-  static MATHTYPEOF(a){
+  static MATHTYPEOF (a) {
     return MathOfT.ISARRAYLIKE(a)
       ? MathOfT.MATHTYPES.arraylike
       : MathOfT.ISNUMBER(a)
         ? MathOfT.MATHTYPES.numberlike
-        : null;
+        : null
   }
 
   /**
@@ -1276,22 +1218,26 @@ undefined*/
    * @param {MathOfT} mathoft the instance doing communication
    * @return {object|Array<string>} communication object, or array of communication keys
    */
-  static TTHIS_TEMPLATE(t,mathoft){
-    let o = (MathOfT.ISCALCULABLE(t) )
+  static TTHIS_TEMPLATE (t, mathoft) {
+    let o = (MathOfT.ISCALCULABLE(t))
       ? { t }
-      : { };
-    let populateFunc = (mathoft instanceof MathOfT)&&(MathOfT.ISCALCULABLE(t))
-      ? (key)=>o[key]=mathoft[key](t)
-      : ()=>null;
+      : { }
+    let populateFunc = (mathoft instanceof MathOfT) && (MathOfT.ISCALCULABLE(t))
+      ? (key) => {
+        o[key] = mathoft[key](t)
+      }
+      : () => null
     let populateMemb = (mathoft instanceof MathOfT)
-      ? (key)=>o[key]=mathoft[key]
-      : () => null;
-    MathOfT.FUNCKEYS.map(fkey=>populateFunc(fkey));
-    MathOfT.MEMBERKEYS.map(mkey=>populateMemb(mkey));
-    if(Object.keys(o).length==0){
-      return MathOfT.FUNCKEYS.concat(MathOfT.MEMBERKEYS);
+      ? (key) => {
+        o[key] = mathoft[key]
+      }
+      : () => null
+    MathOfT.FUNCKEYS.map(fkey => populateFunc(fkey))
+    MathOfT.MEMBERKEYS.map(mkey => populateMemb(mkey))
+    if (Object.keys(o).length === 0) {
+      return MathOfT.FUNCKEYS.concat(MathOfT.MEMBERKEYS)
     } else {
-      return o;
+      return o
     }
   };
 
@@ -1302,8 +1248,8 @@ undefined*/
    * @param  {string} codeToParse
    * @return {boolean}
    */
-  static ISOP(codeToParse){
-     return MathOfT.OPDICT.includes(codeToParse)
+  static ISOP (codeToParse) {
+    return MathOfT.OPDICT.includes(codeToParse)
   }
 
   /**
@@ -1314,12 +1260,11 @@ undefined*/
    * @param  {string} codeToParse
    * @return {function} MathOfT.OPS function corresponding to op
    */
-  static OPPARSE(codeToParse){
+  static OPPARSE (codeToParse) {
     return (MathOfT.ISOP(codeToParse))
-          ? MathOfT.OPS[codeToParse]
-          : MathOfT.OPS[null];
+      ? MathOfT.OPS[codeToParse]
+      : MathOfT.OPS[null]
   }
-
 }
 
 Object.defineProperties(MathOfT, {
@@ -1329,18 +1274,19 @@ Object.defineProperties(MathOfT, {
    * @memberof MathOfT
    */
   'MATHTYPES': {
-    value: (()=>{
+    value: (() => {
       let o = {};
       [
-        'arraylike','numberlike'
-      ].map(function(e){
-        this[e]=Symbol(e), this[this[e]]=e;
-      }, o);
-      return o;
+        'arraylike', 'numberlike'
+      ].map(function (e) {
+        this[e] = Symbol(e)
+        this[this[e]] = e
+      }, o)
+      return o
     })(),
     enumerable: true,
     configurable: false,
-    writable: false,
+    writable: false
   },
   /**
    * @static OPDICT - an array of valid op keys
@@ -1351,7 +1297,7 @@ Object.defineProperties(MathOfT, {
     value: [null, '+', '-', '*', '/', '**', 'magest'],
     enumerable: true,
     configurable: false,
-    writable: false,
+    writable: false
   },
   /**
    * @static OPS - an object containing operations, or ops, that
@@ -1363,154 +1309,163 @@ Object.defineProperties(MathOfT, {
    * @see MathOfT.ARENUMBERS
    * @memberof MathOfT
    */
-  'OPS':{
-    value: Object.defineProperties({},{
-      'opfunc':{
-        value: (code) =>{
+  'OPS': {
+    value: Object.defineProperties({}, {
+      'opfunc': {
+        value: (code, f) => {
           if (typeof code !== 'string') {
             throw new TypeError('MathOfT.OPS.opfunc takes one string')
-          }else if (!MathOfT.OPDICT.includes(code)) {
+          } else if (!MathOfT.OPDICT.includes(code)) {
             throw new RangeError('MathOfT.OPS.opfunc takes one string in MathOfT.OPDICT')
           }
-          return new Function('args',
-             `"use strict";return [...args].reduce((acc, c,i )=>{return(i==0) ? c: acc ${code} c; })`);
+          return (args) => [...args].reduce((acc, c, i) => {
+            return (i === 0)
+              ? c
+              : f(acc, c)
+          })
         },
         writable: false,
         configurable: false,
-        enumerable: false,
+        enumerable: false
       },
-      'resfunc':{
-        value: (code, base, args) =>{
+      'resfunc': {
+        value: (code, f, base, args) => {
           if (!MathOfT.ISCALCULABLE(base)) {
-            throw new TypeError('MathOfT.OPS.resfunc requires a calculable base parameter');
+            throw new TypeError('MathOfT.OPS.resfunc requires a calculable base parameter')
           }
           if (!MathOfT.ISARRAYLIKE(args)) {
-            throw new TypeError('MathOfT.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter');
+            throw new TypeError('MathOfT.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter')
           }
-          let opfunc = MathOfT.OPS.opfunc;
-          if (MathOfT.ARENUMBERS(...args)){
-            return opfunc(code)(args);
+          let opfunc = MathOfT.OPS.opfunc
+          if (MathOfT.ARENUMBERS(...args)) {
+            return opfunc(code, f)(args)
           }
-          let filtered = [...args].map(v=>(v==null)?base:v)
-          if(MathOfT.ARENUMBERS(filtered)){
-            return opfunc(code)(filtered);
+          let filtered = [...args].map(v => (v === null) ? base : v)
+          if (MathOfT.ARENUMBERS(filtered)) {
+            return opfunc(code, f)(filtered)
           }
-          return NaN;
+          return NaN
         },
         writable: false,
         configurable: false,
-        enumerable: false,
+        enumerable: false
       },
-      [null]:{
+      [null]: {
         enumerable: true,
         get: () => {
-          let code = null, base = null;
+          let code = null; let base = null
           return Object.assign(
-            function(){
-              return [...arguments];
+            function () {
+              return [...arguments]
             },
             {
               code,
               base
             }
-          );
+          )
         },
-        set: () => null,
+        set: () => null
       },
-      '+':{
+      '+': {
         enumerable: true,
         get: () => {
-          let base = 0, code = '+';
+          let base = 0
+          let code = '+'
           return Object.assign(
-            function(){
-              return MathOfT.OPS.resfunc(code, base, arguments);
+            function () {
+              return MathOfT.OPS.resfunc(code, (a, b) => a + b, base, arguments)
             }, {
               code,
               base
             }
-          );
+          )
         },
         set: () => '+'
       },
-      '-':{
+      '-': {
         enumerable: true,
         get: () => {
-          let base = 0, code = '-';
+          let base = 0
+          let code = '-'
           return Object.assign(
-            function(){
-              return MathOfT.OPS.resfunc(code, base, arguments);
+            function () {
+              return MathOfT.OPS.resfunc(code, (a, b) => a - b, base, arguments)
             },
             {
               code,
               base
             }
-          );
+          )
         },
         set: () => '-'
       },
-      '*':{
+      '*': {
         enumerable: true,
         get: () => {
-          let base = 1, code = '*';
+          let base = 1
+          let code = '*'
           return Object.assign(
-            function(){
-              return MathOfT.OPS.resfunc(code, base, arguments);
+            function () {
+              return MathOfT.OPS.resfunc(code, (a, b) => a * b, base, arguments)
             },
             {
               code,
               base
             }
-          );
+          )
         },
         set: () => '*'
       },
-      '/':{
+      '/': {
         enumerable: true,
         get: () => {
-          let base = 1, code = '/';
+          let base = 1
+          let code = '/'
           return Object.assign(
-            function(){
-              return MathOfT.OPS.resfunc(code, base, arguments);
+            function () {
+              return MathOfT.OPS.resfunc(code, (a, b) => a / b, base, arguments)
             },
             {
               code,
               base
             }
-          );
+          )
         },
         set: () => '/'
       },
-      '**':{
+      '**': {
         enumerable: true,
         get: () => {
-          let base = 1, code = '**';
+          let base = 1
+          let code = '**'
           return Object.assign(
-            function(){
-              return MathOfT.OPS.resfunc(code, base, arguments);
+            function () {
+              return MathOfT.OPS.resfunc(code, (a, b) => a ** b, base, arguments)
             },
             {
               code,
               base
             }
-          );
+          )
         },
         set: () => '**'
       },
-      '...':{
+      '...': {
         enumerable: true,
         get: () => {
-          let code = '...', base = [];
+          let code = '...'
+          let base = []
           return Object.assign(
             (a, b) => (MathOfT.ISARRAYLIKE(a))
               ? a.concat(b)
               : MathOfT.ISARRAYLIKE(b)
-              ? b.concat(a)
-              : [a,b],
+                ? b.concat(a)
+                : [a, b],
             {
               code,
               base
             }
-          );
+          )
         },
         set: () => '...'
       },
@@ -1521,30 +1476,31 @@ Object.defineProperties(MathOfT, {
        * @params {(number|Array<number>)} arguments the numbers to test
        * @return {number}
        */
-      'magest':{
+      'magest': {
         enumerable: true,
         get: () => {
-          let code = 'magest', base = 0;
+          let code = 'magest'
+          let base = 0
           return Object.assign(
-            function(){
-              let max=base;
-              if(MathOfT.ARECALCULABLES(...arguments)){
-                for(var i=0; i<arguments.length; i++){
-                  let cur = Math.abs(arguments[i]);
+            function () {
+              let max = base
+              if (MathOfT.ARECALCULABLES(...arguments)) {
+                for (var i = 0; i < arguments.length; i++) {
+                  let cur = Math.abs(arguments[i])
                   max = (cur > max)
                     ? cur
-                    : max;
+                    : max
                 }
-                return max;
+                return max
               } else {
-                return NaN;
+                return NaN
               }
             },
             {
               code,
               base
             }
-          );
+          )
         },
         set: () => 'magest'
       }
@@ -1552,7 +1508,7 @@ Object.defineProperties(MathOfT, {
     }),
     enumerable: true,
     configurable: false,
-    writable: false,
+    writable: false
   },
   /**
    * @static R - dimensional labeling
@@ -1562,7 +1518,7 @@ Object.defineProperties(MathOfT, {
     value: ['x', 'y', 'z'],
     enumerable: true,
     configurable: false,
-    writable: false,
+    writable: false
   },
   /**
    * @static FUNCKEYS - methods for inter-instance communication
@@ -1577,7 +1533,7 @@ Object.defineProperties(MathOfT, {
     ],
     enumerable: true,
     configurable: false,
-    writable: false,
+    writable: false
   },
   /**
    * @static MEMBERKEYS - members for inter-instance communication
@@ -1589,11 +1545,11 @@ Object.defineProperties(MathOfT, {
       'range',
       'drange',
       't0',
-      'segmentDivisor',
+      'segmentDivisor'
     ],
     enumerable: true,
     configurable: false,
-    writable: false,
+    writable: false
   },
   /**
    * @static DEFAULT_SEGMENT_DIVISOR By default, MathOfT instances divide into
@@ -1606,7 +1562,7 @@ Object.defineProperties(MathOfT, {
     value: 10,
     enumerable: true,
     configurable: false,
-    writable: false,
+    writable: false
   },
   /**
    * @static MAX_SAFE_DIVISOR the maximum safe to use divisor
@@ -1617,7 +1573,7 @@ Object.defineProperties(MathOfT, {
     value: MathOfT.CALC_PRECISION_WARN(),
     enumerable: true,
     configurable: false,
-    writable: false,
+    writable: false
   },
   /**
    * @static DEFAULT_RANGE By default, MathOfT instances evaluate functions over this range
@@ -1626,11 +1582,11 @@ Object.defineProperties(MathOfT, {
    * @memberof MathOfT
    */
   'DEFAULT_RANGE': {
-    value: [-1,1],
+    value: [-1, 1],
     enumerable: true,
     configurable: false,
-    writable: false,
+    writable: false
   }
-});
+})
 
-export { MathOfT };
+export { MathOfT }

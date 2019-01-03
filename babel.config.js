@@ -1,28 +1,28 @@
-module.exports = function (api){
+module.exports = function (api) {
   let presets = [
     [
-      "@babel/preset-env", {
-        "useBuiltIns": "entry"
+      '@babel/preset-env', {
+        'useBuiltIns': 'entry'
       }
     ]
-  ];
+  ]
   let plugins = [
-    "@babel/plugin-proposal-class-properties",
+    '@babel/plugin-proposal-class-properties',
     [
-      "@babel/plugin-transform-runtime",
+      '@babel/plugin-transform-runtime',
       {
-        "corejs": 2,
-        "helpers": true,
-        "regenerator": true,
-        "useESModules": false
+        'corejs': 2,
+        'helpers': true,
+        'regenerator': true,
+        'useESModules': false
       }
     ]
-  ];
+  ]
 
-  if(api.env('test')){
-    plugins.push("istanbul");
+  if (api.env('test')) {
+    plugins.push('istanbul')
   }
 
   console.log(`loaded babel v${api.version} config `)
-  return {presets, plugins};
+  return { presets, plugins }
 }

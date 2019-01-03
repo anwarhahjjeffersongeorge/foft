@@ -1,16 +1,18 @@
 # mathoftjs
 ### Is
 
-- For investigating the _results_ of arithmetic expressions provided as functions in JavaScript over _specified evaluation ranges_, 
+- For investigating the _results_ of arithmetic expressions provided as functions in JavaScript over _specified evaluation ranges_,
 - For investigating floating-point error tendencies in a JavaScript environment, and
 - An ESM module for browsers or nodejs.
 
 ### Is _not_
 - A comprehensive calculator,
-- Immune to inaccuracies, 
+- Immune to inaccuracies,
 - A computer algebra system,
 - An equation solver, or
 - An expression parser.
+
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Usage:
 MathOfT exports a single class, `MathOfT` that can create an instance as well as provide some `static` utilities.
@@ -30,9 +32,9 @@ MathOfT exports a single class, `MathOfT` that can create an instance as well as
     - Numbers
     - Arrays of Numbers,
     - Nested Arrays of Numbers, or
-    - TypedArrays. 
+    - TypedArrays.
   2. Some of the properties of its `terms(1)`.
-  
+
 
 ## Development Guidelines
 
