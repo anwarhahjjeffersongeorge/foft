@@ -1,18 +1,21 @@
+/* globals describe, it, before, beforeEach */
 'use strict'
 import chai from 'chai'
-import chai_almost from 'chai-almost'
-import chai_as_promised from 'chai-as-promised'
-chai.use(chai_almost()) // chai.use(chai_almost(Number.EPSILON));
-chai.use(chai_as_promised)
+import chaiAlmost from 'chai-almost'
+import chaiAsPromised from 'chai-as-promised'
+import dirtyChai from 'dirty-chai'
+chai.use(chaiAlmost()) // chai.use(chaiAlmost(Number.EPSILON));
+chai.use(chaiAsPromised)
+chai.use(dirtyChai)
 
 chai.config.includeStack = true // turn on stack trace
 var should = chai.should()
 var expect = chai.expect
-var assert = chai.assert
+// var assert = chai.assert
 
 function dotest (MathOfT) {
   const PI = Math.PI
-  const TAU = 2 * PI
+  // const TAU = 2 * PI
 
   // TODO MathOFT tests
   describe('MathOfT', function () {
@@ -68,8 +71,8 @@ function dotest (MathOfT) {
             it('can collapse to a number or string that includes said number', () => {
               res.should.be.an('object');
               (+res).should.be.a('number');
-              ('' + res).should.be.a('string');
-              ('' + res).includes(+res).should.be.true
+              ('' + res).should.be.a('string')
+              ;('' + res).includes(+res).should.be.true()
             })
             it('has own property inaccurateDivisors with array members', () => {
               res.should.have.own.property('inaccurateDivisors').that.is.an('object')
@@ -101,207 +104,207 @@ function dotest (MathOfT) {
         })
         describe(`MathOfT.ISCALCULABLE`, function () {
           it('returns true when provided a SINGLE argument of Number type that is not NaN, +Infinity or -Infinity', function () {
-            MathOfT.ISCALCULABLE(3.3).should.be.true
-            MathOfT.ISCALCULABLE(0).should.be.true
-            MathOfT.ISCALCULABLE(NaN).should.be.false
-            MathOfT.ISCALCULABLE(Infinity).should.be.false
-            MathOfT.ISCALCULABLE(-Infinity).should.be.false
-            MathOfT.ISCALCULABLE(Math.random()).should.be.true
+            MathOfT.ISCALCULABLE(3.3).should.be.true()
+            MathOfT.ISCALCULABLE(0).should.be.true()
+            MathOfT.ISCALCULABLE(NaN).should.be.false()
+            MathOfT.ISCALCULABLE(Infinity).should.be.false()
+            MathOfT.ISCALCULABLE(-Infinity).should.be.false()
+            MathOfT.ISCALCULABLE(Math.random()).should.be.true()
           })
         })
         describe(`MathOfT.ARECALCULABLES`, function () {
           it('returns true when ALL arguments are numbers(excluding NaN, Infinity)', function () {
-            MathOfT.ARECALCULABLES(Math.random(), Math.random()).should.be.true
-            MathOfT.ARECALCULABLES(0, 1, 2, 3, 4, 6, 7, 8, 99).should.be.true
-            MathOfT.ARECALCULABLES(0, NaN, 44).should.be.false
-            MathOfT.ARECALCULABLES(0, Infinity, 44).should.be.false
+            MathOfT.ARECALCULABLES(Math.random(), Math.random()).should.be.true()
+            MathOfT.ARECALCULABLES(0, 1, 2, 3, 4, 6, 7, 8, 99).should.be.true()
+            MathOfT.ARECALCULABLES(0, NaN, 44).should.be.false()
+            MathOfT.ARECALCULABLES(0, Infinity, 44).should.be.false()
           })
           it('returns false when ANY arguments are not numbers', function () {
-            MathOfT.ARECALCULABLES('l').should.be.false
-            MathOfT.ARECALCULABLES('55', 5).should.be.false
-            MathOfT.ARECALCULABLES(55, 55, 5.4, NaN, Infinity, 5).should.be.false
-            MathOfT.ARECALCULABLES(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false
+            MathOfT.ARECALCULABLES('l').should.be.false()
+            MathOfT.ARECALCULABLES('55', 5).should.be.false()
+            MathOfT.ARECALCULABLES(55, 55, 5.4, NaN, Infinity, 5).should.be.false()
+            MathOfT.ARECALCULABLES(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false()
           })
           it('returns false when arguments are null', function () {
-            MathOfT.ARECALCULABLES().should.be.false
+            MathOfT.ARECALCULABLES().should.be.false()
           })
           it('returns true when ALL array members are numbers(excluding NaN, Infinity)',
             function () {
-              MathOfT.ARECALCULABLES([Math.random(), Math.random()]).should.be.true
-              MathOfT.ARECALCULABLES([0, 1, 2, 3, 4, 6, 7, 8, 99]).should.be.true
-              MathOfT.ARECALCULABLES([0, NaN, 44]).should.be.false
-              MathOfT.ARECALCULABLES([0, Infinity, 44]).should.be.false
+              MathOfT.ARECALCULABLES([Math.random(), Math.random()]).should.be.true()
+              MathOfT.ARECALCULABLES([0, 1, 2, 3, 4, 6, 7, 8, 99]).should.be.true()
+              MathOfT.ARECALCULABLES([0, NaN, 44]).should.be.false()
+              MathOfT.ARECALCULABLES([0, Infinity, 44]).should.be.false()
             })
           it('returns false when ANY array members are not finite numbers', function () {
-            MathOfT.ARECALCULABLES(['l']).should.be.false
-            MathOfT.ARECALCULABLES(['55', 5]).should.be.false
-            MathOfT.ARECALCULABLES([55, 55, 5.4, NaN, Infinity, 5]).should.be.false
-            MathOfT.ARECALCULABLES([55, 55, 5.4, '535', 5]).should.be.false
+            MathOfT.ARECALCULABLES(['l']).should.be.false()
+            MathOfT.ARECALCULABLES(['55', 5]).should.be.false()
+            MathOfT.ARECALCULABLES([55, 55, 5.4, NaN, Infinity, 5]).should.be.false()
+            MathOfT.ARECALCULABLES([55, 55, 5.4, '535', 5]).should.be.false()
           })
           it('returns false for null array', function () {
-            MathOfT.ARECALCULABLES([]).should.be.false
+            MathOfT.ARECALCULABLES([]).should.be.false()
           })
           it('returns true for arrays whose nested array members contain submembers that are ALL finite numbers', function () {
-            MathOfT.ARECALCULABLES([1, 2, 3, [1, 34]]).should.be.true
-            MathOfT.ARECALCULABLES([[NaN, Infinity]]).should.be.false
+            MathOfT.ARECALCULABLES([1, 2, 3, [1, 34]]).should.be.true()
+            MathOfT.ARECALCULABLES([[NaN, Infinity]]).should.be.false()
           })
           it('returns false for arrays whose nested array members contain submembers that are NOT ALL finite numbers', function () {
-            MathOfT.ARECALCULABLES([1, 2, 3, [1, 'b', 34]]).should.be.false
-            MathOfT.ARECALCULABLES([[NaN, {}, Infinity]]).should.be.false
+            MathOfT.ARECALCULABLES([1, 2, 3, [1, 'b', 34]]).should.be.false()
+            MathOfT.ARECALCULABLES([[NaN, {}, Infinity]]).should.be.false()
           })
           it('returns true for mixed args of numbers and arrays whose nested array members contain submembers that are ALL numbers or finite Number-filled Arrays', function () {
-            MathOfT.ARECALCULABLES(1, 2, 3, [1, 34]).should.be.true
-            MathOfT.ARECALCULABLES([NaN, Infinity], 2, 4).should.be.false
+            MathOfT.ARECALCULABLES(1, 2, 3, [1, 34]).should.be.true()
+            MathOfT.ARECALCULABLES([NaN, Infinity], 2, 4).should.be.false()
           })
           it('returns false for mixed args of numbers and arrays whose nested array members contain submembers that are NOT ALL numbers or Number-filled Arrays', function () {
-            MathOfT.ARECALCULABLES(1, 2, 3, {}, [1, 34]).should.be.false
-            MathOfT.ARECALCULABLES(['popo', NaN, Infinity], 2, 4).should.be.false
+            MathOfT.ARECALCULABLES(1, 2, 3, {}, [1, 34]).should.be.false()
+            MathOfT.ARECALCULABLES(['popo', NaN, Infinity], 2, 4).should.be.false()
           })
         })
         describe(`MathOfT.ISNUMBER`, function () {
           it('returns true when provided a SINGLE argument of Number type', function () {
-            MathOfT.ISNUMBER(3).should.be.true
-            MathOfT.ISNUMBER(NaN).should.be.true
-            MathOfT.ISNUMBER(Infinity).should.be.true
-            MathOfT.ISNUMBER(Math.random()).should.be.true
+            MathOfT.ISNUMBER(3).should.be.true()
+            MathOfT.ISNUMBER(NaN).should.be.true()
+            MathOfT.ISNUMBER(Infinity).should.be.true()
+            MathOfT.ISNUMBER(Math.random()).should.be.true()
           })
           it('returns false when provided argument NOT of Number type', function () {
-            MathOfT.ISNUMBER('3').should.be.false
-            MathOfT.ISNUMBER(undefined).should.be.false
-            MathOfT.ISNUMBER(null).should.be.false
-            MathOfT.ISNUMBER({}).should.be.false
-            MathOfT.ISNUMBER([]).should.be.false
-            MathOfT.ISNUMBER(Math.random).should.be.false
+            MathOfT.ISNUMBER('3').should.be.false()
+            MathOfT.ISNUMBER(undefined).should.be.false()
+            MathOfT.ISNUMBER(null).should.be.false()
+            MathOfT.ISNUMBER({}).should.be.false()
+            MathOfT.ISNUMBER([]).should.be.false()
+            MathOfT.ISNUMBER(Math.random).should.be.false()
           })
           it('returns false when NOT provided a SINGLE argument', function () {
-            MathOfT.ISNUMBER(3, 3).should.be.false
-            MathOfT.ISNUMBER().should.be.false
+            MathOfT.ISNUMBER(3, 3).should.be.false()
+            MathOfT.ISNUMBER().should.be.false()
           })
         })
 
         describe(`MathOfT.ARENUMBERS`, function () {
           it('returns true when ALL arguments are numbers(including NaN, Infinity)', function () {
-            MathOfT.ARENUMBERS(Math.random(), Math.random()).should.be.true
-            MathOfT.ARENUMBERS(0, 1, 2, 3, 4, 6, 7, 8, 99).should.be.true
-            MathOfT.ARENUMBERS(0, NaN, 44).should.be.true
-            MathOfT.ARENUMBERS(0, Infinity, 44).should.be.true
+            MathOfT.ARENUMBERS(Math.random(), Math.random()).should.be.true()
+            MathOfT.ARENUMBERS(0, 1, 2, 3, 4, 6, 7, 8, 99).should.be.true()
+            MathOfT.ARENUMBERS(0, NaN, 44).should.be.true()
+            MathOfT.ARENUMBERS(0, Infinity, 44).should.be.true()
           })
           it('returns false when ANY arguments are not numbers', function () {
-            MathOfT.ARENUMBERS('l').should.be.false
-            MathOfT.ARENUMBERS('55', 5).should.be.false
-            MathOfT.ARENUMBERS(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false
-            MathOfT.ARENUMBERS(55, 55, 5.4, '535', 5).should.be.false
+            MathOfT.ARENUMBERS('l').should.be.false()
+            MathOfT.ARENUMBERS('55', 5).should.be.false()
+            MathOfT.ARENUMBERS(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false()
+            MathOfT.ARENUMBERS(55, 55, 5.4, '535', 5).should.be.false()
           })
           it('returns false when arguments are null', function () {
-            MathOfT.ARENUMBERS().should.be.false
+            MathOfT.ARENUMBERS().should.be.false()
           })
           it('returns true when ALL array members are numbers(including NaN, Infinity)',
             function () {
-              MathOfT.ARENUMBERS([Math.random(), Math.random()]).should.be.true
-              MathOfT.ARENUMBERS([0, 1, 2, 3, 4, 6, 7, 8, 99]).should.be.true
-              MathOfT.ARENUMBERS([0, NaN, 44]).should.be.true
-              MathOfT.ARENUMBERS([0, Infinity, 44]).should.be.true
+              MathOfT.ARENUMBERS([Math.random(), Math.random()]).should.be.true()
+              MathOfT.ARENUMBERS([0, 1, 2, 3, 4, 6, 7, 8, 99]).should.be.true()
+              MathOfT.ARENUMBERS([0, NaN, 44]).should.be.true()
+              MathOfT.ARENUMBERS([0, Infinity, 44]).should.be.true()
             })
           it('returns false when ANY array members are not numbers', function () {
-            MathOfT.ARENUMBERS(['l']).should.be.false
-            MathOfT.ARENUMBERS(['55', 5]).should.be.false
-            MathOfT.ARENUMBERS([55, 55, 5.4, NaN, Infinity, '535', 5]).should.be.false
-            MathOfT.ARENUMBERS([55, 55, 5.4, '535', 5]).should.be.false
+            MathOfT.ARENUMBERS(['l']).should.be.false()
+            MathOfT.ARENUMBERS(['55', 5]).should.be.false()
+            MathOfT.ARENUMBERS([55, 55, 5.4, NaN, Infinity, '535', 5]).should.be.false()
+            MathOfT.ARENUMBERS([55, 55, 5.4, '535', 5]).should.be.false()
           })
           it('returns false for null array', function () {
-            MathOfT.ARENUMBERS([]).should.be.false
+            MathOfT.ARENUMBERS([]).should.be.false()
           })
           it('returns true for arrays whose nested array members contain submembers that are ALL numbers', function () {
-            MathOfT.ARENUMBERS([1, 2, 3, [1, 34]]).should.be.true
-            MathOfT.ARENUMBERS([[NaN, Infinity]]).should.be.true
+            MathOfT.ARENUMBERS([1, 2, 3, [1, 34]]).should.be.true()
+            MathOfT.ARENUMBERS([[NaN, Infinity]]).should.be.true()
           })
           it('returns false for arrays whose nested array members contain submembers that are NOT ALL numbers', function () {
-            MathOfT.ARENUMBERS([1, 2, 3, [1, 'b', 34]]).should.be.false
-            MathOfT.ARENUMBERS([[NaN, {}, Infinity]]).should.be.false
+            MathOfT.ARENUMBERS([1, 2, 3, [1, 'b', 34]]).should.be.false()
+            MathOfT.ARENUMBERS([[NaN, {}, Infinity]]).should.be.false()
           })
           it('returns true for mixed args of numbers and arrays whose nested array members contain submembers that are ALL numbers or Number-filled Arrays', function () {
-            MathOfT.ARENUMBERS(1, 2, 3, [1, 34]).should.be.true
-            MathOfT.ARENUMBERS([NaN, Infinity], 2, 4).should.be.true
+            MathOfT.ARENUMBERS(1, 2, 3, [1, 34]).should.be.true()
+            MathOfT.ARENUMBERS([NaN, Infinity], 2, 4).should.be.true()
           })
           it('returns false for mixed args of numbers and arrays whose nested array members contain submembers that are NOT ALL numbers or Number-filled Arrays', function () {
-            MathOfT.ARENUMBERS(1, 2, 3, {}, [1, 34]).should.be.false
-            MathOfT.ARENUMBERS(['popo', NaN, Infinity], 2, 4).should.be.false
+            MathOfT.ARENUMBERS(1, 2, 3, {}, [1, 34]).should.be.false()
+            MathOfT.ARENUMBERS(['popo', NaN, Infinity], 2, 4).should.be.false()
           })
         })
         describe('MathOfT.INRANGE', function () {
           it('returns false when arguments provided don\'t satisfy MathOfT.ARENUMBERS', function () {
-            MathOfT.INRANGE(3, 'a').should.be.false
+            MathOfT.INRANGE(3, 'a').should.be.false()
           })
           it('returns false when FIRST argument provided doesn\'t satisfy MathOfT.ISNUMBER', function () {
-            MathOfT.INRANGE([3]).should.be.false
+            MathOfT.INRANGE([3]).should.be.false()
           })
           it(`returns true when sole argument n falls within MathOfT.DEFAULT_RANGE`, function () {
             let testval = MathOfT.DEFAULT_RANGE[0] +
               (MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0]) / 2
-            MathOfT.INRANGE(testval).should.be.true
+            MathOfT.INRANGE(testval).should.be.true()
           })
           it(`returns false when sole argument n falls outside of MathOfT.DEFAULT_RANGE`, function () {
             let testval = MathOfT.DEFAULT_RANGE[0] +
               (MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0]) * 2
-            MathOfT.INRANGE(testval).should.be.false
+            MathOfT.INRANGE(testval).should.be.false()
           })
           it(`returns true when n of arguments (n,m) with m being a Number falls within [0, m]`, function () {
             let testN = Math.random()
             let testM = testN * 2
-            MathOfT.INRANGE(testN, testM).should.be.true
+            MathOfT.INRANGE(testN, testM).should.be.true()
           })
           it(`returns false when n of arguments (n,m) with m being a Number falls outside of [0, m]`, function () {
             let testN = Math.random()
             let testM = testN / 2
-            MathOfT.INRANGE(testN, testM).should.be.false
+            MathOfT.INRANGE(testN, testM).should.be.false()
           })
           it(`returns true when n of arguments (n,m) with m being a unit-length Array falls within [0, m[0]]`, function () {
             let testN = Math.random()
             let testM = [testN * 2]
-            MathOfT.INRANGE(testN, testM).should.be.true
+            MathOfT.INRANGE(testN, testM).should.be.true()
           })
           it(`returns false when n of arguments (n,m) with m being a unit-length Array falls outside of [0, m[0]]`, function () {
             let testN = Math.random()
             let testM = [testN / 2]
-            MathOfT.INRANGE(testN, testM).should.be.false
+            MathOfT.INRANGE(testN, testM).should.be.false()
           })
           it(`returns true when n of arguments (n,m) with m being an Array falls within [m[0], m[m.length-1]]`, function () {
             let testN = Math.random()
             let testM = [testN / 2, testN * 2]
-            MathOfT.INRANGE(testN, testM).should.be.true
+            MathOfT.INRANGE(testN, testM).should.be.true()
             let testM2 = [testN / 2, testN / 2, testN * 2]
-            MathOfT.INRANGE(testN, testM2).should.be.true
+            MathOfT.INRANGE(testN, testM2).should.be.true()
           })
           it(`returns false when n of arguments (n,m) with m being an Array falls outside of [m[0], m[m.length-1]]`, function () {
             let testN = Math.random()
             let testM = [testN / 2, testN / 4]
-            MathOfT.INRANGE(testN, testM).should.be.false
+            MathOfT.INRANGE(testN, testM).should.be.false()
             let testM2 = [testN / 2, testN * 2, testN / 4]
-            MathOfT.INRANGE(testN, testM2).should.be.false
+            MathOfT.INRANGE(testN, testM2).should.be.false()
           })
           it(`returns true when n of arguments (n,m,mm) falls within [m, mm]`, function () {
             let testN = Math.random()
             let testM = testN / 2
             let testMM = testN * 2
-            MathOfT.INRANGE(testN, testM, testMM).should.be.true
+            MathOfT.INRANGE(testN, testM, testMM).should.be.true()
           })
           it(`returns false when n of arguments (n,m,mm) falls outside of [m, mm]`, function () {
             let testN = Math.random()
             let testM = testN / 2
             let testMM = testN / 4
-            MathOfT.INRANGE(testN, testM, testMM).should.be.false
+            MathOfT.INRANGE(testN, testM, testMM).should.be.false()
           })
           it('returns true when n is one of the edge values of the given test range', function () {
-            MathOfT.INRANGE(MathOfT.DEFAULT_RANGE[0]).should.be.true
+            MathOfT.INRANGE(MathOfT.DEFAULT_RANGE[0]).should.be.true()
             let testN = Math.random()
             let testM = Math.random()
-            let testMM = Math.random()
-            MathOfT.INRANGE(testN, testN).should.be.true // [0, m]
-            MathOfT.INRANGE(testN, [testN]).should.be.true // [0, m[0]]
-            MathOfT.INRANGE(testN, [testN, testM]).should.be.true // [m[0], m[1]]
-            MathOfT.INRANGE(testN, [testM, testN]).should.be.true // [m[0], m[1]]
-            MathOfT.INRANGE(testN, testN, testM).should.be.true // [m, mm]
-            MathOfT.INRANGE(testN, testM, testN).should.be.true // [m, mm]
+            // let testMM = Math.random()
+            MathOfT.INRANGE(testN, testN).should.be.true() // [0, m]
+            MathOfT.INRANGE(testN, [testN]).should.be.true() // [0, m[0]]
+            MathOfT.INRANGE(testN, [testN, testM]).should.be.true() // [m[0], m[1]]
+            MathOfT.INRANGE(testN, [testM, testN]).should.be.true() // [m[0], m[1]]
+            MathOfT.INRANGE(testN, testN, testM).should.be.true() // [m, mm]
+            MathOfT.INRANGE(testN, testM, testN).should.be.true() // [m, mm]
           })
         })
 
@@ -342,43 +345,43 @@ function dotest (MathOfT) {
         })
         describe('MathOfT.EQUAL', () => {
           it('should return true for any number of congruent number arguments', () => {
-            MathOfT.EQUAL(1, 1, 1, 1).should.be.true
-            MathOfT.EQUAL(Infinity, Infinity).should.be.true
-            MathOfT.EQUAL(0, 0, 0, 0, 0, 7 - 7).should.be.true
+            MathOfT.EQUAL(1, 1, 1, 1).should.be.true()
+            MathOfT.EQUAL(Infinity, Infinity).should.be.true()
+            MathOfT.EQUAL(0, 0, 0, 0, 0, 7 - 7).should.be.true()
           })
           it('should return false for any number of incongruent number arguments', () => {
-            MathOfT.EQUAL(1, 3, 1, 1).should.be.false
-            MathOfT.EQUAL(NaN, NaN).should.be.false
-            MathOfT.EQUAL(NaN, 2).should.be.false
-            MathOfT.EQUAL(-Infinity, Infinity).should.be.false
-            MathOfT.EQUAL(0, 0, 0, 0, 0, 7).should.be.false
+            MathOfT.EQUAL(1, 3, 1, 1).should.be.false()
+            MathOfT.EQUAL(NaN, NaN).should.be.false()
+            MathOfT.EQUAL(NaN, 2).should.be.false()
+            MathOfT.EQUAL(-Infinity, Infinity).should.be.false()
+            MathOfT.EQUAL(0, 0, 0, 0, 0, 7).should.be.false()
           })
           it('should return true for any number of congruent, non-nested array arguments of any lengths', () => {
-            MathOfT.EQUAL([1, 1], [1, 1]).should.be.true
-            MathOfT.EQUAL([Infinity, Infinity], [Infinity, Infinity]).should.be.true
-            MathOfT.EQUAL([0, 0, 0], [0, 0, 0], [0, 0, 7 - 7]).should.be.true
+            MathOfT.EQUAL([1, 1], [1, 1]).should.be.true()
+            MathOfT.EQUAL([Infinity, Infinity], [Infinity, Infinity]).should.be.true()
+            MathOfT.EQUAL([0, 0, 0], [0, 0, 0], [0, 0, 7 - 7]).should.be.true()
           })
           it('should return false for any number of incongruent, non-nested array arguments of any lengths', () => {
-            MathOfT.EQUAL([1, 1], [1, 1, 1]).should.be.false
-            MathOfT.EQUAL([NaN], [111]).should.be.false
-            MathOfT.EQUAL([NaN], [NaN]).should.be.false
-            MathOfT.EQUAL([Infinity, -Infinity], [Infinity, Infinity]).should.be.false
-            MathOfT.EQUAL([0, 0, 0], [0, 0, 0], [0, 0, -7]).should.be.false
+            MathOfT.EQUAL([1, 1], [1, 1, 1]).should.be.false()
+            MathOfT.EQUAL([NaN], [111]).should.be.false()
+            MathOfT.EQUAL([NaN], [NaN]).should.be.false()
+            MathOfT.EQUAL([Infinity, -Infinity], [Infinity, Infinity]).should.be.false()
+            MathOfT.EQUAL([0, 0, 0], [0, 0, 0], [0, 0, -7]).should.be.false()
           })
           it('should return true for any number of congruent, nested array arguments of any lengths', () => {
             MathOfT.EQUAL([[1, 1], [1, 1]],
-              [[1, 1], [1, 1]]).should.be.true
-            MathOfT.EQUAL([Infinity, [Infinity]], [Infinity, [Infinity]]).should.be.true
+              [[1, 1], [1, 1]]).should.be.true()
+            MathOfT.EQUAL([Infinity, [Infinity]], [Infinity, [Infinity]]).should.be.true()
             MathOfT.EQUAL([[0, 0, 0], [3, 5, 1]],
               [[0, 0, 0], [3, 5, 1]],
-              [[0, 0, 7 - 7], [6 - 3, 0 + 5, 1 / 1]]).should.be.true
+              [[0, 0, 7 - 7], [6 - 3, 0 + 5, 1 / 1]]).should.be.true()
           })
           it('should return false for any number of incongruent, nested array arguments of any lengths', () => {
-            MathOfT.EQUAL([1, 1], [1, 1, 1]).should.be.false
-            MathOfT.EQUAL([NaN], [111]).should.be.false
-            MathOfT.EQUAL([[NaN]], [[NaN]]).should.be.false
-            MathOfT.EQUAL([Infinity, -Infinity], [Infinity, Infinity]).should.be.false
-            MathOfT.EQUAL([0, 0, 0], [0, 0, 0], [0, 0, -7]).should.be.false
+            MathOfT.EQUAL([1, 1], [1, 1, 1]).should.be.false()
+            MathOfT.EQUAL([NaN], [111]).should.be.false()
+            MathOfT.EQUAL([[NaN]], [[NaN]]).should.be.false()
+            MathOfT.EQUAL([Infinity, -Infinity], [Infinity, Infinity]).should.be.false()
+            MathOfT.EQUAL([0, 0, 0], [0, 0, 0], [0, 0, -7]).should.be.false()
           })
         })
 
@@ -415,7 +418,7 @@ function dotest (MathOfT) {
                 testRangeArr = [0, 1]
                 let normarr = [0, 100]
                 let normt = 0.35
-                let testval = normt * dTestRangeArr() + testRangeArr[0]
+                // let testval = normt * dTestRangeArr() + testRangeArr[0]
                 MathOfT.NORMALIZETORANGE(normt, testRangeArr, normarr).should.equal(35)
               })
             })
@@ -432,26 +435,26 @@ function dotest (MathOfT) {
             // MathOfT.MATHTYPEOF().should.equal(MathOfT.MATHTYPES.arraylike);
           })
           it('should return null for unrecognized types', function () {
-            expect(MathOfT.MATHTYPEOF('3')).to.be.null
-            expect(MathOfT.MATHTYPEOF({ Infinity })).to.be.null
-            expect(MathOfT.MATHTYPEOF((a) => a)).to.be.null
+            expect(MathOfT.MATHTYPEOF('3')).to.be.null()
+            expect(MathOfT.MATHTYPEOF({ Infinity })).to.be.null()
+            expect(MathOfT.MATHTYPEOF((a) => a)).to.be.null()
           })
         })
         describe('MathOfT.ISARRAYLIKE', () => {
           it('should return true for Array types', function () {
-            MathOfT.ISARRAYLIKE([9]).should.be.true
-            MathOfT.ISARRAYLIKE([]).should.be.true
-            MathOfT.ISARRAYLIKE([[1, 1], [3, 3]]).should.be.true
+            MathOfT.ISARRAYLIKE([9]).should.be.true()
+            MathOfT.ISARRAYLIKE([]).should.be.true()
+            MathOfT.ISARRAYLIKE([[1, 1], [3, 3]]).should.be.true()
           })
           it('should return true for Array types', function () {
-            MathOfT.ISARRAYLIKE(new Float32Array([1, 1, 1, 33, 53])).should.be.true
-            MathOfT.ISARRAYLIKE(new Int8Array()).should.be.true
-            // MathOfT.ISARRAYLIKE([[1,1],[3,3]]).should.be.true;
+            MathOfT.ISARRAYLIKE(new Float32Array([1, 1, 1, 33, 53])).should.be.true()
+            MathOfT.ISARRAYLIKE(new Int8Array()).should.be.true()
+            // MathOfT.ISARRAYLIKE([[1,1],[3,3]]).should.be.true();
           })
           it('should return false for non-Array-like types', function () {
-            MathOfT.ISARRAYLIKE('3').should.be.false
-            MathOfT.ISARRAYLIKE({ Infinity }).should.be.false
-            MathOfT.ISARRAYLIKE((a) => a).should.be.false
+            MathOfT.ISARRAYLIKE('3').should.be.false()
+            MathOfT.ISARRAYLIKE({ Infinity }).should.be.false()
+            MathOfT.ISARRAYLIKE((a) => a).should.be.false()
           })
         })
         describe('MathOfT.IINRANGE', () => {
@@ -503,7 +506,7 @@ function dotest (MathOfT) {
                 // ex.
                 testRangeArr = [0, 1]
                 let normt = 0.35
-                let antinormt = testRangeArr[1] - normt
+                // let antinormt = testRangeArr[1] - normt
                 let testval = normt * dTestRangeArr() + testRangeArr[0]
                 MathOfT.ANTINORMALIZETORANGE(testval, testRangeArr).should.equal(1.3)
               })
@@ -515,7 +518,7 @@ function dotest (MathOfT) {
                 testRangeArr = [0, 1]
                 let normarr = [0, 100]
                 let normt = 0.35
-                let testval = normt * dTestRangeArr() + testRangeArr[0]
+                // let testval = normt * dTestRangeArr() + testRangeArr[0]
                 MathOfT.ANTINORMALIZETORANGE(normt, testRangeArr, normarr).should.equal(65)
               })
             })
@@ -564,8 +567,10 @@ function dotest (MathOfT) {
           let dummychar = () => String.fromCharCode(Math.floor(255 * Math.random()))
           let badcodes = Array(10).fill(null).map(() => dummychar())
           badcodes.forEach((badcode) => {
-            let resetbadcode = () => badcode = String.fromCharCode(
-              Math.floor(255 * Math.random()))
+            let resetbadcode = () => {
+              badcode = String.fromCharCode(
+                Math.floor(255 * Math.random()))
+            }
             while (MathOfT.OPDICT.includes(badcode)) {
               resetbadcode()
             }
@@ -583,14 +588,16 @@ function dotest (MathOfT) {
           let goodtestcodes = Array.from(MathOfT.OPDICT)
           goodtestcodes.map((code) => {
             it(`returns true when given MathOfT.OPDICT code ${code}`, function () {
-              MathOfT.ISOP(code).should.be.true
+              MathOfT.ISOP(code).should.be.true()
             })
           })
           let numbadcodes = 10; let badtestcodes = []
           for (let n = 0; n < numbadcodes; n++) {
             let badcode
-            let resetbadcode = () => badcode = String.fromCharCode(
-              Math.floor(255 * Math.random()))
+            let resetbadcode = () => {
+              badcode = String.fromCharCode(
+                Math.floor(255 * Math.random()))
+            }
             resetbadcode()
             while (MathOfT.OPDICT.includes(badcode)) {
               resetbadcode()
@@ -600,7 +607,7 @@ function dotest (MathOfT) {
           // console.info(badtestcodes.length)
           badtestcodes.forEach((code) => {
             it(`returns false when given random code ${code} not in MathOfT.OPDICT`, function () {
-              MathOfT.ISOP(code).should.be.false
+              MathOfT.ISOP(code).should.be.false()
             })
           })
         })
@@ -611,17 +618,21 @@ function dotest (MathOfT) {
           describe(`contains property ${opfunckey}`, function () {
             let testTarget = MathOfT.OPS[opfunckey]
             it(`which is a non-enumerable function that takes one string argument in MathOfT.OPDICT and one function and returns a function`, function () {
-              Object.keys(MathOfT.OPS).includes(opfunckey).should.be.false
+              Object.keys(MathOfT.OPS).includes(opfunckey).should.be.false()
               should.exist(MathOfT.OPS[opfunckey])
               testTarget.should.be.a('function')
               testTarget.length.should.equal(2)
-              let badfunc = () => testTarget(3)
+              let badfunc = () => {
+                testTarget(3)
+              }
               badfunc.should.throw(TypeError)
               badfunc = () => testTarget({})
               badfunc.should.throw(TypeError)
               let badcode
-              let resetbadcode = () => badcode = String.fromCharCode(
-                Math.floor(255 * Math.random()))
+              let resetbadcode = () => {
+                badcode = String.fromCharCode(
+                  Math.floor(255 * Math.random()))
+              }
               resetbadcode()
               while (MathOfT.OPDICT.includes(badcode)) {
                 resetbadcode()
@@ -637,7 +648,7 @@ function dotest (MathOfT) {
           describe(`contains property ${resfunckey}`, function () {
             let testTarget = MathOfT.OPS[resfunckey]
             it(`which is a non-enumerable function that takes 4 arguments`, function () {
-              Object.keys(MathOfT.OPS).includes(resfunckey).should.be.false
+              Object.keys(MathOfT.OPS).includes(resfunckey).should.be.false()
               should.exist(MathOfT.OPS[resfunckey])
               testTarget.should.be.a('function')
               testTarget.length.should.equal(4)
@@ -646,8 +657,10 @@ function dotest (MathOfT) {
               let badfunc = () => testTarget({}, () => 22, 1, [0, 2, 4])
               badfunc.should.throw(TypeError)
               let badcode
-              let resetbadcode = () => badcode = String.fromCharCode(
-                Math.floor(255 * Math.random()))
+              let resetbadcode = () => {
+                badcode = String.fromCharCode(
+                  Math.floor(255 * Math.random()))
+              }
               resetbadcode()
               while (MathOfT.OPDICT.includes(badcode)) {
                 resetbadcode()
@@ -695,41 +708,41 @@ function dotest (MathOfT) {
                     testResult[1].should.equal(2)
                     testResult[2].should.equal(3)
                     // can't use should.deep.equal because of NaN value (NaN !== NaN)
-                    testResult[3].should.be.NaN
+                    Number.isNaN(testResult[3]).should.be.true()
                   })
                   break
                 case '+':
                   it(`should perform summation on its number operands, substituting ${base} for null operands`, function () {
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 + 2 + 3 + 4)
                     MathOfT.OPS[key](1, null, 3, 4).should.equal(1 + base + 3 + 4)
-                    MathOfT.OPS[key](1, 2, 3, NaN).should.be.NaN
+                    Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case '-':
                   it(`should perform subtraction on its number operands, substituting ${base} for null operands`, function () {
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 - 2 - 3 - 4)
                     MathOfT.OPS[key](1, null, 3, 4).should.equal(1 - base - 3 - 4)
-                    MathOfT.OPS[key](1, 2, 3, NaN).should.be.NaN
+                    Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case '*':
                   it(`should perform multiplication on its number operands, substituting ${base} for null operands`, function () {
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 * 2 * 3 * 4)
                     MathOfT.OPS[key](1, null, 3, 4).should.equal(1 * base * 3 * 4)
-                    MathOfT.OPS[key](1, 2, 3, NaN).should.be.NaN
+                    Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case '/':
                   it(`should perform division on its number operands, substituting ${base} for null operands`, function () {
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 / 2 / 3 / 4); MathOfT.OPS[key](1, null, 3, 4).should.equal(1 / base / 3 / 4)
-                    MathOfT.OPS[key](1, 2, 3, NaN).should.be.NaN
+                    Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case '**':
-                  it(`should perform exponentiation on its number operands, substituting ${base} for null operands`, function () {
+                  it(`should perform exponentiation on its number operands, substituting ${base} for null operands`, function () {
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 ** 2 ** 3 ** 4)
                     MathOfT.OPS[key](1, null, 3, 4).should.equal(1 ** base ** 3 ** 4)
-                    MathOfT.OPS[key](1, 2, 3, NaN).should.be.NaN
+                    Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case 'magest':
@@ -739,7 +752,7 @@ function dotest (MathOfT) {
                     MathOfT.OPS[key](-10, 2, 3, 10).should.equal(10)
                   })
                   it(`should return NaN when given operands aren't calculables`, () => {
-                    MathOfT.OPS[key](NaN, Infinity, NaN).should.be.NaN
+                    Number.isNaN(MathOfT.OPS[key](NaN, Infinity, NaN)).should.be.true()
                   })
                   break
                 default:
@@ -897,12 +910,18 @@ function dotest (MathOfT) {
         describe('key: segmentDivisor', function () {
           it('should use default (fail gracefully) when provided NaN segment divisor', function () {
             let testParamsObj = {
-              terms: [(t) => Math.sin(t) / 5, (t) => Math.cos(3 * t) / 7, (t) => Math.sin(5 * t) / 9],
+              terms: [
+                (t) => Math.sin(t) / 5,
+                (t) => Math.cos(3 * t) / 7,
+                (t) => Math.sin(5 * t) / 9
+              ],
               segmentDivisor: NaN,
               range: [0, PI]
             }
             let testObj
-            let testObjFunc = () => testObj = new MathOfT(testParamsObj)
+            let testObjFunc = () => {
+              testObj = new MathOfT(testParamsObj)
+            }
             testObjFunc.should.not.throw(TypeError)
             testObj.segmentDivisor.should.equal(10)
           })
@@ -942,7 +961,7 @@ function dotest (MathOfT) {
           testFunc(testVal).should.equal(testVal)
         })
         it('opcode: null', function () {
-          expect(testObj.opcode).to.be.null
+          expect(testObj.opcode).to.be.null()
         })
       })
     })
@@ -1021,9 +1040,9 @@ function dotest (MathOfT) {
           let goodobjA = dd => dd
 
           let goodobjB = new MathOfT()
-          testObj.addTerm(badobj).should.be.false
-          testObj.addTerm(goodobjA).should.be.true
-          testObj.addTerm(goodobjB).should.be.true
+          testObj.addTerm(badobj).should.be.false()
+          testObj.addTerm(goodobjA).should.be.true()
+          testObj.addTerm(goodobjB).should.be.true()
         })
         // it('array notation should reference the added terms in corresponding order to their array positions', ()=>{
         //
@@ -1031,9 +1050,9 @@ function dotest (MathOfT) {
         //   let badobj = {},
         //     goodobjA = dd=>dd,
         //     goodobjB = new MathOfT();
-        //   testObj.addTerm(badobj).should.be.false;
-        //   testObj.addTerm(goodobjA).should.be.true;
-        //   testObj.addTerm(goodobjB).should.be.true;
+        //   testObj.addTerm(badobj).should.be.false();
+        //   testObj.addTerm(goodobjA).should.be.true();
+        //   testObj.addTerm(goodobjB).should.be.true();
         //   testObj[0].should.equal(testObj.terms[0]);
         //   testObj[1].should.equal(goodobjB);
         // });
@@ -1101,12 +1120,15 @@ function dotest (MathOfT) {
           testRangeArr = [-1, 20, -100]
           testObj = new MathOfT(testRangeArr)
         })
-        it('should throw TypeError when given non-number arguments', function () {
-          () => testObj.dSubrange('b').should.throw(TypeError)
+        it('should throw TypeError when given non-number nn arguments', function () {
+          let badfunc = () => testObj.dSubrange(2, 'b')
+          badfunc.should.throw(TypeError)
         })
         it('should throw RangeError when given non-integer arguments', function () {
-          () => testObj.dSubrange(4.5, 0).should.throw(RangeError);
-          () => testObj.dSubrange(0, 4.5).should.throw(RangeError)
+          let badfunc = () => testObj.dSubrange(4.5, 0)
+          badfunc.should.throw(RangeError)
+          badfunc = () => testObj.dSubrange(0, 4.5)
+          badfunc.should.throw(RangeError)
         })
         it('should when given no parameters return the difference between the 0th-indexed range element and the 1st', function () {
           testObj.dSubrange().should.equal(testRangeArr[1] - testRangeArr[0])
@@ -1291,7 +1313,7 @@ function dotest (MathOfT) {
             let res = testObj.normalizeT(-1) // less than Math.random in testRangeArr
             res.should.be.an('array')
             res.should.have.lengthOf(testRangeArr.length - 1)
-            res.every(v => v == -Infinity || v == Infinity).should.be.true
+            res.every(v => v === -Infinity || v === Infinity).should.be.true()
             // explicit tTypes
             testObj = new MathOfT([0, 1, 2, 0])
             res = testObj.normalizeT(0.5)
@@ -1368,7 +1390,7 @@ function dotest (MathOfT) {
             let res = testObj.antinormalizeT(-1) // less than Math.random in testRangeArr
             res.should.be.an('array')
             res.should.have.lengthOf(testRangeArr.length - 1)
-            res.every(v => v == -Infinity || v == Infinity).should.be.true
+            res.every(v => v === -Infinity || v === Infinity).should.be.true()
             // explicit values
             testObj = new MathOfT([0, 1, 2, 0])
             res = testObj.antinormalizeT(0.5)
@@ -1400,11 +1422,11 @@ function dotest (MathOfT) {
         describe('when giyen a single parameter t', () => {
           it('should return true IFF t falls within the evaluation range of this instance', () => {
             testObj = new MathOfT([11, 51])
-            testObj.isInRange(55).should.be.false
-            testObj.isInRange(5).should.be.false
-            testObj.isInRange(11).should.be.true
-            testObj.isInRange(51).should.be.true
-            testObj.isInRange(15).should.be.true
+            testObj.isInRange(55).should.be.false()
+            testObj.isInRange(5).should.be.false()
+            testObj.isInRange(11).should.be.true()
+            testObj.isInRange(51).should.be.true()
+            testObj.isInRange(15).should.be.true()
           })
         })
       })
@@ -1530,7 +1552,7 @@ function dotest (MathOfT) {
             testObj = new MathOfT(function (t) {
               this.should.be.an('object')
               let template = MathOfT.TTHIS_TEMPLATE()
-              Object.keys(this).every(key => key in template).should.be.true
+              Object.keys(this).every(key => key in template).should.be.true()
             })
             return false
           })
@@ -1542,7 +1564,7 @@ function dotest (MathOfT) {
               should.exist(this.tthis)
               this.tthis.should.be.an('object')
               let template = MathOfT.TTHIS_TEMPLATE()
-              Object.keys(this.tthis).every(key => key in template).should.be.true
+              Object.keys(this.tthis).every(key => key in template).should.be.true()
             })
           })
         })
@@ -1642,34 +1664,34 @@ function dotest (MathOfT) {
       })
 
       describe('oftNormal', function () {
-        let bound, outofboundsA, outofboundsB
+        let bound//, outofboundsA, outofboundsB
         before(function () {
           bound = PI
-          outofboundsA = 2 * bound, outofboundsB = -2 * bound
+          // outofboundsA = 2 * bound, outofboundsB = -2 * bound
           testObj = new MathOfT({
             range: bound,
             terms: (t) => [Math.cos(t), Math.sin(t)]
           })
         })
         it('should return the value for middle of range  when given non-number tNormal', function () {
-          let correctres = [ Math.cos(0), Math.sin(0)]
+          let correctres = [Math.cos(0), Math.sin(0)]
           let res = testObj.oftNormal('sfdafhurkysjerky')
           res.should.deep.equal(correctres)
         })
         it('should correctly calculate values for any given tNormal', function () {
           let ttargets = [-1, -0.75, -0.5, -0.25, 0]
-          let correctres = [
-            [ -1, 0],
-            [ -Math.sqrt(2) / 2, -Math.sqrt(2) / 2 ],
-            [ 0, -1],
-            [ Math.sqrt(2) / 2, -Math.sqrt(2) / 2],
-            [ 1, 0]
-          ]
+          // let correctres = [
+          //   [-1, 0],
+          //   [-Math.sqrt(2) / 2, -Math.sqrt(2) / 2 ],
+          //   [0, -1],
+          //   [Math.sqrt(2) / 2, -Math.sqrt(2) / 2],
+          //   [1, 0]
+          // ]
           for (var i in ttargets) {
             let t = ttargets[i]
             let res = testObj.oftNormal(t)
             let thet = PI * t
-            res.should.deep.equal([ Math.cos(thet), Math.sin(thet)])
+            res.should.deep.equal([Math.cos(thet), Math.sin(thet)])
             // res.should.be.almost.equalTo(correctres[i]);
           }
         })
@@ -1682,7 +1704,7 @@ function dotest (MathOfT) {
           res.should.deep.equal(testObj.ofLastt)
         })
         it('should know when to provide NaN after receiving NaN', function () {
-          testObj.oftNormal(NaN).should.be.NaN
+          Number.isNaN(testObj.oftNormal(NaN)).should.be.true()
         })
         it('should when called with a calculable t value that falls outside of the normalization range correctly calculate the corresponding value', function () {
           let drange = MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0]
@@ -1699,7 +1721,7 @@ function dotest (MathOfT) {
       describe('oftOp', () => {
         describe('for any given calculable t parameter', () => {
           describe('for any single-term instance', () => {
-            let testObj, testObj2, testObj3, testObj4
+            let testObj, testObj2 // , testObj3, testObj4
             describe('for all valid or invalid _op parameter and null _acc parameter', () => {
               before(() => {
                 testObj = new MathOfT({
@@ -1793,7 +1815,7 @@ function dotest (MathOfT) {
             })
           })
           describe('for any multi-term instance', () => {
-            let testObj, testObj2, testObj3, testObj4
+            let testObj, testObj2, testObj3 // , testObj4
             // let a,b,c,i,j,k;
             describe('for all valid or invalid _op parameter and null _acc parameter', () => {
               before(() => {
@@ -1970,13 +1992,13 @@ function dotest (MathOfT) {
                   ],
                   opcode: '-'
                 })
-                testObj4 = new MathOfT({
-                  terms: [
-                    (a) => [1 * a, 2 * a],
-                    (a) => [3 * a, 4 * a]
-                  ],
-                  opcode: '**'
-                })
+                // testObj4 = new MathOfT({
+                //   terms: [
+                //     (a) => [1 * a, 2 * a],
+                //     (a) => [3 * a, 4 * a]
+                //   ],
+                //   opcode: '**'
+                // })
               })
               it('the result is equivalent to performing said op on the individual results of the evaluations of the instance\'s terms for the given t', () => {
                 let testResult = testObj.oftOp(3, 'bad code')
