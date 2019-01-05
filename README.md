@@ -1,11 +1,13 @@
 # mathoftjs
-### Is
+### It Is
 
-- For investigating the _results_ of arithmetic expressions provided as functions in JavaScript over _specified evaluation ranges_,
+- Mostly [syntactic sugar](https://en.wikipedia.org/wiki/Syntactic_sugar)
+- For investigating the _results_ of known arithmetic expressions provided as functions in JavaScript over _specified evaluation ranges_,
 - For investigating floating-point error tendencies in a JavaScript environment, and
-- An ESM module for browsers or nodejs.
+- An [ECMAScript module](https://github.com/standard-things/esm) for browsers or nodejs.
 
-### Is _not_
+### It Is _not_
+- Fast,
 - A comprehensive calculator,
 - Immune to inaccuracies,
 - A computer algebra system,
@@ -24,7 +26,8 @@ MathOfT exports a single class, `MathOfT` that can create an instance as well as
         range: [0, 10],
         segmentDivisor: 10 //one less than resultant number of evaluation points
     });
-	[...m] //Array(11) [ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 ]
+	[...m] // Array(11) [ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 ]
+  m(5.13) // 10.26
 
 ### Generally, a MathOfT instance can evaluate:
   1. Its `terms`: `Function` or `MathOfT` instances
