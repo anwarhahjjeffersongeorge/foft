@@ -42,7 +42,13 @@ MathOfT exports a single class, `MathOfT` that can create an instance as well as
 ## Development Guidelines
 
 ### Testing
+#### in nodejs
 Run `npm test`
+#### in nodejs with coverage (slower)
+Run `npm btest`
+#### in browser
+Run `npm disttest`
+
 
 ### Documentation
 Run `npm run-script docs`

@@ -9,10 +9,10 @@
     "clean": "rm -rf docs test disttest coverage ./mathoftmochajs.html",
     "predocs": "clear && rm -rf docs",
     "docs": "npx jsdoc --configure .jsdoc.json --verbose",
-    "prebtest": "clear && rm -rf test && npx babel src --out-dir test --ignore \"src/browserentry.js\"",
+    "prebtest": "clear && rm -rf test && rsync -rv src/* test",
     "btest": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text mocha ./test/mocha/nodetestrunner.js",
     "pretest": "clear && rm -rf test && rsync -rv src/* test",
-    "test": "npx cross-env NODE_ENV=test nyc --require esm --reporter=text mocha ./test/mocha/nodetestrunner.js",
+    "test": "npx cross-env NODE_ENV=test mocha --require esm ./test/mocha/nodetestrunner.js",
     "prebuild": "clear && rm -rf lib",
     "build": "rsync -rv --exclude='mocha' src/* lib",
     "bbuild": "npx cross-env NODE_ENV=production babel src --out-dir lib --ignore \"src/mocha/,src/browserentry.js\"",
@@ -20,7 +20,7 @@
     "dist": "browserify -t [babelify] src/browserentry.js -o dist/mathoft.js",
     "postdist": "minify dist/mathoft.js > lib/mathoft-min.js",
     "predisttest": "clear && rm -rf disttest && mkdir disttest && cp src/mocha/custommochainfo.css src/mocha/mathoftmochajs.html disttest && browserify -t [ babelify --presets [ @babel/preset-env ] --plugins [ @babel/plugin-proposal-class-properties ] ] src/mocha/browsertestrunner.js -o disttest/mathoftmochajs-browser.js",
-    "disttest": "firefox disttest/mathoftmochajs.html"
+    "disttest": "echo See test results at: && echo file://$(pwd)/disttest/mathoftmochajs.html && echo"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,8 @@
   "nyc": {
     "exclude": [
       "coverage/**",
-      "**/node_modules/**"
+      "node_modules/**",
+      "test/mocha/**"
     ],
     "sourceMap": false,
     "instrument": false,
