@@ -1352,7 +1352,7 @@ Object.defineProperties(MathOfT, {
       },
       [null]: {
         enumerable: true,
-        get: () => {
+        value: (() => {
           let code = null; let base = null
           return Object.assign(
             function () {
@@ -1363,12 +1363,13 @@ Object.defineProperties(MathOfT, {
               base
             }
           )
-        },
-        set: () => null
+        })(),
+        configurable: false,
+        writable: false
       },
       '+': {
         enumerable: true,
-        get: () => {
+        value: (() => {
           let base = 0
           let code = '+'
           return Object.assign(
@@ -1379,12 +1380,13 @@ Object.defineProperties(MathOfT, {
               base
             }
           )
-        },
-        set: () => '+'
+        })(),
+        configurable: false,
+        writable: false
       },
       '-': {
         enumerable: true,
-        get: () => {
+        value: (() => {
           let base = 0
           let code = '-'
           return Object.assign(
@@ -1396,12 +1398,13 @@ Object.defineProperties(MathOfT, {
               base
             }
           )
-        },
-        set: () => '-'
+        })(),
+        configurable: false,
+        writable: false
       },
       '*': {
         enumerable: true,
-        get: () => {
+        value: (() => {
           let base = 1
           let code = '*'
           return Object.assign(
@@ -1413,12 +1416,13 @@ Object.defineProperties(MathOfT, {
               base
             }
           )
-        },
-        set: () => '*'
+        })(),
+        configurable: false,
+        writable: false
       },
       '/': {
         enumerable: true,
-        get: () => {
+        value: (() => {
           let base = 1
           let code = '/'
           return Object.assign(
@@ -1430,12 +1434,13 @@ Object.defineProperties(MathOfT, {
               base
             }
           )
-        },
-        set: () => '/'
+        })(),
+        configurable: false,
+        writable: false
       },
       '**': {
         enumerable: true,
-        get: () => {
+        value: (() => {
           let base = 1
           let code = '**'
           return Object.assign(
@@ -1447,12 +1452,13 @@ Object.defineProperties(MathOfT, {
               base
             }
           )
-        },
-        set: () => '**'
+        })(),
+        configurable: false,
+        writable: false
       },
       '...': {
         enumerable: true,
-        get: () => {
+        value: (() => {
           let code = '...'
           let base = []
           return Object.assign(
@@ -1466,8 +1472,9 @@ Object.defineProperties(MathOfT, {
               base
             }
           )
-        },
-        set: () => '...'
+        })(),
+        configurable: false,
+        writable: false
       },
       /**
        * @name magest - given some values, return the one with the greatest magnitude
