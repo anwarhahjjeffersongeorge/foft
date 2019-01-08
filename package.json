@@ -6,11 +6,11 @@
   "module": "lib/main.js",
   "private": true,
   "scripts": {
-    "clean": "rm -rf docs test disttest coverage ./mathoftmochajs.html",
+    "clean": "rm -rf docs test disttest coverage dist lib ./mathoftmochajs.html",
     "predocs": "clear && rm -rf docs",
     "docs": "npx jsdoc --configure .jsdoc.json --verbose",
     "prebtest": "clear && rm -rf test && rsync -rv src/* test",
-    "btest": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text mocha ./test/mocha/nodetestrunner.js",
+    "btest": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text --reporter=html mocha ./test/mocha/nodetestrunner.js",
     "pretest": "clear && rm -rf test && rsync -rv src/* test",
     "test": "npx cross-env NODE_ENV=test mocha --require esm ./test/mocha/nodetestrunner.js",
     "prebuild": "clear && rm -rf lib",
