@@ -103,8 +103,8 @@ class MathOfT extends ExtensibleFunction {
     terms = (typeof terms === 'function')
       ? [terms]
       : terms
-    if (!MathOfT.ISARRAYLIKE(terms) && (typeof terms !== 'function')) {
-      throw new TypeError('params.terms should be array or function')
+    if (!MathOfT.ISARRAYLIKE(terms) && (typeof terms !== 'function') && !(terms instanceof MathOfT)) {
+      throw new TypeError('params.terms should be array, function or MathOfT instance')
     }
     for (let term of terms) {
       // const term = terms[termIndex];
@@ -203,12 +203,27 @@ class MathOfT extends ExtensibleFunction {
   get numSegments () {
     return this.segmentDivisor + 1
   }
+
+
+  /**
+   * get dt - get the delta for t between the first and final values of the
+   * evaluation range. May be innacurate when the range has more than two
+   * terms
+   *
+   * @return {number}
+   */
   get dt () {
     return this.drange / this.segmentDivisor
   }
 
+
+  /**
+   * set range - only accepts an arraylike of calculables
+   *
+   * @param  {Array<number>} range
+   */
   set range (range) {
-    if (!MathOfT.ARENUMBERS(...range)) throw new TypeError('range values should be Array of numbers')
+  if (!(MathOfT.ISARRAYLIKE(range) && MathOfT.ARECALCULABLES(range))) throw new TypeError('range values should be Array of calculable numbers')
     this._range = Array(range.length)
 
     for (let rangeIndex in range) {
@@ -1103,53 +1118,44 @@ undefined */
    * @return {Array}
    */
   static DIMENSIONS (x) {
+    let dim = Promise.resolve([])
     if (MathOfT.ISNUMBER(x)) {
-      return Promise.resolve([0])
+      return dim.then(dimarr => dimarr.concat(0))
     }
-
-    // let irregularflag = false
-    return Promise.resolve().then(() => {
-      // debugger;
-      let dim = Promise.resolve([])
-      if (MathOfT.ISARRAYLIKE(x)) {
-        if (x.length === 0) {
-          return dim.then(dimarr => dimarr.concat(0))
-        } else {
-          return dim
-            .then(dimarr => {
-              // console.log(x.length)
-              return dimarr.concat(x.length)
-            })
-            .then(dimarr => {
-              // console.log(dimarr)
-              for (let elementindex in x) {
-                let longestelementlength = 0
-                let element = x[elementindex]
-                if (MathOfT.ISARRAYLIKE(element)) {
-                  if (element.length >= longestelementlength) {
-                    longestelementlength = element.length
-                  } else {
-                    // irregularflag = true // sparse element
-                  }
-                  return Promise
-                    .all(element.map(subelement => MathOfT.DIMENSIONS(subelement)))
-                    .then(nestedelementlengths => {
-                      let mag = MathOfT.OPS.magest(...nestedelementlengths)
-                      return (Number.isNaN(mag) || mag === 0)
-                        ? []
-                        : mag
-                    })
-                    .then(longestnestedelementlength => dimarr.concat(longestelementlength, longestnestedelementlength))
-                } else {
-                  return Promise.resolve(dimarr)
-                }
-              }
-            })
-        }
+    else if (MathOfT.ISARRAYLIKE(x)) {
+      if (x.length === 0) {
+        return dim.then(dimarr => dimarr.concat(0))
       } else {
-        return dim
+        let subarrayIndices = []
+        let isNotSubarrayTest = (acc, v, i) => {
+          if (!MathOfT.ISARRAYLIKE(v)) {
+            return acc && true
+          } else {
+            subarrayIndices.push(i)
+            return acc && false
+          }
+        }
+        if (x.reduce(isNotSubarrayTest, true)) {
+          return dim.then(dimarr => dimarr.concat(x.length))
+        } else {
+          return dim.then(dimarr => {
+            return Promise.all(subarrayIndices.map((v) => {
+              let xSubArr = x[v]
+              // console.log(xSubArr)
+              return MathOfT.DIMENSIONS(xSubArr)
+            })).then(subdims => {
+              // console.log(subdims)
+              let mag = MathOfT.OPS.magest(...subdims)
+              mag = (Number.isNaN(mag) || mag === 0)
+                ? []
+                : mag
+              return dimarr.concat(x.length, mag)
+            })
+          })
+        }
       }
-    })
+    }
+    return dim
   }
 
   /**
@@ -1340,9 +1346,9 @@ Object.defineProperties(MathOfT, {
           if (MathOfT.ARENUMBERS(...args)) {
             return opfunc(code, f)(args)
           }
-          let filtered = [...args].map(v => (v === null) ? base : v)
-          if (MathOfT.ARENUMBERS(filtered)) {
-            return opfunc(code, f)(filtered)
+          let nullsReplaced = [...args].map(v => (v === null) ? base : v)
+          if (MathOfT.ARENUMBERS(nullsReplaced)) {
+            return opfunc(code, f)(nullsReplaced)
           }
           return NaN
         },
@@ -1456,17 +1462,27 @@ Object.defineProperties(MathOfT, {
         configurable: false,
         writable: false
       },
+      /**
+       * ... recursive arraylike flatten
+       */
       '...': {
         enumerable: true,
         value: (() => {
           let code = '...'
           let base = []
           return Object.assign(
-            (a, b) => (MathOfT.ISARRAYLIKE(a))
-              ? a.concat(b)
-              : MathOfT.ISARRAYLIKE(b)
-                ? b.concat(a)
-                : [a, b],
+            function flatten() {
+              let res = Promise.resolve([])
+              for (var i = 0; i < arguments.length; i++) {
+                let a = arguments[i]
+                if (MathOfT.ISARRAYLIKE(a)) {
+                  res.then(arr => arr.concat(flatten(...a)))
+                } else {
+                  res.then(arr => arr.concat(a))
+                }
+              }
+              return res
+            },
             {
               code,
               base
@@ -1485,7 +1501,7 @@ Object.defineProperties(MathOfT, {
        */
       'magest': {
         enumerable: true,
-        get: () => {
+        value: (() => {
           let code = 'magest'
           let base = 0
           return Object.assign(
@@ -1507,9 +1523,11 @@ Object.defineProperties(MathOfT, {
               code,
               base
             }
-          )
+          ))()
+          configurable: false,
+          writable: false
         },
-        set: () => 'magest'
+
       }
 
     }),

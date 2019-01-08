@@ -324,7 +324,7 @@ function dotest (MathOfT) {
               MathOfT.DIMENSIONS([1, 2, null, 3]).should.eventually.deep.equal([4])
             ])
           })
-          it('identifies the dimensions of a 2-D nested array correctly', () => {
+          it('identifies the dimensions of a regular 2-D nested array correctly', () => {
             return MathOfT.DIMENSIONS([
               [1, 2, 4],
               [1, 3, 4]
@@ -333,17 +333,26 @@ function dotest (MathOfT) {
           it('identifies the dimensions of a regular 3-D nested array correctly', () => {
             return MathOfT.DIMENSIONS([
               [
-                [1, 2, 4],
-                [1, 3, 4]
+                [1, 2, 4, 5],
+                [1, 3, 1, 4],
+                [1, 3, 3, 4]
               ],
               [
-                [3, 2, 4],
-                [55, 3, 4]
+                [1, 2, 4, 5],
+                [1, 3, 1, 4],
+                [1, 3, 3, 4]
               ]
-            ]).should.eventually.deep.equal([2, 2, 3])
+            ]).should.eventually.deep.equal([2, 3, 4])
           })
+          it('identifies the dimensions of an irregular 2-D array correctly by using the subarray of greatest length', () => {
+            return MathOfT.DIMENSIONS([
+              [1, 2, 4],
+              [1, 3, 4, 33]
+            ]).should.eventually.deep.equal([2, 4])
+          });
         })
         describe('MathOfT.EQUAL', () => {
+
           it('should return true for any number of congruent number arguments', () => {
             MathOfT.EQUAL(1, 1, 1, 1).should.be.true()
             MathOfT.EQUAL(Infinity, Infinity).should.be.true()
@@ -745,6 +754,18 @@ function dotest (MathOfT) {
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
+                case '...':
+                  it('should return an already flat array as-is', function () {
+                    let testArr = [1, 2, 3, 4]
+                    MathOfT.OPS[key](testArr).should.equal(testArr)
+                  })
+                  it(`should return 2-d nested arrays in a 1-d form with same elements`, () => {
+                    let testArr = [[1, 2, 3, 4],[1, 2, 3, 4]]
+                    let ansArr = [[1, 2, 3, 4, 1, 2, 3, 4]]
+                    MathOfT.OPS[key](testArr).should.equal(ansArr)
+
+                  })
+                  break
                 case 'magest':
                   it('should identify the greatest magnitude in the given number operands', function () {
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(4)
@@ -764,6 +785,20 @@ function dotest (MathOfT) {
       })
     })
     describe('MathOfT constructor', function () {
+      describe('rejects certain bad parameters', () => {
+        it('should throw TypeError when given non arraylike range parameter', () => {
+          let badFunc = () => new MathOfT({
+            range: {}
+          })
+          badFunc.should.throw(TypeError)
+        })
+        it('should throw TypeError when given non arraylike, function or MathOfT terms parameter', () => {
+          let badFunc = () => new MathOfT({
+            terms: {}
+          })
+          badFunc.should.throw(TypeError)
+        })
+      })
       describe('accepts a single parameter', function () {
         it('should have constructor function length 1 ', () => {
           MathOfT.constructor.length.should.equal(1)
@@ -1071,9 +1106,41 @@ function dotest (MathOfT) {
           })
         })
       })
-      describe('trange', function () {
-        describe('when called upon an instance with a two-element evaluation range, return the range', function () {
-
+      describe('dt', () => {
+        it('should equal the instance drange divided by the instance segmentDivisor', () => {
+          let testObj = new MathOfT({
+            range: [11, 3],
+            terms: (a) => a + 33
+          })
+          let res = testObj.dt * testObj.segmentDivisor
+          res.should.equal(testObj.drange)
+        });
+      });
+      describe('set range', function () {
+        it('should throw TypeError when given a range parameter that isn\'t an arraylike of calculable values', function () {
+          let testObj = new MathOfT(
+            [Math.random(), Math.random()]
+          )
+          let testRange = {}
+          let badFunc = () => {
+            testObj.range = testRange
+          }
+          badFunc.should.throw(TypeError)
+          testRange = [Infinity, NaN, 22.2]
+          badFunc.should.throw(TypeError)
+          testRange = 22.2
+          badFunc.should.throw(TypeError)
+        })
+        it('should set the instance range member when given a valid range parameter', () => {
+          let testRange = [11, 33, 55, 33, 11]
+          let testRange2 = [42, 20, 0.22]
+          testObj = new MathOfT({
+            range: testRange,
+            terms: (a) => a + 33
+          })
+          testObj.range.should.deep.equal(testRange)
+          testObj.range = testRange2
+          testObj.range.should.deep.equal(testRange2)
         })
       })
       describe('.t0', function () {
