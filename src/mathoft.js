@@ -1141,15 +1141,18 @@ undefined */
           return dim.then(dimarr => {
             return Promise.all(subarrayIndices.map((v) => {
               let xSubArr = x[v]
-              // console.log(xSubArr)
+              console.log(xSubArr)
               return MathOfT.DIMENSIONS(xSubArr)
             })).then(subdims => {
-              // console.log(subdims)
+              console.log(subdims)
+              subdims = MathOfT.OPS['...'](subdims)
               let mag = MathOfT.OPS.magest(...subdims)
               mag = (Number.isNaN(mag) || mag === 0)
                 ? []
                 : mag
-              return dimarr.concat(x.length, mag)
+              return (subarrayIndices.length > 0)
+                ? dimarr.concat(x.length, mag)
+                : dimarr.concat(x.length, ...subdims)
             })
           })
         }
@@ -1300,7 +1303,7 @@ Object.defineProperties(MathOfT, {
    * @memberof MathOfT
    */
   'OPDICT': {
-    value: [null, '+', '-', '*', '/', '**', 'magest'],
+    value: [null, '+', '-', '*', '/', '**', '...', 'magest'],
     enumerable: true,
     configurable: false,
     writable: false
@@ -1471,17 +1474,16 @@ Object.defineProperties(MathOfT, {
           let code = '...'
           let base = []
           return Object.assign(
-            function flatten() {
-              let res = Promise.resolve([])
-              for (var i = 0; i < arguments.length; i++) {
-                let a = arguments[i]
-                if (MathOfT.ISARRAYLIKE(a)) {
-                  res.then(arr => arr.concat(flatten(...a)))
-                } else {
-                  res.then(arr => arr.concat(a))
-                }
+            function flatten(arr) {
+              if (!MathOfT.ISARRAYLIKE(arr)) {
+                return arr
+              } else {
+                return arr.reduce((acc, v) => {
+                  return (MathOfT.ISARRAYLIKE(v))
+                    ? acc.concat(flatten(v))
+                    : acc.concat(v)
+                }, base)
               }
-              return res
             },
             {
               code,
@@ -1523,11 +1525,10 @@ Object.defineProperties(MathOfT, {
               code,
               base
             }
-          ))()
-          configurable: false,
-          writable: false
-        },
-
+          )
+        })(),
+        configurable: false,
+        writable: false
       }
 
     }),

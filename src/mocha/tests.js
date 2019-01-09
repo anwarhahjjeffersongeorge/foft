@@ -694,10 +694,16 @@ function dotest (MathOfT) {
                 testTarget.should.be.a('function')
               })
               if (key) { // null key
-                it(`has own property base (number)`, function () {
+                it(`has own property base (number/[])`, function () {
                   testTarget.should.be.a('function')
                   testTarget.should.have.own.property('base')
-                  testTarget['base'].should.be.a('number')
+                  if (key === '...') {
+                    testTarget['base'].should.be.an('array')
+                    testTarget['base'].should.have.lengthOf(0)
+                  } else {
+                    testTarget['base'].should.be.a('number')
+                  }
+
                 })
                 it(`has own property code(string) `, function () {
                   testTarget.should.be.a('function')
@@ -755,15 +761,37 @@ function dotest (MathOfT) {
                   })
                   break
                 case '...':
-                  it('should return an already flat array as-is', function () {
-                    let testArr = [1, 2, 3, 4]
-                    MathOfT.OPS[key](testArr).should.equal(testArr)
+                  // it('should return a promise', function () {
+                  //   let testArr = [1, 2, 3, 4]
+                  //   return MathOfT.OPS[key](testArr).should.be.a('promise')
+                  // })
+                  // it('should resolve returning an already flat array as-is', function () {
+                  //   let testArr = [1, 2, 3, 4]
+                  //   return MathOfT.OPS[key](testArr).should.eventually.deep.equal(testArr)
+                  // })
+                  // it(`should resolve returning 2-d nested arrays in a 1-d form with same elements`, () => {
+                  //   let testArr = [[1, 2, 3, 4],[1, 2, 3, 4]]
+                  //   let ansArr = [1, 2, 3, 4, 1, 2, 3, 4]
+                  //   return MathOfT.OPS[key](testArr).should.eventually.deep.equal(ansArr)
+                  //
+                  // })
+                  it('should  return a non-arraylike as-is', function () {
+                    let testArr = 1
+                    MathOfT.OPS[key](testArr).should.deep.equal(testArr)
                   })
-                  it(`should return 2-d nested arrays in a 1-d form with same elements`, () => {
+                  it('should  return an already flat array as-is', function () {
+                    let testArr = [1, 2, 3, 4]
+                    MathOfT.OPS[key](testArr).should.deep.equal(testArr)
+                  })
+                  it(`should return 2-d nested arrays in a 1-d form with same elements  and ordering`, () => {
                     let testArr = [[1, 2, 3, 4],[1, 2, 3, 4]]
-                    let ansArr = [[1, 2, 3, 4, 1, 2, 3, 4]]
-                    MathOfT.OPS[key](testArr).should.equal(ansArr)
-
+                    let ansArr = [1, 2, 3, 4, 1, 2, 3, 4]
+                    MathOfT.OPS[key](testArr).should.deep.equal(ansArr)
+                  })
+                  it(`should return 3-d nested arrays in a 1-d form with same elements and ordering`, () => {
+                    let testArr = [[1, 2, [3, 4]],[1, 2, 3, 4]]
+                    let ansArr = [1, 2, 3, 4, 1, 2, 3, 4]
+                    MathOfT.OPS[key](testArr).should.deep.equal(ansArr)
                   })
                   break
                 case 'magest':
