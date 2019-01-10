@@ -324,13 +324,19 @@ function dotest (MathOfT) {
               MathOfT.DIMENSIONS([1, 2, null, 3]).should.eventually.deep.equal([4])
             ])
           })
-          it('identifies the dimensions of a regular 2-D nested array correctly', () => {
+          it('identifies the dimensions of a regular 2-D nested array correctly (1)', () => {
             return MathOfT.DIMENSIONS([
               [1, 2, 4],
-              [1, 3, 4]
+              [21, 43, 44]
             ]).should.eventually.deep.equal([2, 3])
           })
-          it('identifies the dimensions of a regular 3-D nested array correctly', () => {
+          it('identifies the dimensions of a regular 2-D nested array correctly (2)', () => {
+            return MathOfT.DIMENSIONS([
+              [1, 2],
+              [41, 43]
+            ]).should.eventually.deep.equal([2, 2])
+          })
+          it('identifies the dimensions of a regular 3-D nested array correctly(1)', () => {
             return MathOfT.DIMENSIONS([
               [
                 [1, 2, 4, 5],
@@ -338,21 +344,52 @@ function dotest (MathOfT) {
                 [1, 3, 3, 4]
               ],
               [
-                [1, 2, 4, 5],
-                [1, 3, 1, 4],
-                [1, 3, 3, 4]
+                [41, 2, 4, 5],
+                [41, 3, 1, 4],
+                [41, 3, 3, 4]
               ]
             ]).should.eventually.deep.equal([2, 3, 4])
+          })
+          it('identifies the dimensions of a regular 3-D nested array correctly(2)', () => {
+            return MathOfT.DIMENSIONS([
+              [
+                [1, 2, 4],
+                [1, 3, 1],
+                [1, 3, 3]
+              ],
+              [
+                [44, 2, 4],
+                [41, 3, 1],
+                [41, 3, 3]
+              ]
+            ]).should.eventually.deep.equal([2, 3, 3])
           })
           it('identifies the dimensions of an irregular 2-D array correctly by using the subarray of greatest length', () => {
             return MathOfT.DIMENSIONS([
               [1, 2, 4],
               [1, 3, 4, 33]
             ]).should.eventually.deep.equal([2, 4])
+          })
+          it('identifies the dimensions of an irregular 3-D array correctly by using the subarray of greatest length', () => {
+            return MathOfT.DIMENSIONS([
+              [
+                [1, 2, 4],
+                [1, 3, 3, 3, 3],
+                [1, 3, 3]
+              ],
+              [
+                [44, 55, 2, 4],
+                [41, 3, 1],
+                [41, 3, 3]
+              ]
+            ]).should.eventually.deep.equal([2, 3, 5])
           });
         })
         describe('MathOfT.EQUAL', () => {
-
+          it('should return true for a single non-NaN argument ', () => {
+            MathOfT.EQUAL(5).should.be.true()
+            MathOfT.EQUAL(NaN).should.be.false()
+          });
           it('should return true for any number of congruent number arguments', () => {
             MathOfT.EQUAL(1, 1, 1, 1).should.be.true()
             MathOfT.EQUAL(Infinity, Infinity).should.be.true()
@@ -795,13 +832,33 @@ function dotest (MathOfT) {
                   })
                   break
                 case 'magest':
-                  it('should identify the greatest magnitude in the given number operands', function () {
+                  it('should identify the greatest magnitude in the given calculable operands', function () {
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(4)
                     MathOfT.OPS[key](-100, 2, 3, 10).should.equal(100)
                     MathOfT.OPS[key](-10, 2, 3, 10).should.equal(10)
                   })
-                  it(`should return NaN when given operands aren't calculables`, () => {
+                  it('should identify the arraylike with greatest magest in the given arraylike operands', function () {
+                    MathOfT.OPS[key]([1, 2], [3, 4]).should.deep.equal([3, 4])
+                    MathOfT.OPS[key]([-100, 2], [3, 10]).should.deep.equal([-100, 2])
+                    MathOfT.OPS[key]([-10],[ 2, 3], [10]).should.deep.equal([-10])
+                  })
+                  it(`should return NaN when given operands aren't calculables or arraylikes`, () => {
                     Number.isNaN(MathOfT.OPS[key](NaN, Infinity, NaN)).should.be.true()
+                  })
+                  break
+                case 'magesti':
+                  it('should identify the index of the greatest magnitude in the given calculable operands', function () {
+                    MathOfT.OPS[key](1, 2, 3, 4).should.equal(3)
+                    MathOfT.OPS[key](-100, 2, 3, 10).should.equal(0)
+                    MathOfT.OPS[key](-10, 2, 3, 10).should.equal(0)
+                  })
+                  it('should identify the index of the arraylike with greatest magest in the given arraylike operands', function () {
+                    MathOfT.OPS[key]([1, 2], [3, 4]).should.equal(1)
+                    MathOfT.OPS[key]([-100, 2], [3, 10]).should.equal(0)
+                    MathOfT.OPS[key]([-10], [ 2, 3], [10]).should.equal(0)
+                  })
+                  it(`should return -1 when given operands aren't calculables or arraylikes`, () => {
+                    MathOfT.OPS[key](NaN, Infinity, NaN).should.equal(-1)
                   })
                   break
                 default:

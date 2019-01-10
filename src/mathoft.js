@@ -1112,7 +1112,7 @@ undefined */
   }
 
   /**
-   * @static DIMENSIONS - return the size of the given x, where x can be a number or an Array
+   * @static DIMENSIONS - return the size of the given x, where x can be a number or an arraylike or a nested arraylike
    *
    * @param  {(number|Array)} x the structure to get dimensions of
    * @return {Array}
@@ -1141,18 +1141,23 @@ undefined */
           return dim.then(dimarr => {
             return Promise.all(subarrayIndices.map((v) => {
               let xSubArr = x[v]
-              console.log(xSubArr)
+              // console.log(xSubArr)
               return MathOfT.DIMENSIONS(xSubArr)
             })).then(subdims => {
-              console.log(subdims)
-              subdims = MathOfT.OPS['...'](subdims)
-              let mag = MathOfT.OPS.magest(...subdims)
+              console.log(subdims, x.length)
+              let flatsubdims = MathOfT.OPS['...'](subdims)
+              // console.log(flatsubdims, x.length)
+              let mag
+              if (MathOfT.EQUAL(flatsubdims.length, subdims.length, x.length)) {
+                mag = MathOfT.OPS.magest(...flatsubdims)
+              } else {
+                mag = MathOfT.OPS.magest(...subdims)
+
+              }
               mag = (Number.isNaN(mag) || mag === 0)
                 ? []
                 : mag
-              return (subarrayIndices.length > 0)
-                ? dimarr.concat(x.length, mag)
-                : dimarr.concat(x.length, ...subdims)
+              return dimarr.concat(x.length, mag)
             })
           })
         }
@@ -1176,7 +1181,9 @@ undefined */
       return false
     }
     if (arguments.length === 1) {
-      return true
+      return Number.isNaN(arguments[0])
+        ? false
+        : true
     }
     const a0 = arguments[0]
     const type = MathOfT.MATHTYPEOF(a0)
@@ -1303,7 +1310,7 @@ Object.defineProperties(MathOfT, {
    * @memberof MathOfT
    */
   'OPDICT': {
-    value: [null, '+', '-', '*', '/', '**', '...', 'magest'],
+    value: [null, '+', '-', '*', '/', '**', '...', 'magest', 'magesti'],
     enumerable: true,
     configurable: false,
     writable: false
@@ -1466,7 +1473,12 @@ Object.defineProperties(MathOfT, {
         writable: false
       },
       /**
-       * ... recursive arraylike flatten
+       * ... recursive arraylike flatten. given parameter arr, return
+       * - if arr is arraylike, a 1-d  Array containing the elements of arr with their order preserved, or
+       * - if arr isn't arraylike, arr
+       *
+       * @param {arraylike} arr
+       * @return {arraylike|?}
        */
       '...': {
         enumerable: true,
@@ -1495,11 +1507,13 @@ Object.defineProperties(MathOfT, {
         writable: false
       },
       /**
-       * @name magest - given some values, return the one with the greatest magnitude
+       * @name magest - given some
+       * - calculable values, return the one with the greatest MAGNITUDE
+       * - arraylike values, return the one with the greatest MAGEST
        *
        * @memberof OPS
-       * @params {(number|Array<number>)} arguments the numbers to test
-       * @return {number}
+       * @params {(number|Array<number>)} arguments
+       * @return {number|Array<number>)}
        */
       'magest': {
         enumerable: true,
@@ -1509,7 +1523,19 @@ Object.defineProperties(MathOfT, {
           return Object.assign(
             function () {
               let max = base
-              if (MathOfT.ARECALCULABLES(...arguments)) {
+              if ([...arguments].every(MathOfT.ISARRAYLIKE) && (arguments.length > 1)) {
+                let maxmagest = base
+                let magesti = base
+                for (let i = 0; i < arguments.length; i++) {
+                  let cur = MathOfT.OPS['magest'](...arguments[i])
+                  console.log(cur)
+                  if (cur > maxmagest) {
+                    maxmagest = cur
+                    magesti = i
+                  }
+                }
+                return arguments[magesti]
+              } else if (MathOfT.ARECALCULABLES(...arguments)) {
                 for (var i = 0; i < arguments.length; i++) {
                   let cur = Math.abs(arguments[i])
                   max = (cur > max)
@@ -1520,6 +1546,48 @@ Object.defineProperties(MathOfT, {
               } else {
                 return NaN
               }
+            },
+            {
+              code,
+              base
+            }
+          )
+        })(),
+        configurable: false,
+        writable: false
+      },
+      /**
+       * @name magesti - given some values, return the first INDEX of the one with the greatest MAGEST
+       *
+       * @memberof OPS
+       * @params {(number|Array<number>)}
+       * @return {number}
+       */
+      'magesti': {
+        enumerable: true,
+        value: (() => {
+          let code = 'magesti'
+          let base = 0
+          return Object.assign(
+            function () {
+              let magests = Array(arguments.length)
+              for (let i = 0; i < arguments.length; i++) {
+                let a = arguments[i]
+                magests[i] = (MathOfT.ISARRAYLIKE(a))
+                  ? MathOfT.OPS['magest'](...a)
+                  : MathOfT.OPS['magest'](a)
+              }
+              let index = magests.findIndex((v) => {
+                // console.log(v)
+                v = MathOfT.ISARRAYLIKE(v)
+                  ? v
+                  : Math.abs(v)
+                return MathOfT.EQUAL(
+                  v,
+                  MathOfT.OPS['magest'](...magests)
+                )
+              })
+              return index
             },
             {
               code,
