@@ -173,13 +173,24 @@ class MathOfT extends ExtensibleFunction {
     return numterms === this.terms.length - 1
   }
 
+
+  /**
+   * set segmentDivisor - set the segment divisor for the evaluation range where
+   * - the range will be divided into (segmentDivisor+1) segments,
+   * - if given an arraylike parameter, use the 0th value
+   * - if given a calculable parameter, use it as-is
+   *
+   *
+   * @param  {number|arraylike<number>} segmentDivisor
+   * @throws {TypeError} segmentDivisor should be calculable number
+   */
   set segmentDivisor (segmentDivisor) {
     segmentDivisor = MathOfT.ISARRAYLIKE(segmentDivisor)
       ? segmentDivisor[0]
       : segmentDivisor
     if (!MathOfT.ISCALCULABLE(segmentDivisor)) {
       // console.log('NaN segment Divisor')
-      throw new TypeError('segmentDivisor should be non-NaN number, not: ' + segmentDivisor)
+      throw new TypeError('segmentDivisor should be calculable number, not: ' + segmentDivisor)
     } else {
       this._segmentDivisor = [segmentDivisor]
     }
@@ -498,9 +509,10 @@ class MathOfT extends ExtensibleFunction {
   * @see isInRange
   * @param  {Number} [t=t0]
   * @param {boolean} [filterNulls=false]
+  * @param {boolean} [maketthis=true]
   * @return {(Number|Array.<Number>|Array<Array>)}
   */
-  oft (t, filterNulls, dotthis) {
+  oft (t, filterNulls, maketthis) {
     // console.log(this)
     t = MathOfT.ISCALCULABLE(t)
       ? t
@@ -508,24 +520,25 @@ class MathOfT extends ExtensibleFunction {
     filterNulls = (typeof filterNulls === 'boolean')
       ? filterNulls
       : false
-    dotthis = (typeof dotthis === 'boolean')
-      ? dotthis
+    maketthis = (typeof maketthis === 'boolean')
+      ? maketthis
       : true
     // debugger;
-    let tthis = null
-    if (dotthis) {
-      tthis = (typeof this.tthis === 'object')
+    let tthis = (maketthis)
+      ? MathOfT.TTHIS_TEMPLATE(t, this)
+      : (typeof this.tthis === 'object')
         ? this.tthis
-        : MathOfT.TTHIS_TEMPLATE(t, this)
-    }
+        : null
+
     let result = []
     for (let i in this.terms) {
       let _term = this.terms[i]
       if ((typeof _term === 'function') && !(_term instanceof MathOfT)) {
         result[i] = _term.call(tthis, t)
-      } else if (_term instanceof MathOfT) {
+      } else if ((typeof _term === 'function') && (_term instanceof MathOfT)) {
+        // console.log(_term);
         let subres = _term.isInRange(t)
-          ? _term.oft.call(Object.assign(_term, { tthis }), t)
+          ? _term.oft.call(Object.assign(_term, { tthis }), t, null, false)
           : null
         result[i] = subres // OVERRIDE?
       }
@@ -628,9 +641,8 @@ class MathOfT extends ExtensibleFunction {
           if (MathOfT.ISARRAYLIKE(acc)) {
             throw new TypeError('Can\'t apply an arraylike accumulator to a scalar.')
           } else if (MathOfT.ISNUMBER(acc)) {
-            return op(acc, val)
+            transformRes = op(acc, val)
           }
-          transformRes = val
           break
         case MathOfT.MATHTYPES.arraylike:
           let isNested = MathOfT.ISARRAYLIKE(val[0])
@@ -670,12 +682,12 @@ class MathOfT extends ExtensibleFunction {
     let res
     switch (this.terms.length) {
       case 1:
-        res = (_acc)
+        res = (_acc || Number.isNaN(_acc))
           ? transform(_acc, _oft)
           : _oft
         break
       default:
-        res = (_acc)
+        res = (_acc || Number.isNaN(_acc) )
           ? MathOfT.ISARRAYLIKE(_acc)
             ? transform(_acc, _oft)
             : _oft.reduce(transform, _acc)
@@ -999,14 +1011,12 @@ undefined */
         return (m.length === 1)
           ? test(n, 0, m[0])
           : test(n, m[0], m[m.length - 1])
-      } else if (MathOfT.ISNUMBER(m)) {
+      } else {
         if (!MathOfT.ISNUMBER(mm)) {
           return test(n, 0, m)
         } else if (MathOfT.ISNUMBER(mm)) {
           return test(n, m, mm)
         }
-      } else {
-        return false
       }
     }
   }
@@ -1144,7 +1154,7 @@ undefined */
               // console.log(xSubArr)
               return MathOfT.DIMENSIONS(xSubArr)
             })).then(subdims => {
-              console.log(subdims, x.length)
+              // console.log(subdims, x.length)
               let flatsubdims = MathOfT.OPS['...'](subdims)
               // console.log(flatsubdims, x.length)
               let mag
@@ -1528,7 +1538,7 @@ Object.defineProperties(MathOfT, {
                 let magesti = base
                 for (let i = 0; i < arguments.length; i++) {
                   let cur = MathOfT.OPS['magest'](...arguments[i])
-                  console.log(cur)
+                  // console.log(cur)
                   if (cur > maxmagest) {
                     maxmagest = cur
                     magesti = i
