@@ -63,11 +63,33 @@ function dotest (MathOfT) {
 
       describe('with the functionalities such that', function () {
         describe(`MathOfT.CALC_PRECISION_WARN`, function () {
-          let res
-          before(function () {
-            res = MathOfT.CALC_PRECISION_WARN()
+          describe('when given no parameter should return an object that', () => {
+            let res
+            before(function () {
+              res = MathOfT.CALC_PRECISION_WARN()
+            })
+            it('can collapse to a number or string that includes said number', () => {
+              res.should.be.an('object');
+              (+res).should.be.a('number');
+              ('' + res).should.be.a('string')
+              ;('' + res).includes(+res).should.be.true()
+            })
+            it('has own property inaccurateDivisors with array members', () => {
+              res.should.have.own.property('inaccurateDivisors').that.is.an('object')
+              for (let prop of ['all', 'errors', 'excessive', 'deficient']) {
+                res.inaccurateDivisors.should.have.own.property(prop).that.is.an('array')
+              }
+            })
+            it('is iterable producing the same array as its own inaccurateDivisors.all', () => {
+              Object.getOwnPropertySymbols(res).should.include(Symbol.iterator);
+              [...res].should.deep.equal(res.inaccurateDivisors.all)
+            })
           })
-          describe('should return an object that', () => {
+          describe('when given one calculable parameter should return an object that', () => {
+            let res
+            before(function () {
+              res = MathOfT.CALC_PRECISION_WARN(55)
+            })
             it('can collapse to a number or string that includes said number', () => {
               res.should.be.an('object');
               (+res).should.be.a('number');
@@ -764,34 +786,39 @@ function dotest (MathOfT) {
                   })
                   break
                 case '+':
-                  it(`should perform summation on its number operands, substituting ${base} for null operands`, function () {
+                  it(`should perform summation on its number operands, substituting ${base} for null operands, and return single operands as-is`, function () {
+                    MathOfT.OPS[key](5).should.equal(5)
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 + 2 + 3 + 4)
                     MathOfT.OPS[key](1, null, 3, 4).should.equal(1 + base + 3 + 4)
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case '-':
-                  it(`should perform subtraction on its number operands, substituting ${base} for null operands`, function () {
+                  it(`should perform subtraction on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
+                    MathOfT.OPS[key](511).should.equal(511)
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 - 2 - 3 - 4)
                     MathOfT.OPS[key](1, null, 3, 4).should.equal(1 - base - 3 - 4)
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case '*':
-                  it(`should perform multiplication on its number operands, substituting ${base} for null operands`, function () {
+                  it(`should perform multiplication on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
+                    MathOfT.OPS[key](5).should.equal(5)
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 * 2 * 3 * 4)
                     MathOfT.OPS[key](1, null, 3, 4).should.equal(1 * base * 3 * 4)
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case '/':
-                  it(`should perform division on its number operands, substituting ${base} for null operands`, function () {
+                  it(`should perform division on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
+                    MathOfT.OPS[key](5).should.equal(5)
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 / 2 / 3 / 4); MathOfT.OPS[key](1, null, 3, 4).should.equal(1 / base / 3 / 4)
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case '**':
-                  it(`should perform exponentiation on its number operands, substituting ${base} for null operands`, function () {
+                  it(`should perform exponentiation on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
+                    MathOfT.OPS[key](4).should.equal(4)
                     MathOfT.OPS[key](1, 2, 3, 4).should.equal(1 ** 2 ** 3 ** 4)
                     MathOfT.OPS[key](1, null, 3, 4).should.equal(1 ** base ** 3 ** 4)
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, NaN)).should.be.true()
@@ -812,7 +839,7 @@ function dotest (MathOfT) {
                   //   return MathOfT.OPS[key](testArr).should.eventually.deep.equal(ansArr)
                   //
                   // })
-                  it('should  return a non-arraylike as-is', function () {
+                  it('should return a non-arraylike as-is', function () {
                     let testArr = 1
                     MathOfT.OPS[key](testArr).should.deep.equal(testArr)
                   })
@@ -1199,8 +1226,8 @@ function dotest (MathOfT) {
           })
           let res = testObj.dt * testObj.segmentDivisor
           res.should.equal(testObj.drange)
-        });
-      });
+        })
+      })
       describe('set range', function () {
         it('should throw TypeError when given a range parameter that isn\'t an arraylike of calculable values', function () {
           let testObj = new MathOfT(
@@ -1226,6 +1253,38 @@ function dotest (MathOfT) {
           testObj.range.should.deep.equal(testRange)
           testObj.range = testRange2
           testObj.range.should.deep.equal(testRange2)
+        })
+      })
+      describe('set segmentDivisor', function () {
+        it('should throw TypeError when given a segmentDivisor parameter that isn\'t a calculable value or an arraylike with a 0th calculable value', function () {
+          let testObj = new MathOfT(
+            [Math.random(), Math.random()]
+          )
+          let testSegmentDivisor = {}
+          let badFunc = () => {
+            testObj.segmentDivisor = testSegmentDivisor
+          }
+          badFunc.should.throw(TypeError)
+          testSegmentDivisor = [Infinity, NaN, 22.2]
+          badFunc.should.throw(TypeError)
+          testSegmentDivisor = NaN
+          badFunc.should.throw(TypeError)
+          testSegmentDivisor = 22.2
+          badFunc.should.not.throw(TypeError)
+        })
+        it('should set the instance segmentDivisor member when given a valid calculable value or an arraylike with a 0th calculable value segmentDivisor parameter', () => {
+          let testSegmentDivisor = [11, 33, 55, 33, 11]
+          let testSegmentDivisor2 = [42, 20, 0.22]
+          let testSegmentDivisor3 = 55
+          testObj = new MathOfT({
+            segmentDivisor: testSegmentDivisor,
+            terms: (a) => a + 33
+          })
+          testObj.segmentDivisor.should.deep.equal(testSegmentDivisor[0])
+          testObj.segmentDivisor = testSegmentDivisor2
+          testObj.segmentDivisor.should.deep.equal(testSegmentDivisor2[0])
+          testObj.segmentDivisor = testSegmentDivisor3
+          testObj.segmentDivisor.should.deep.equal(testSegmentDivisor3)
         })
       })
       describe('.t0', function () {
@@ -1760,7 +1819,7 @@ function dotest (MathOfT) {
             testObj.oft(10).should.be.an('array')
             testObj.oft(10).should.deep.equal([null, 30, 270])
           })
-          it('should when given a true second parameter filter from its result all null values corresponding to those MathOfT terms whose evaluation ranges exclude t', () => {
+          it('should when given a true filterNulls parameter filter from its result all null values corresponding to those MathOfT terms whose evaluation ranges exclude t', () => {
             testObj = new MathOfT({
               terms: [
                 new MathOfT({
@@ -1787,6 +1846,21 @@ function dotest (MathOfT) {
             testObj.oft(3, true).should.deep.equal([27, 81])
             testObj.oft(10, true).should.be.an('array')
             testObj.oft(10, true).should.deep.equal([30, 270])
+          })
+          it('should when given a false maketthis parameter call its subterms with a null this value', () => {
+            function testTermFunc(){
+              return this
+            }
+            testObj = new MathOfT(testTermFunc)
+            expect(testObj.oft(3, null, false)).to.be.null()
+            testObj = new MathOfT({
+              terms: [
+                new MathOfT(testTermFunc),
+                new MathOfT(testTermFunc),
+                new MathOfT(testTermFunc)
+              ]
+            })
+            testObj.oft(3, null, false).should.deep.equal([null, null, null])
           })
         })
       })
@@ -2119,59 +2193,116 @@ function dotest (MathOfT) {
                 // res.should.deep.equal(testObj2.oft(420));
               })
             })
-            describe('for any invalid _op parameter should perform the instance op where', () => {
-              before(function () {
-                testObj = new MathOfT({
-                  terms: [
-                    (t) => 1000 * t,
-                    (t) => 100 * t,
-                    (t) => 10 * t,
-                    (t) => 1 * t
-                  ],
-                  opcode: '+'
-                })
-                testObj2 = new MathOfT({
-                  terms: [
-                    (t) => [1000 * t, 100 * t, 10 * t, 1 * t],
-                    (t) => [1000 * t, 100 * t, 10 * t, 1 * t]
-                  ],
-                  opcode: '+'
-                })
-                testObj3 = new MathOfT({
-                  terms: [
-                    (t) => [1000 * t, [100 * t, 10 * t], 1 * t],
-                    (t) => [2000 * t, [200 * t, 20 * t], 2 * t]
-                  ],
-                  opcode: '-'
-                })
-                // testObj4 = new MathOfT({
-                //   terms: [
-                //     (a) => [1 * a, 2 * a],
-                //     (a) => [3 * a, 4 * a]
-                //   ],
-                //   opcode: '**'
-                // })
+          })
+          describe('for any invalid _op parameter should perform the instance op where', () => {
+            let testObj, testObj2, testObj3, testObj4
+            before(function () {
+              testObj = new MathOfT({
+                terms: [
+                  (t) => 1000 * t,
+                  (t) => 100 * t,
+                  (t) => 10 * t,
+                  (t) => 1 * t
+                ],
+                opcode: '+'
               })
-              it('the result is equivalent to performing said op on the individual results of the evaluations of the instance\'s terms for the given t', () => {
-                let testResult = testObj.oftOp(3, 'bad code')
-                testResult.should.equal(3333)
-                let testT = Math.random() * 199
-                testResult = testObj.oftOp(testT, 'bad code')
-                testResult.should.almost.equal(1111 * testT)
+              testObj2 = new MathOfT({
+                terms: [
+                  (t) => [1000 * t, 100 * t, 10 * t, 1 * t],
+                  (t) => [1000 * t, 100 * t, 10 * t, 1 * t]
+                ],
+                opcode: '+'
               })
-
-              it('the result is equivalent to performing said op on the 1-D array member results of the evaluations of the instance\'s terms for the given t', () => {
-                let testResult = testObj2.oftOp(3, 'bad code')
-                testResult.should.be.an('array')
-                testResult.should.deep.equal([6000, 600, 60, 6])
+              testObj3 = new MathOfT({
+                terms: [
+                  (t) => [1000 * t, [100 * t, 10 * t], 1 * t],
+                  (t) => [2000 * t, [200 * t, 20 * t], 2 * t]
+                ],
+                opcode: '-'
               })
-
-              it('the result is equivalent to performing said op on the #-D array member results of the evaluations of the instance\'s terms for the given t', () => {
-                let testResult = testObj3.oftOp(3, 'bad code')
-                testResult.should.be.an('array')
-                testResult.should.deep.equal([-3000, [-300, -30], -3])
+              testObj4 = new MathOfT({
+                terms: [
+                  (a) => 1 * a
+                ],
+                opcode: '/'
               })
             })
+            it('the result is equivalent to performing said op on the individual results of the evaluations of the instance\'s terms for the given t', () => {
+              let testResult = testObj.oftOp(3, 'bad code')
+              testResult.should.equal(3333)
+              let testT = Math.random() * 199
+              testResult = testObj4.oftOp(testT, 'bad code')
+              testResult.should.equal(1 * testT)
+            })
+            it('the result is equivalent to performing said op on the 1-D array member results of the evaluations of the instance\'s terms for the given t', () => {
+              let testResult = testObj2.oftOp(3, 'bad code')
+              testResult.should.be.an('array')
+              testResult.should.deep.equal([6000, 600, 60, 6])
+            })
+            it('the result is equivalent to performing said op on the #-D array member results of the evaluations of the instance\'s terms for the given t', () => {
+              let testResult = testObj3.oftOp(3, 'bad code')
+              testResult.should.be.an('array')
+              testResult.should.deep.equal([-3000, [-300, -30], -3])
+            })
+          })
+          describe('for a non-numerical _acc parameter', () => {
+            let testObj, testObj2, testObj3, testObj4, badAcc
+            before(function () {
+              badAcc = {}
+              testObj = new MathOfT({
+                terms: [
+                  (t) => 1000 * t,
+                  (t) => 100 * t,
+                  (t) => 10 * t,
+                  (t) => 1 * t
+                ],
+                opcode: '+'
+              })
+              testObj2 = new MathOfT({
+                terms: [
+                  (t) => [1000 * t, 100 * t, 10 * t, 1 * t],
+                  (t) => [1000 * t, 100 * t, 10 * t, 1 * t]
+                ],
+                opcode: '+'
+              })
+              testObj3 = new MathOfT({
+                terms: [
+                  (t) => [1000 * t, [100 * t, 10 * t], 1 * t],
+                  (t) => [2000 * t, [200 * t, 20 * t], 2 * t]
+                ],
+                opcode: '-'
+              })
+              testObj4 = new MathOfT({
+                terms: [
+                  (a) => 1 * a
+                ],
+                opcode: '/'
+              })
+            })
+            it('the single result of a multitermed instance whose terms return numbers should be NaN', () => {
+              let testResult = testObj.oftOp(3, 'bad code', badAcc)
+              Number.isNaN(testResult).should.be.true()
+            })
+            it('the 1-d arraylike results should include NaNs', () => {
+              let testResult = testObj2.oftOp(3, 'bad code', badAcc)
+              testResult.should.be.an('array')
+              testResult.every((d) => Number.isNaN(d)).should.be.true()
+            })
+            it('the 2-d arraylike results should include NaNs', () => {
+              let testResult = testObj3.oftOp(3, 'bad code', badAcc)
+              testResult.should.be.an('array')
+              testResult[1].should.be.an('array')
+              Number.isNaN(testResult[0]).should.be.true()
+              testResult[1].every((d) => Number.isNaN(d)).should.be.true()
+              Number.isNaN(testResult[2]).should.be.true()
+            })
+            it('the single result one-termed instance whose term returns a number should be NaN', () => {
+              let testResult = testObj4.oftOp(3, 'bad code', badAcc)
+              Number.isNaN(testResult).should.be.true()
+            })
+          })
+          describe('description', () => {
+
           })
         })
       })
