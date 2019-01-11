@@ -408,10 +408,13 @@ function dotest (MathOfT) {
           });
         })
         describe('MathOfT.EQUAL', () => {
-          it('should return true for a single non-NaN argument ', () => {
+          it('should return true for a single non-NaN argument or false for a single NaN argument ', () => {
             MathOfT.EQUAL(5).should.be.true()
             MathOfT.EQUAL(NaN).should.be.false()
           });
+          it('should return false for no arguments', () => {
+            MathOfT.EQUAL().should.be.false()
+          })
           it('should return true for any number of congruent number arguments', () => {
             MathOfT.EQUAL(1, 1, 1, 1).should.be.true()
             MathOfT.EQUAL(Infinity, Infinity).should.be.true()
@@ -482,6 +485,8 @@ function dotest (MathOfT) {
                 MathOfT.NORMALIZETORANGE(outofboundsA, testRangeArr).should.equal(-Infinity)
                 MathOfT.NORMALIZETORANGE(outofboundsB, testRangeArr).should.equal(Infinity)
               })
+              it('should when given non-number parameter t correctly calculate the normalized value for t=0, returning -/+ Infinity for out-of-bounds t')
+              it('should when given non-number parameters TT correctly calculate the normalized value for TT=MathOfT.DEFAULT_RANGE, returning -/+ Infinity for out-of-bounds t')
               it('should accept a parameter NN and use it as the target normalization output range', function () {
                 testRangeArr = [0, 1]
                 let normarr = [0, 100]
@@ -527,7 +532,7 @@ function dotest (MathOfT) {
         })
         describe('MathOfT.IINRANGE', () => {
           let outofboundsA, outofboundsB, testRangeArr, dTestRangeArr, d
-          describe('for any number t, number d and array TT ',
+          describe('for any number t, array TT and number d',
             function () {
               beforeEach(function () {
                 testRangeArr = [Math.random(), Math.random()]
@@ -546,6 +551,7 @@ function dotest (MathOfT) {
                 MathOfT.IINRANGE(30, [0, 200], 10).should.equal(1)
                 MathOfT.IINRANGE(0.5, [0, 1], 50).should.equal(25)
               })
+              it('should when given parameter t, array parameter TT and no d correctly calculate the integer corresponding to the position of t in TT times the d=MathOfT.DEFAULT_SEGMENT_DIVISOR')
               it('should when given parameter t correctly calculate the corresponding normalized value, returning null for out-of-bounds t', function () {
                 should.not.exist(MathOfT.IINRANGE(outofboundsA, testRangeArr, d))
                 should.not.exist(MathOfT.IINRANGE(outofboundsB, testRangeArr, d))
@@ -582,6 +588,8 @@ function dotest (MathOfT) {
                 MathOfT.ANTINORMALIZETORANGE(outofboundsA, testRangeArr).should.equal(Infinity)
                 MathOfT.ANTINORMALIZETORANGE(outofboundsB, testRangeArr).should.equal(-Infinity)
               })
+              it('should when given non-number parameter t correctly calculate the normalized value for t=0, returning -/+ Infinity for out-of-bounds t')
+              it('should when given non-number parameters TT correctly calculate the normalized value for TT=MathOfT.DEFAULT_RANGE, returning -/+ Infinity for out-of-bounds t')
               it('should accept a parameter NN and use it as the target normalization output range', function () {
                 testRangeArr = [0, 1]
                 let normarr = [0, 100]
@@ -2301,8 +2309,10 @@ function dotest (MathOfT) {
               Number.isNaN(testResult).should.be.true()
             })
           })
-          describe('description', () => {
-
+          describe('for an incalculable acc parameter', () => {
+            it('should do thing with -Infinity value');
+            it('should do thing with +Infinity value');
+            it('should do thing with NaN value');
           })
         })
       })
