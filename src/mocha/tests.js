@@ -1218,7 +1218,7 @@ function dotest (MathOfT) {
           })
         })
       })
-      describe('dt', () => {
+      describe('.dt', () => {
         it('should equal the instance drange divided by the instance segmentDivisor', () => {
           let testObj = new MathOfT({
             range: [11, 3],
@@ -1562,7 +1562,7 @@ function dotest (MathOfT) {
         })
       })
 
-      describe('antinormalizeT', function () {
+      describe('.antinormalizeT', function () {
         let outofboundsA, outofboundsB
         describe('for a MathOfT instance whose range has two elements', function () {
           before(function () {
@@ -1629,7 +1629,7 @@ function dotest (MathOfT) {
           })
         })
       })
-      describe('isInRange', () => {
+      describe('.isInRange', () => {
         describe('when giyen a single parameter t', () => {
           it('should return true IFF t falls within the evaluation range of this instance', () => {
             testObj = new MathOfT([11, 51])
@@ -1641,7 +1641,7 @@ function dotest (MathOfT) {
           })
         })
       })
-      describe('oft', function () {
+      describe('.oft', function () {
         describe('for a MathOfT instance with one function or MathOfT term', () => {
           it('should provide the value of the term for any given t', () => {
             testObj = new MathOfT(a => 9 * a)
@@ -1865,7 +1865,7 @@ function dotest (MathOfT) {
         })
       })
 
-      describe('ofLastt', function () {
+      describe('.ofLastt', function () {
         before(function () {
           testObj = new MathOfT({
             range: [Math.random(), Math.random()],
@@ -1877,7 +1877,7 @@ function dotest (MathOfT) {
         })
       })
 
-      describe('ofFirstt', function () {
+      describe('.ofFirstt', function () {
         before(function () {
           testObj = new MathOfT({
             range: Math.random(),
@@ -1889,7 +1889,7 @@ function dotest (MathOfT) {
         })
       })
 
-      describe('oftNormal', function () {
+      describe('.oftNormal', function () {
         let bound//, outofboundsA, outofboundsB
         before(function () {
           bound = PI
@@ -1944,7 +1944,7 @@ function dotest (MathOfT) {
         })
       })
 
-      describe('oftOp', () => {
+      describe('.oftOp', () => {
         describe('for any given calculable t parameter', () => {
           describe('for any single-term instance', () => {
             let testObj, testObj2 // , testObj3, testObj4
@@ -2306,7 +2306,7 @@ function dotest (MathOfT) {
           })
         })
       })
-      describe('ofAlltT', () => {
+      describe('.ofAlltT', () => {
         describe('returns a generator function that yields the results of calling oft on all elements t in this.T as Array ordered pairs, or [t, oft(t)]', () => {
           it('should hold true for single-term instance ', () => {
             let testObj = new MathOfT(a => 5 * a)
@@ -2416,7 +2416,7 @@ function dotest (MathOfT) {
           })
         })
       })
-      describe('ofAlltOp', () => {
+      describe('.ofAlltOp', () => {
         describe('returns a generator function that yields the results of calling oftOp on all elements t in this.T as Array ordered pairs, or [t, oft(t)]', () => {
           it('should hold true for single-term instance ', () => {
             let testObj = new MathOfT(a => 5.33 / a)
@@ -2472,7 +2472,7 @@ function dotest (MathOfT) {
           })
         })
       })
-      describe('mapT', () => {
+      describe('.mapT', () => {
         it('should throw TypeError when not given a valid function as callback parameter', () => {
           let testObj = new MathOfT(a => 5.33 / a)
           let badfunc = () => testObj.mapT({})
@@ -2503,7 +2503,7 @@ function dotest (MathOfT) {
           }
         })
       })
-      describe('mapTOp', () => {
+      describe('.mapTOp', () => {
         it('should throw TypeError when not given a valid function as callback parameter', () => {
           let testObj = new MathOfT(a => 5.33 / a)
           let badfunc = () => testObj.mapTOp({})
