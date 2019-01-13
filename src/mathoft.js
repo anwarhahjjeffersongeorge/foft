@@ -1196,13 +1196,13 @@ undefined */
         : true
     }
     const a0 = arguments[0]
-    const type = MathOfT.MATHTYPEOF(a0)
+    const a0type = MathOfT.MATHTYPEOF(a0)
     let res = true
     // const dim = MathOfT.DIMENSIONS(arguments[0]);
     for (let i = 1; i < arguments.length; i++) {
       let a = arguments[i]
-      if (MathOfT.MATHTYPEOF(a) !== type) return false
-      switch (type) {
+      if (MathOfT.MATHTYPEOF(a) !== a0type) return false
+      switch (a0type) {
         case MathOfT.MATHTYPES.arraylike:
           if (a.length !== a0.length) return false
           for (let ai = 0; ai < a0.length; ai++) {
