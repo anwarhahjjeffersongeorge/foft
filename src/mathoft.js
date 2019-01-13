@@ -535,7 +535,8 @@ class MathOfT extends ExtensibleFunction {
       let _term = this.terms[i]
       if ((typeof _term === 'function') && !(_term instanceof MathOfT)) {
         result[i] = _term.call(tthis, t)
-      } else if ((typeof _term === 'function') && (_term instanceof MathOfT)) {
+      }
+      else if ((typeof _term === 'function') && (_term instanceof MathOfT)) {
         // console.log(_term);
         let subres = _term.isInRange(t)
           ? _term.oft.call(Object.assign(_term, { tthis }), t, null, false)
@@ -1164,9 +1165,9 @@ undefined */
                 mag = MathOfT.OPS.magest(...subdims)
 
               }
-              mag = (Number.isNaN(mag) || mag === 0)
-                ? []
-                : mag
+              // mag = (Number.isNaN(mag) || mag === 0)
+              //   ? []
+              //   : mag
               return dimarr.concat(x.length, mag)
             })
           })
@@ -1181,8 +1182,10 @@ undefined */
    * 1) all of a single shared type,
    * 2) if numbers, of equal value,
    * 3) if arrays, composed of equal positional elements
+   * 4) if other types, satisfying strict equality test
    *
    * When comparing values that are NaN or containing NaN in the same positions, the function will return false because NaN doesn't equal NaN
+   *
    * @params {?} [arguments]
    * @return {boolean}
    */
@@ -1210,11 +1213,11 @@ undefined */
           }
           break
         case MathOfT.MATHTYPES.numberlike:
-          // console.log(a)
           res = res && (a === a0)
           break
         default:
-          return false
+          // console.log(a)
+          res = res &&  (a === a0)
       }
     }
     return res
@@ -1344,11 +1347,7 @@ Object.defineProperties(MathOfT, {
           } else if (!MathOfT.OPDICT.includes(code)) {
             throw new RangeError('MathOfT.OPS.opfunc takes one string in MathOfT.OPDICT')
           }
-          return (args) => [...args].reduce((acc, c, i) => {
-            return (i === 0)
-              ? c
-              : f(acc, c)
-          })
+          return (args) => [...args].reduce((acc, c, i) => f(acc, c))
         },
         writable: false,
         configurable: false,
@@ -1362,13 +1361,12 @@ Object.defineProperties(MathOfT, {
           if (!MathOfT.ISARRAYLIKE(args)) {
             throw new TypeError('MathOfT.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter')
           }
-          let opfunc = MathOfT.OPS.opfunc
           if (MathOfT.ARENUMBERS(...args)) {
-            return opfunc(code, f)(args)
+            return MathOfT.OPS.opfunc(code, f)(args)
           }
           let nullsReplaced = [...args].map(v => (v === null) ? base : v)
           if (MathOfT.ARENUMBERS(nullsReplaced)) {
-            return opfunc(code, f)(nullsReplaced)
+            return MathOfT.OPS.opfunc(code, f)(nullsReplaced)
           }
           return NaN
         },
@@ -1589,9 +1587,6 @@ Object.defineProperties(MathOfT, {
               }
               let index = magests.findIndex((v) => {
                 // console.log(v)
-                v = MathOfT.ISARRAYLIKE(v)
-                  ? v
-                  : Math.abs(v)
                 return MathOfT.EQUAL(
                   v,
                   MathOfT.OPS['magest'](...magests)
