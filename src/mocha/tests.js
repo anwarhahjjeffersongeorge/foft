@@ -405,14 +405,14 @@ function dotest (MathOfT) {
                 [41, 3, 3]
               ]
             ]).should.eventually.deep.equal([2, 3, 5])
-          });
+          })
         })
         describe('MathOfT.EQUAL', () => {
           it('should return true for a single non-NaN argument or false for a single NaN argument ', () => {
             MathOfT.EQUAL(5).should.be.true()
             MathOfT.EQUAL(NaN).should.be.false()
             MathOfT.EQUAL('a').should.be.true()
-          });
+          })
           it('should return false for no arguments', () => {
             MathOfT.EQUAL().should.be.false()
           })
@@ -494,7 +494,7 @@ function dotest (MathOfT) {
               MathOfT.NORMALIZETORANGE(outofboundsA, testRangeArr).should.equal(-Infinity)
               MathOfT.NORMALIZETORANGE(outofboundsB, testRangeArr).should.equal(Infinity)
             })
-            it('should when given non-number parameter t calculate the normalized value for t=0 with any other TT and NN parameters', function() {
+            it('should when given non-number parameter t calculate the normalized value for t=0 with any other TT and NN parameters', function () {
               MathOfT.NORMALIZETORANGE(
                 null,
                 testRangeArr
@@ -581,7 +581,7 @@ function dotest (MathOfT) {
               MathOfT.ANTINORMALIZETORANGE(outofboundsA, testRangeArr).should.equal(Infinity)
               MathOfT.ANTINORMALIZETORANGE(outofboundsB, testRangeArr).should.equal(-Infinity)
             })
-            it('should when given non-number parameter t calculate the normalized value for t=0 with any other TT and NN parameters', function() {
+            it('should when given non-number parameter t calculate the normalized value for t=0 with any other TT and NN parameters', function () {
               MathOfT.ANTINORMALIZETORANGE(
                 null,
                 testRangeArr
@@ -732,7 +732,6 @@ function dotest (MathOfT) {
             })
           })
         })
-
 
         describe('MathOfT.TTHIS_TEMPLATE', function () {
           it('when called without a valid t or mathoft method, return an array of keys', function () {
@@ -904,7 +903,6 @@ function dotest (MathOfT) {
                   } else {
                     testTarget['base'].should.be.a('number')
                   }
-
                 })
                 it(`has own property code(string) `, function () {
                   testTarget.should.be.a('function')
@@ -937,7 +935,7 @@ function dotest (MathOfT) {
                   })
                   it('should return NaN when given any non-number, non-null args', () => {
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, 'NaN')).should.be.true()
-                  });
+                  })
                   break
                 case '-':
                   it(`should perform subtraction on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
@@ -949,7 +947,7 @@ function dotest (MathOfT) {
                   })
                   it('should return NaN when given any non-number, non-null args', () => {
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, 'NaN')).should.be.true()
-                  });
+                  })
                   break
                 case '*':
                   it(`should perform multiplication on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
@@ -968,7 +966,7 @@ function dotest (MathOfT) {
                   })
                   it('should return NaN when given any non-number, non-null args', () => {
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, 'NaN')).should.be.true()
-                  });
+                  })
                   break
                 case '**':
                   it(`should perform exponentiation on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
@@ -980,7 +978,7 @@ function dotest (MathOfT) {
                   })
                   it('should return NaN when given any non-number, non-null args', () => {
                     Number.isNaN(MathOfT.OPS[key](1, 2, 3, 'NaN')).should.be.true()
-                  });
+                  })
                   break
                 case '...':
                   // it('should return a promise', function () {
@@ -1006,12 +1004,12 @@ function dotest (MathOfT) {
                     MathOfT.OPS[key](testArr).should.deep.equal(testArr)
                   })
                   it(`should return 2-d nested arrays in a 1-d form with same elements  and ordering`, () => {
-                    let testArr = [[1, 2, 3, 4],[1, 2, 3, 4]]
+                    let testArr = [[1, 2, 3, 4], [1, 2, 3, 4]]
                     let ansArr = [1, 2, 3, 4, 1, 2, 3, 4]
                     MathOfT.OPS[key](testArr).should.deep.equal(ansArr)
                   })
                   it(`should return 3-d nested arrays in a 1-d form with same elements and ordering`, () => {
-                    let testArr = [[1, 2, [3, 4]],[1, 2, 3, 4]]
+                    let testArr = [[1, 2, [3, 4]], [1, 2, 3, 4]]
                     let ansArr = [1, 2, 3, 4, 1, 2, 3, 4]
                     MathOfT.OPS[key](testArr).should.deep.equal(ansArr)
                   })
@@ -1025,7 +1023,7 @@ function dotest (MathOfT) {
                   it('should identify the arraylike with greatest magest in the given arraylike operands', function () {
                     MathOfT.OPS[key]([1, 2], [3, 4]).should.deep.equal([3, 4])
                     MathOfT.OPS[key]([-100, 2], [3, 10]).should.deep.equal([-100, 2])
-                    MathOfT.OPS[key]([-10],[ 2, 3], [10]).should.deep.equal([-10])
+                    MathOfT.OPS[key]([-10], [2, 3], [10]).should.deep.equal([-10])
                   })
                   it(`should return NaN when given operands aren't calculables or arraylikes`, () => {
                     Number.isNaN(MathOfT.OPS[key](NaN, Infinity, NaN)).should.be.true()
@@ -1040,7 +1038,7 @@ function dotest (MathOfT) {
                   it('should identify the index of the arraylike with greatest magest in the given arraylike operands', function () {
                     MathOfT.OPS[key]([1, 2], [3, 4]).should.equal(1)
                     MathOfT.OPS[key]([-100, 2], [3, 10]).should.equal(0)
-                    MathOfT.OPS[key]([-10], [ 2, 3], [10]).should.equal(0)
+                    MathOfT.OPS[key]([-10], [2, 3], [10]).should.equal(0)
                   })
                   it(`should return -1 when given operands aren't calculables or arraylikes`, () => {
                     MathOfT.OPS[key](NaN, Infinity, NaN).should.equal(-1)
@@ -2006,7 +2004,7 @@ function dotest (MathOfT) {
             testObj.oft(10, true).should.deep.equal([30, 270])
           })
           it('should when given a false maketthis parameter call its subterms with a null this value', () => {
-            function testTermFunc(){
+            function testTermFunc () {
               return this
             }
             testObj = new MathOfT(testTermFunc)
@@ -2199,7 +2197,7 @@ function dotest (MathOfT) {
             })
           })
           describe('for any multi-term instance', () => {
-            let testObj, testObj2, testObj3 // , testObj4
+            let testObj, testObj2 // ,testObj3 // , testObj4
             // let a,b,c,i,j,k;
             describe('for all valid or invalid _op parameter and null _acc parameter', () => {
               before(() => {
@@ -2480,7 +2478,7 @@ function dotest (MathOfT) {
               })
               testObj3 = new MathOfT({
                 terms: [
-                  (t) => [1000 * t, [100 * t, 10 * t], 1 * t],
+                  (t) => [1000 * t, [100 * t, 10 * t], 1 * t]
                 ],
                 opcode: '-'
               })
@@ -2491,8 +2489,8 @@ function dotest (MathOfT) {
               acc = Infinity
               testObj.oftOp(3, 'bad code', acc).should.equal(Infinity)
               acc = NaN
-            Number.isNaN(testObj.oftOp(2, 'bad code', acc)).should.be.true()
-            });
+              Number.isNaN(testObj.oftOp(2, 'bad code', acc)).should.be.true()
+            })
             it('should compute multi-term array result with -Infinity/+Infinity/NaN value in proper place', function () {
               acc = [1000, -Infinity, 10, 1]
               testObj2.oftOp(3, 'bad code', acc).should.deep.equal(
@@ -2508,7 +2506,7 @@ function dotest (MathOfT) {
                 [5000, NaN, 50, 5]
               )
               Number.isNaN(res[1]).should.be.true()
-            });
+            })
             it('should compute single-term array result with -Infinity/+Infinity/NaN value in proper place', function () {
               acc = [1000, [-Infinity, 10], 1]
               testObj3.oftOp(7, 'bad code', acc).should.deep.equal(
@@ -2521,10 +2519,10 @@ function dotest (MathOfT) {
               acc = [1, [NaN, 10], 1]
               let res = testObj3.oftOp(2, 'bad code', acc)
               res.should.deep.equal(
-                [-1999,[ NaN, -10], -1]
+                [-1999, [NaN, -10], -1]
               )
               Number.isNaN(res[1][0]).should.be.true()
-            });
+            })
           })
         })
       })
@@ -2583,9 +2581,31 @@ function dotest (MathOfT) {
           })
         })
       })
-      describe('[Symbol.iterator]', () => {
-        it('should return...');
+      describe('.toString', () => {
+        it('should return a string', () => {
+          testObj = new MathOfT({
+            terms: [
+              a => 9 * a,
+              a => 9 / a
+            ]
+          })
+          testObj.toString().should.be.a('string')
+        })
       })
+
+      describe('[Symbol.toStringTag]', () => {
+        it('should return a string ', () => {
+          testObj = new MathOfT({
+            terms: [
+              a => 9 * a,
+              a => 9 / a
+            ]
+          })
+          let res = Object.prototype.toString.call(testObj)
+          res.should.be.a('string')
+        })
+      })
+
       describe('[Symbol.iterator]', () => {
         describe('returns a generator function that yields the results of calling oft on all elements t in this.T, i.e. [oft(t0)...oft(tt)]', () => {
           it('should hold true for single-term instance ', () => {

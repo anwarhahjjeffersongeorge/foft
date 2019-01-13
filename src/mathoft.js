@@ -173,7 +173,6 @@ class MathOfT extends ExtensibleFunction {
     return numterms === this.terms.length - 1
   }
 
-
   /**
    * set segmentDivisor - set the segment divisor for the evaluation range where
    * - the range will be divided into (segmentDivisor+1) segments,
@@ -215,7 +214,6 @@ class MathOfT extends ExtensibleFunction {
     return this.segmentDivisor + 1
   }
 
-
   /**
    * get dt - get the delta for t between the first and final values of the
    * evaluation range. May be innacurate when the range has more than two
@@ -227,14 +225,13 @@ class MathOfT extends ExtensibleFunction {
     return this.drange / this.segmentDivisor
   }
 
-
   /**
    * set range - only accepts an arraylike of calculables
    *
    * @param  {Array<number>} range
    */
   set range (range) {
-  if (!(MathOfT.ISARRAYLIKE(range) && MathOfT.ARECALCULABLES(range))) throw new TypeError('range values should be Array of calculable numbers')
+    if (!(MathOfT.ISARRAYLIKE(range) && MathOfT.ARECALCULABLES(range))) throw new TypeError('range values should be Array of calculable numbers')
     this._range = Array(range.length)
 
     for (let rangeIndex in range) {
@@ -535,8 +532,7 @@ class MathOfT extends ExtensibleFunction {
       let _term = this.terms[i]
       if ((typeof _term === 'function') && !(_term instanceof MathOfT)) {
         result[i] = _term.call(tthis, t)
-      }
-      else if ((typeof _term === 'function') && (_term instanceof MathOfT)) {
+      } else if ((typeof _term === 'function') && (_term instanceof MathOfT)) {
         // console.log(_term);
         let subres = _term.isInRange(t)
           ? _term.oft.call(Object.assign(_term, { tthis }), t, null, false)
@@ -690,7 +686,7 @@ class MathOfT extends ExtensibleFunction {
           : _oft
         break
       default:
-        res = (_acc || Number.isNaN(_acc) )
+        res = (_acc || Number.isNaN(_acc))
           ? MathOfT.ISARRAYLIKE(_acc)
             ? transform(_acc, _oft)
             : _oft.reduce(transform, _acc)
@@ -771,6 +767,33 @@ class MathOfT extends ExtensibleFunction {
   mapTOp (callback, thisArg) {
     if (!(callback instanceof Function)) throw new TypeError('map needs Function callback')
     return [...this.ofAlltTOp()].map(callback, thisArg)
+  }
+
+  /**
+   * toString
+   *
+   * @override
+   * @return {string}
+   */
+  toString () {
+    let res = 'MathOfT\n'
+    res += `range:\n\t[${this.range}]\n`
+    res += `segments:\n\t[${this.numSegments}]\n`
+    res += `terms:\n`
+    for (var i = 0; i < this.terms.length; i++) {
+      res += `\t[${i}]: ${this.terms[i]}\n`
+    }
+    return res
+  }
+
+  /**
+   * get Symbol.toStringTag
+   *
+   * @override
+   * @return {string}
+   */
+  get [Symbol.toStringTag] () {
+    return 'MathOfT Function'
   }
 
   /**
@@ -1014,11 +1037,11 @@ undefined */
         return (m.length === 1)
           ? test(n, 0, m[0])
           : test(n, m[0], m[m.length - 1])
-      } else if(MathOfT.ISNUMBER(m)){
+      } else if (MathOfT.ISNUMBER(m)) {
         if (!MathOfT.ISNUMBER(mm)) {
           return test(n, 0, m)
         } else if (MathOfT.ISNUMBER(mm)) {
-           return test(n, m, mm)
+          return test(n, m, mm)
         }
       }
     }
@@ -1134,8 +1157,7 @@ undefined */
     let dim = Promise.resolve([])
     if (MathOfT.ISNUMBER(x)) {
       return dim.then(dimarr => dimarr.concat(0))
-    }
-    else if (MathOfT.ISARRAYLIKE(x)) {
+    } else if (MathOfT.ISARRAYLIKE(x)) {
       if (x.length === 0) {
         return dim.then(dimarr => dimarr.concat(0))
       } else {
@@ -1165,7 +1187,6 @@ undefined */
                 mag = MathOfT.OPS.magest(...flatsubdims)
               } else {
                 mag = MathOfT.OPS.magest(...subdims)
-
               }
               // mag = (Number.isNaN(mag) || mag === 0)
               //   ? []
@@ -1196,9 +1217,7 @@ undefined */
       return false
     }
     if (arguments.length === 1) {
-      return Number.isNaN(arguments[0])
-        ? false
-        : true
+      return !Number.isNaN(arguments[0])
     }
     const a0 = arguments[0]
     const a0type = MathOfT.MATHTYPEOF(a0)
@@ -1219,7 +1238,7 @@ undefined */
           break
         default:
           // console.log(a)
-          res = res &&  (a === a0)
+          res = res && (a === a0)
       }
     }
     return res
@@ -1496,7 +1515,7 @@ Object.defineProperties(MathOfT, {
           let code = '...'
           let base = []
           return Object.assign(
-            function flatten(arr) {
+            function flatten (arr) {
               if (!MathOfT.ISARRAYLIKE(arr)) {
                 return arr
               } else {
