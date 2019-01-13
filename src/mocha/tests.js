@@ -2459,10 +2459,72 @@ function dotest (MathOfT) {
               Number.isNaN(testResult).should.be.true()
             })
           })
-          describe('for an incalculable acc parameter', () => {
-            it('should do thing with -Infinity value');
-            it('should do thing with +Infinity value');
-            it('should do thing with NaN value');
+          describe('for an incalculable or incalculable-containing acc parameter', () => {
+            let testObj, testObj2, testObj3, acc
+            before(function () {
+              testObj = new MathOfT({
+                terms: [
+                  (t) => 1000 * t,
+                  (t) => 100 * t,
+                  (t) => 10 * t,
+                  (t) => 1 * t
+                ],
+                opcode: '+'
+              })
+              testObj2 = new MathOfT({
+                terms: [
+                  (t) => [1000 * t, 100 * t, 10 * t, 1 * t],
+                  (t) => [1000 * t, 100 * t, 10 * t, 1 * t]
+                ],
+                opcode: '+'
+              })
+              testObj3 = new MathOfT({
+                terms: [
+                  (t) => [1000 * t, [100 * t, 10 * t], 1 * t],
+                ],
+                opcode: '-'
+              })
+            })
+            it('should compute single result with -Infinity/+Infinity/NaN value', function () {
+              acc = -Infinity
+              testObj.oftOp(3, 'bad code', acc).should.equal(-Infinity)
+              acc = Infinity
+              testObj.oftOp(3, 'bad code', acc).should.equal(Infinity)
+              acc = NaN
+            Number.isNaN(testObj.oftOp(2, 'bad code', acc)).should.be.true()
+            });
+            it('should compute multi-term array result with -Infinity/+Infinity/NaN value in proper place', function () {
+              acc = [1000, -Infinity, 10, 1]
+              testObj2.oftOp(3, 'bad code', acc).should.deep.equal(
+                [7000, -Infinity, 70, 7]
+              )
+              acc = [1000, 100, Infinity, 1]
+              testObj2.oftOp(3, 'bad code', acc).should.deep.equal(
+                [7000, 700, Infinity, 7]
+              )
+              acc = [1000, NaN, 10, 1]
+              let res = testObj2.oftOp(2, 'bad code', acc)
+              res.should.deep.equal(
+                [5000, NaN, 50, 5]
+              )
+              Number.isNaN(res[1]).should.be.true()
+            });
+            it('should compute single-term array result with -Infinity/+Infinity/NaN value in proper place', function () {
+              acc = [1000, [-Infinity, 10], 1]
+              testObj3.oftOp(7, 'bad code', acc).should.deep.equal(
+                [-6000, [-Infinity, -60], -6]
+              )
+              acc = [1000, [Infinity, 10], 1]
+              testObj3.oftOp(7, 'bad code', acc).should.deep.equal(
+                [-6000, [Infinity, -60], -6]
+              )
+              acc = [1, [NaN, 10], 1]
+              let res = testObj3.oftOp(2, 'bad code', acc)
+              res.should.deep.equal(
+                [-1999,[ NaN, -10], -1]
+              )
+              Number.isNaN(res[1][0]).should.be.true()
+            });
           })
         })
       })
