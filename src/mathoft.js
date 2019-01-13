@@ -680,6 +680,8 @@ class MathOfT extends ExtensibleFunction {
       return op(_oft)
     }
     // console.log(_oft)
+    // console.log(_acc);
+
     let res
     switch (this.terms.length) {
       case 1:
@@ -1012,11 +1014,11 @@ undefined */
         return (m.length === 1)
           ? test(n, 0, m[0])
           : test(n, m[0], m[m.length - 1])
-      } else {
+      } else if(MathOfT.ISNUMBER(m)){
         if (!MathOfT.ISNUMBER(mm)) {
           return test(n, 0, m)
         } else if (MathOfT.ISNUMBER(mm)) {
-          return test(n, m, mm)
+           return test(n, m, mm)
         }
       }
     }
@@ -1379,8 +1381,8 @@ Object.defineProperties(MathOfT, {
         value: (() => {
           let code = null; let base = null
           return Object.assign(
-            function () {
-              return [...arguments]
+            function (...args) {
+              return args
             },
             {
               code,
@@ -1529,7 +1531,7 @@ Object.defineProperties(MathOfT, {
           let code = 'magest'
           let base = 0
           return Object.assign(
-            function () {
+            function (...args) {
               let max = base
               if ([...arguments].every(MathOfT.ISARRAYLIKE) && (arguments.length > 1)) {
                 let maxmagest = base
