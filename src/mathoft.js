@@ -1112,7 +1112,7 @@ undefined */
   static IINRANGE (t, TT, d) {
     d = (MathOfT.ISNUMBER(d))
       ? Math.floor(d)
-      : MathOfT.DEFAULT_SEGMENT_DIVISOR
+      : Math.floor(MathOfT.DEFAULT_SEGMENT_DIVISOR)
     let res = MathOfT.NORMALIZETORANGE(t, TT, [0, 1])
     return (res === Infinity)
       ? null
