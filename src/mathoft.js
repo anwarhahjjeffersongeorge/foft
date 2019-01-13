@@ -628,11 +628,11 @@ class MathOfT extends ExtensibleFunction {
       : this.opcode
     const op = MathOfT.OPS[_op]
     // debugger;
-    _acc = (!_acc)
-      ? null // op.base
-      : (MathOfT.ARENUMBERS(_acc))
+    _acc = ((_acc || Number.isNaN(_acc)))
+      ? (MathOfT.ARENUMBERS(_acc))
         ? _acc
         : NaN
+      : null // op.base
     // debugger;
     const transform = (acc, val) => {
       let transformRes
