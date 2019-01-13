@@ -12,7 +12,7 @@
     "prebtest": "clear && rm -rf test coverage .nyc_output && rsync -rv src/* test",
     "btest": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text --reporter=html --show-process-tree mocha ./test/mocha/nodetestrunner.js",
     "pretest": "clear && rm -rf test && rsync -rv src/* test",
-    "test": "npx cross-env NODE_ENV=test mocha --require esm ./test/mocha/nodetestrunner.js",
+    "test": "standard && npx cross-env NODE_ENV=test mocha --require esm ./test/mocha/nodetestrunner.js",
     "prebuild": "clear && rm -rf lib",
     "build": "rsync -rv --exclude='mocha' src/* lib",
     "bbuild": "npx cross-env NODE_ENV=production babel src --out-dir lib --ignore \"src/mocha/,src/browserentry.js\"",
