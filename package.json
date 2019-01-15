@@ -46,6 +46,7 @@
     "not dead"
   ],
   "dependencies": {
+    "esm": "^3.0.84",
     "@babel/runtime-corejs2": "^7.2.0"
   },
   "devDependencies": {
@@ -63,7 +64,6 @@
     "chai-as-promised": "^7.1.1",
     "cross-env": "^5.2.0",
     "dirty-chai": "^2.0.1",
-    "esm": "^3.0.84",
     "jsdoc": "^3.5.5",
     "minify": "^4.1.0",
     "mocha": "^5.2.0",
