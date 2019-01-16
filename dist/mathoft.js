@@ -3760,13 +3760,19 @@ global.MathOfT = M.MathOfT;
 },{"./main.js":191,"@babel/runtime-corejs2/helpers/interopRequireWildcard":34}],191:[function(require,module,exports){
 'use strict'; // ESM syntax is supported.
 
-var _interopRequireWildcard = require("@babel/runtime-corejs2/helpers/interopRequireWildcard");
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+Object.defineProperty(exports, "MathOfT", {
+  enumerable: true,
+  get: function get() {
+    return _mathoft.MathOfT;
+  }
+});
 
-var M = _interopRequireWildcard(require("./mathoft.js"));
+var _mathoft = require("./mathoft.js");
 
-module.exports = M;
-
-},{"./mathoft.js":192,"@babel/runtime-corejs2/helpers/interopRequireWildcard":34}],192:[function(require,module,exports){
+},{"./mathoft.js":192}],192:[function(require,module,exports){
 'use strict'; // https://stackoverflow.com/questions/36871299/how-to-extend-function-with-es6-classes
 // https://stackoverflow.com/questions/23807805/why-is-mutating-the-prototype-of-an-object-bad-for-performance7
 // https://stackoverflow.com/questions/32444575/whats-the-performance-impact-of-setprototypeof-on-a-new-object
