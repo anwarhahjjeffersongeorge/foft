@@ -19,8 +19,8 @@
     "predist": "clear && rm -rf dist && mkdir dist",
     "dist": "browserify -t [babelify] src/browserentry.js -o dist/mathoft.js",
     "postdist": "minify dist/mathoft.js > lib/mathoft-min.js",
-    "predisttest": "clear && rm -rf disttest && mkdir disttest && cp src/mocha/custommochainfo.css src/mocha/mathoftmochajs.html disttest && browserify -t [ babelify --presets [ @babel/preset-env ] --plugins [ @babel/plugin-proposal-class-properties ] ] src/mocha/browsertestrunner.js -o disttest/mathoftmochajs-browser.js",
-    "disttest": "echo See test results at: && echo file://$(pwd)/disttest/mathoftmochajs.html && echo"
+    "predisttest": "clear && rm -rf disttest && mkdir disttest && cp src/mocha/custommochainfo.css src/mocha/mathoftmochajs.html disttest && browserify -t [ babelify --presets [ @babel/preset-env ] ] src/mocha/browsertestrunner.js -o disttest/mathoftmochajs-browser.js",
+    "disttest": "echo See test results at: && echo \"file://$(pwd)/disttest/mathoftmochajs.html\" && echo"
   },
   "repository": {
     "type": "git",
