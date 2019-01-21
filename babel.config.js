@@ -7,7 +7,6 @@ module.exports = function (api) {
     ]
   ]
   let plugins = [
-    '@babel/plugin-proposal-class-properties',
     [
       '@babel/plugin-transform-runtime',
       {
