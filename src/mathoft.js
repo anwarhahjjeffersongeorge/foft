@@ -783,6 +783,7 @@ class MathOfT extends ExtensibleFunction {
     for (var i = 0; i < this.terms.length; i++) {
       res += `\t[${i}]: ${this.terms[i]}\n`
     }
+    res += `opcode:\n\t${this.opcode}`
     return res
   }
 
@@ -1542,7 +1543,7 @@ Object.defineProperties(MathOfT, {
        *
        * @memberof OPS
        * @params {(number|Array<number>)} arguments
-       * @return {number|Array<number>)}
+       * @return {(number|Array<number>)}
        */
       'magest': {
         enumerable: true,
