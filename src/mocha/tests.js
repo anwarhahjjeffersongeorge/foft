@@ -908,6 +908,10 @@ function dotest (MathOfT) {
                   testTarget.should.be.a('function')
                   testTarget['code'].should.be.a('string')
                 })
+                it(`has own property desc(string) `, function () {
+                  testTarget.should.be.a('function')
+                  testTarget['desc'].should.be.a('string')
+                })
               }
               let base = MathOfT.OPS[key].base
               switch (key) {
