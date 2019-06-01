@@ -1,8 +1,7 @@
-.backup
-.ftp*
 /node_modules/*
 /.nyc_output/*
 /test/*
 /disttest/*
+/dist/*
 /coverage/*
 /docs/*

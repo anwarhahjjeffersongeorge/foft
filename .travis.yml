@@ -4,7 +4,6 @@ cache: npm
 before_deploy:
   - npm run coverage
   - npm run doc
-  - npm run dist
 deploy:
   local_dir: ./docs
   provider: pages
