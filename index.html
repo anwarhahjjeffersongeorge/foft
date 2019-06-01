@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Documentation Index</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Documentation</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="Foft.html">Foft</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#%2522...%2522">"..."</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+    <section class="readme-section">
+        <article><h2><a href="https://github.com/anwarhahjjeffersongeorge/foft"><img src="https://img.shields.io/github/package-json/v/anwarhahjjeffersongeorge/foft/master.svg" alt="Version"></a><a href="https://travis-ci.com/anwarhahjjeffersongeorge/foft"><img src="https://travis-ci.com/anwarhahjjeffersongeorge/foft.svg?branch=master" alt="Build Status"></a> <a href="https://codecov.io/gh/anwarhahjjeffersongeorge/foft"><img src="https://codecov.io/gh/anwarhahjjeffersongeorge/foft/branch/master/graph/badge.svg" alt="codecov"></a></h2>
+<p><a href="UNLICENSE"><img src="https://img.shields.io/github/license/anwarhahjjeffersongeorge/foft.svg" alt="license"></a> <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-blue.svg" alt="JavaScript Style Guide"></a></p>
+<hr>
+<h1>— <code>foft</code> —</h1>
+<h3><a href="https://anwarhahjjeffersongeorge.github.io/foft/">Documentation</a></h3>
+<h3>Syntactic sugar for discontinuous (mathematical) functions.</h3>
+<h4>It Is</h4>
+<ul>
+<li>A lot of <a href="https://en.wikipedia.org/wiki/Syntactic_sugar">syntactic sugar</a></li>
+<li>For investigating the <em>results</em> of known arithmetic expressions provided as functions in JavaScript over <em>specified evaluation ranges</em>,</li>
+<li>For investigating floating-point error tendencies in a JavaScript environment, and</li>
+<li>An <a href="https://github.com/standard-things/esm">ECMAScript module</a> for browsers or nodejs.</li>
+</ul>
+<h4>It Is <em>not</em></h4>
+<ul>
+<li>Fast,</li>
+<li>A comprehensive calculator,</li>
+<li>Immune to inaccuracies,</li>
+<li>A computer algebra system,</li>
+<li>An equation solver, or</li>
+<li>An expression parser.</li>
+</ul>
+<h2>Usage:</h2>
+<p>Foft exports a single class, <code>Foft</code> that can create an instance as well as provide some <code>static</code> utilities.</p>
+<h3>Example:</h3>
+<pre><code>import {Foft} from 'foftjs';
+m = new Foft({
+    terms: [t =&gt; 2*t],
+    range: [0, 10],
+    segmentDivisor: 10 //one less than resultant number of evaluation points
+});
+[...m] // Array(11) [ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 ]
+</code></pre>
+<p>m(5.13) // 10.26</p>
+<h3>Generally, a Foft instance can evaluate:</h3>
+<ol>
+<li>Its <code>terms</code>: <code>Function</code> or <code>Foft</code> instances<br>
+that should generally receive and return</li>
+</ol>
+<ul>
+<li>Numbers</li>
+<li>Arrays of Numbers,</li>
+<li>Nested Arrays of Numbers, or</li>
+<li>TypedArrays.</li>
+</ul>
+<ol start="2">
+<li>Some of the properties of its <code>terms(1)</code>.</li>
+</ol>
+<h2>Development Guidelines</h2>
+<h3>Testing</h3>
+<h4>in nodejs</h4>
+<p>Run <code>npm test</code></p>
+<h3>Documentation</h3>
+<p>Run <code>npm run-script docs</code></p></article>
+    </section>
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	ⓤ Uncopyright 2019 by Anwar Hahj Jefferson-George
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
+	
+		on  2019 0601 2307+0000
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>
