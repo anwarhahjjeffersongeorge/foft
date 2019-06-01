@@ -13,6 +13,8 @@
     "btest": "npx cross-env NODE_ENV=test nyc --require @babel/register --require esm --reporter=text --reporter=html --show-process-tree mocha ./test/mocha/nodetestrunner.js",
     "pretest": "clear && rm -rf test && rsync -rv src/* test",
     "test": "standard \"src/* test/* lib/index.js lib/main.js lib/mathoft.js\" && npx cross-env NODE_ENV=test mocha --require esm ./test/mocha/nodetestrunner.js",
+    "pretestw": "clear && rm -rf test && rsync -rv src/* test",
+    "testw": "standard \"src/* test/* lib/index.js lib/main.js lib/mathoft.js\" && npx cross-env NODE_ENV=test mocha --watch --reporter=min --require esm ./test/mocha/nodetestrunner.js",
     "prebuild": "clear && rm -rf lib && mkdir lib",
     "build": "rsync -rv --exclude='mocha' --exclude='browserentry.js' src/* lib",
     "bbuild": "npx cross-env NODE_ENV=production babel src --out-dir lib --ignore \"src/mocha/,src/browserentry.js\"",
@@ -24,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "pi@raspberrypi:/home/pi/GIT/mathoftjs"
+    "url": ""
   },
   "keywords": [],
   "author": "Anwar Hahj Jefferson-George <anwarhahjjeffersongeorge@gmail.com>",
