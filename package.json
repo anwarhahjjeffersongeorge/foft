@@ -6,6 +6,7 @@
   "module": "src/main.js",
   "scripts": {
     "clean": "rm -rf docs test disttest .nyc_output coverage dist lib ./foftmochajs.html",
+    "coverage": "codecov",
     "predoc": "clear && rm -rf docs",
     "doc": "jsdoc ./src/foft.js -c jsdoc.json -d ./docs/ -r ./README.md  --verbose -t ./node_modules/ink-docstrap/template",
     "pretest": "clear && rm -rf test coverage .nyc_output && rsync -rv src/* test",
@@ -50,6 +51,7 @@
     "chai": "^4.2.0",
     "chai-almost": "^1.0.1",
     "chai-as-promised": "^7.1.1",
+    "codecov": "^3.5.0",
     "cross-env": "^5.2.0",
     "dirty-chai": "^2.0.1",
     "ink-docstrap": "^1.3.2",
