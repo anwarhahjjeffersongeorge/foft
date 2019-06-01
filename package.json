@@ -1,6 +1,6 @@
 {
   "name": "foft",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Syntactic sugar for discontinuous (mathematical) functions.",
   "main": "src/index.js",
   "module": "src/main.js",
