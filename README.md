@@ -6,6 +6,8 @@
 --------------
 
 # &mdash; `foft` &mdash;
+### [Documentation](https://anwarhahjjeffersongeorge.github.io/foft/)
+
 
 ### Syntactic sugar for discontinuous (mathematical) functions.
 
