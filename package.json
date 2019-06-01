@@ -4,7 +4,6 @@
   "description": "Syntactic sugar for discontinuous (mathematical) functions.",
   "main": "src/index.js",
   "module": "src/main.js",
-  "private": true,
   "scripts": {
     "clean": "rm -rf docs test disttest .nyc_output coverage dist lib ./foftmochajs.html",
     "predoc": "clear && rm -rf docs",
@@ -15,7 +14,8 @@
     "qtest": "echo \"quick test\" && standard \"src/* test/* lib/index.js lib/main.js lib/foft.js\" && cross-env NODE_ENV=test mocha --require esm ./test/mocha/nodetestrunner.js",
     "pretestw": "clear && rm -rf test && rsync -rv src/* test",
     "testw": "standard \"src/* test/* lib/index.js lib/main.js lib/foft.js\" && cross-env NODE_ENV=test mocha --watch --reporter=min --require esm ./test/mocha/nodetestrunner.js",
-    "preversion": "npm test && npm run doc"
+    "preversion": "npm test && npm run doc",
+    "postversion": "git push"
   },
   "repository": {
     "type": "git",
