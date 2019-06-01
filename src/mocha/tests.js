@@ -13,8 +13,8 @@
 // var expect = chai.expect
 // var assert = chai.assert
 import { domaintest } from './spec'
-function dotest (MathOfT, Parser) {
-  domaintest(MathOfT)
-  // doParsertest(MathOfT, Parser)
+function dotest (Foft, Parser) {
+  domaintest(Foft)
+  // doParsertest(Foft, Parser)
 }
 export { dotest }

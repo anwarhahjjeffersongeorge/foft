@@ -1,5 +1,5 @@
 'use strict'
 // ESM syntax is supported.
-import { MathOfT } from './mathoft.js'
+import { Foft } from './foft.js'
 
-export { MathOfT }
+export { Foft }

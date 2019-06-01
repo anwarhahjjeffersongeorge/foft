@@ -1,74 +1,48 @@
 'use strict'
-// https://stackoverflow.com/questions/36871299/how-to-extend-function-with-es6-classes
-// https://stackoverflow.com/questions/23807805/why-is-mutating-the-prototype-of-an-object-bad-for-performance7
-// https://stackoverflow.com/questions/32444575/whats-the-performance-impact-of-setprototypeof-on-a-new-object
-// https://esdiscuss.org/topic/setprototypeof-vs-obj-proto-assignment#content-5
-// only works with members defined in parent class
-// class ExtensibleFunction2 extends Function{
-//   constructor(){
-//     super('...args','return this.__call__(...args)');
-//     return this.bind(this);
-//   }
-//
-//   __call__(...args){
-//     throw new Error(`please override before calling with ${args}`)
-//   }
-// }
-class ExtensibleFunction extends Function {
-  constructor (f) {
-    return Object.setPrototypeOf(f, new.target.prototype)
-  }
-}
 /**
-* @class MathOfT is a class that evaluates the
-* properties of Function or MathOfT objects that
+* @class Foft is a class that evaluates the
+* properties of Function or Foft objects that
 * generally receive and return objects of type
 *  - Number
 *  - Array of Number,
 *  - Array of Array
 * @example
-* // returns a MathOfT instance
-* let MoT = new MathOfT()
+* // returns a Foft instance
+* let MoT = new Foft()
 * @example
-* // returns a MathOfT instance that
+* // returns a Foft instance that
 * // describes an equation over the range [0,1] (inclusive)
 * // split into 22 segments (23) total points
-* let MoT = new MathOfT({
+* let MoT = new Foft({
 *   range: [0, 1],
 *   segmentDivisor: 22,
 *   terms: (t) => t*2;
 * });
-* MathOfT also evaluates some of the properties
-* of the Function or MathOfT objects in its terms
-* @see MathOfT.oft
+* Foft also evaluates some of the properties
+* of the Function or Foft objects in its terms
+* @see Foft.oft
 */
-class MathOfT extends ExtensibleFunction {
-// class MathOfT extends ExtensibleFunction2{
-
-  // static #test=1;//@babel/plugin-proposal-class-properties
+class Foft {
   /**
-  * constructor - create a MathOfT instance that evaluates its Function terms
+  * constructor - create a Foft instance that evaluates its Function terms
   *    when given some parameter "t".
   * @param  {(Object|Function|Array)} params
   * @param {(Number|Array.<Number>)} [params.range] Range of two numerical values over which t is evaluated inclusively. If given a single number t0, range is [-t0,t0]
   * @param {Number} [params.segmentDivisor] The number of segments to divide the range into when picking t values for evaluation.
-  * @param {(Function|Array.<Function>|Array.<MathOfT>)} [params.terms=[]] A function that accepts a parameter t and returns a result of some operation on t
+  * @param {(Function|Array.<Function>|Array.<Foft>)} [params.terms=[]] A function that accepts a parameter t and returns a result of some operation on t
   * @param {boolean} [params.rangeoverride=false] if true, will override any range provided and set range equal to [0, params.segmentDivisor]
-  * @param {boolean} [params.harmonize=false] if true, will harmonize the domains of any MathOfT terms to that of the new parent instance @see range, @see segmentDivisor
+  * @param {boolean} [params.harmonize=false] if true, will harmonize the domains of any Foft terms to that of the new parent instance @see range, @see segmentDivisor
   * @throws TypeError
   */
   constructor (params) {
-    // super();
-    super((...args) => this.oft(...args))
-
     params = params || {}
 
-    if ((typeof params === 'function') || (params instanceof MathOfT)) {
+    if ((typeof params === 'function') || (params instanceof Foft)) {
       let thefunc = params
       params = {
         terms: thefunc
       }
-    } else if (MathOfT.ISARRAYLIKE(params)) {
+    } else if (Foft.ISARRAYLIKE(params)) {
       let thearray = params
       params = {
         range: thearray
@@ -76,7 +50,7 @@ class MathOfT extends ExtensibleFunction {
     }
 
     // define the division of the evaluation range
-    const segmentDivisor = params.segmentDivisor || MathOfT.DEFAULT_SEGMENT_DIVISOR
+    const segmentDivisor = params.segmentDivisor || Foft.DEFAULT_SEGMENT_DIVISOR
     this.segmentDivisor = segmentDivisor
 
     let rangeoverride = (typeof params.rangeoverride === 'boolean')
@@ -88,23 +62,23 @@ class MathOfT extends ExtensibleFunction {
     // create an evaluation range
     let range = (rangeoverride)
       ? [0, this.segmentDivisor]
-      : params.range || MathOfT.DEFAULT_RANGE
-    range = MathOfT.ISCALCULABLE(range)
+      : params.range || Foft.DEFAULT_RANGE
+    range = Foft.ISCALCULABLE(range)
       ? [-range, range]
       : range
-    if (!MathOfT.ISARRAYLIKE(range)) throw new TypeError('range should be array')
+    if (!Foft.ISARRAYLIKE(range)) throw new TypeError('range should be array')
     // if(range.length!==2) throw new RangeError('range should have two elements')
     this.range = Array.from(range)
 
-    // this MathOfT can use these terms
+    // this Foft can use these terms
     // define terms
     this._terms = []
     let terms = params.terms || [(t) => t]
     terms = (typeof terms === 'function')
       ? [terms]
       : terms
-    if (!MathOfT.ISARRAYLIKE(terms) && (typeof terms !== 'function') && !(terms instanceof MathOfT)) {
-      throw new TypeError('params.terms should be array, function or MathOfT instance')
+    if (!Foft.ISARRAYLIKE(terms) && (typeof terms !== 'function') && !(terms instanceof Foft)) {
+      throw new TypeError('params.terms should be array, function or Foft instance')
     }
     for (let term of terms) {
       // const term = terms[termIndex];
@@ -128,7 +102,7 @@ class MathOfT extends ExtensibleFunction {
   // }
 
   /**
-  * get terms - the Function terms of this MathOfT object
+  * get terms - the Function terms of this Foft object
   *
   * @return {Array}
   */
@@ -137,11 +111,11 @@ class MathOfT extends ExtensibleFunction {
   }
 
   /**
-  * addTerm - add a term to the terms of this MathOfT instance
+  * addTerm - add a term to the terms of this Foft instance
   *
-  * @param  {(function|MathOfT)} term A Function that takes a parameter (t) or
-  *   MathOfT
-  * @param {boolean} [harmonize=false] if true, and term is a MathOfT
+  * @param  {(function|Foft)} term A Function that takes a parameter (t) or
+  *   Foft
+  * @param {boolean} [harmonize=false] if true, and term is a Foft
   *  instance, this overwrites the range and segmentDivisor of term to make them
   *  reference the same-named parameters of this instance.
   * @returns {boolean} true if length of terms grew
@@ -153,9 +127,9 @@ class MathOfT extends ExtensibleFunction {
       this[numterms] = this.terms[numterms]
     }
     harmonize = (typeof harmonize === 'boolean') ? harmonize : false
-    if (typeof term === 'function' && !(term instanceof MathOfT)) {
+    if (typeof term === 'function' && !(term instanceof Foft)) {
       push(term)
-    } else if (term instanceof MathOfT) {
+    } else if (term instanceof Foft) {
       push(term)
       if (harmonize) {
         // term.range = this.range;
@@ -184,10 +158,10 @@ class MathOfT extends ExtensibleFunction {
    * @throws {TypeError} segmentDivisor should be calculable number
    */
   set segmentDivisor (segmentDivisor) {
-    segmentDivisor = MathOfT.ISARRAYLIKE(segmentDivisor)
+    segmentDivisor = Foft.ISARRAYLIKE(segmentDivisor)
       ? segmentDivisor[0]
       : segmentDivisor
-    if (!MathOfT.ISCALCULABLE(segmentDivisor)) {
+    if (!Foft.ISCALCULABLE(segmentDivisor)) {
       // console.log('NaN segment Divisor')
       throw new TypeError('segmentDivisor should be calculable number, not: ' + segmentDivisor)
     } else {
@@ -197,7 +171,7 @@ class MathOfT extends ExtensibleFunction {
   /**
   * get segmentDivisor The number of segment divisors
   * (number of t evaluation points -1)
-  *   in this MathOfT
+  *   in this Foft
   *
   * @return {Number}
   */
@@ -206,7 +180,7 @@ class MathOfT extends ExtensibleFunction {
   }
 
   /**
-   * get numSegments - The number of actual segments the MathOfT divides the evaluation range into
+   * get numSegments - The number of actual segments the Foft divides the evaluation range into
    *
    * @return {Number}
    */
@@ -231,7 +205,7 @@ class MathOfT extends ExtensibleFunction {
    * @param  {Array<number>} range
    */
   set range (range) {
-    if (!(MathOfT.ISARRAYLIKE(range) && MathOfT.ARECALCULABLES(range))) throw new TypeError('range values should be Array of calculable numbers')
+    if (!(Foft.ISARRAYLIKE(range) && Foft.ARECALCULABLES(range))) throw new TypeError('range values should be Array of calculable numbers')
     this._range = Array(range.length)
 
     for (let rangeIndex in range) {
@@ -266,15 +240,15 @@ class MathOfT extends ExtensibleFunction {
   }
 
   /**
-  * get opcode - a MathOfT can have an opcode as defined in
-  * MathOfT.OPS. These codes represent mathematical operations
+  * get opcode - a Foft can have an opcode as defined in
+  * Foft.OPS. These codes represent mathematical operations
   * between Numbers and other types. They are useful for performing
-  * said operations when the Function or MathOfT in the terms
+  * said operations when the Function or Foft in the terms
   * Array
   *
-  * @see MathOfT.OPS
+  * @see Foft.OPS
   * @see terms
-  * @return {string} @see MathOfT.OPS
+  * @return {string} @see Foft.OPS
   */
   get opcode () {
     return this._opcode
@@ -282,19 +256,19 @@ class MathOfT extends ExtensibleFunction {
 
   /**
   * set opcode - set the opcode to one of the opcodes
-  *  defined in MathOfT.OPS
+  *  defined in Foft.OPS
   *
-  * @param  {string} [opcode=null] @see MathOfT.OPS
+  * @param  {string} [opcode=null] @see Foft.OPS
   */
   set opcode (opcode) {
-    this._opcode = (MathOfT.ISOP(opcode))
+    this._opcode = (Foft.ISOP(opcode))
       ? opcode
       : null
   }
 
   /**
    * get dSubrange - given indices n & nn
-   * returns the delta between sub values in the MathOfT instance's
+   * returns the delta between sub values in the Foft instance's
    * evaluation range, or: range[nn%range.length]-range[n%range.length],
    *
    * when given no parameters, it uses 0 and 1
@@ -305,23 +279,23 @@ class MathOfT extends ExtensibleFunction {
    * @throws {TypeError} when given non-number parameter
    */
   dSubrange (n, nn) {
-    n = MathOfT.ISNUMBER(n)
+    n = Foft.ISNUMBER(n)
       ? n
       : 0
-    if (nn && !MathOfT.ISNUMBER(nn)) {
-      throw new TypeError(`MathOfT.dSubRange only accepts Numbers, given ${[...arguments]}`)
+    if (nn && !Foft.ISNUMBER(nn)) {
+      throw new TypeError(`Foft.dSubRange only accepts Numbers, given ${[...arguments]}`)
     }
     n = n % this.range.length
     if (!Number.isInteger(n)) {
-      throw new RangeError(`MathOfT.dSubRange only accepts Integers, given ${[...arguments]}`)
+      throw new RangeError(`Foft.dSubRange only accepts Integers, given ${[...arguments]}`)
     }
     // for this conditional, we use the explicit ISNUMBER to avoid logical
     // error for zero case: if(0) is falsy
-    nn = MathOfT.ISNUMBER(nn)
+    nn = Foft.ISNUMBER(nn)
       ? nn % this.range.length
       : (n + 1) % this.range.length
     if (!Number.isInteger(nn)) {
-      throw new RangeError(`MathOfT.dSubRange only accepts Integers, given ${[...arguments]}`)
+      throw new RangeError(`Foft.dSubRange only accepts Integers, given ${[...arguments]}`)
     }
     return this.range[nn] - this.range[n]
   }
@@ -358,7 +332,7 @@ class MathOfT extends ExtensibleFunction {
       ? omitLast
       : false
     let defaultN = 0
-    n = MathOfT.ISNUMBER(n)
+    n = Foft.ISNUMBER(n)
       ? n % this.range.length
       : defaultN
     let a = this.range[n]
@@ -382,9 +356,9 @@ class MathOfT extends ExtensibleFunction {
   /**
   * get T -  get a Generator yielding all values of t across instance evaluation range
   * @example
-  * // get the default t values for which a MathOfT is
+  * // get the default t values for which a Foft is
   * // evaluated
-  * let MoT = new MathOfT({
+  * let MoT = new Foft({
   *   range: [0, Math.PI*2],
   *   segmentDivisor: 22,
   *   terms: (t) => [sin(t), cos(t)];
@@ -407,9 +381,9 @@ class MathOfT extends ExtensibleFunction {
   }
 
   /**
-  * normalizeT - given a Number t, return a normalized (to MathOfT.DEFAULT_RANGE)
+  * normalizeT - given a Number t, return a normalized (to Foft.DEFAULT_RANGE)
   * representation of the ratio between t and the delta of the evaluation
-  * range of this MathOfT
+  * range of this Foft
   *
   * If t falls out of bounds of range, the value is returned as -/+ Infinity
   *
@@ -428,8 +402,8 @@ class MathOfT extends ExtensibleFunction {
       ? doAnti
       : false
     let func = (doAnti)
-      ? MathOfT.ANTINORMALIZETORANGE
-      : MathOfT.NORMALIZETORANGE
+      ? Foft.ANTINORMALIZETORANGE
+      : Foft.NORMALIZETORANGE
     let arr = Array(this.range.length - 1)
     for (let r = 0; r < arr.length; r++) {
       arr[r] = func(t, [
@@ -477,7 +451,7 @@ class MathOfT extends ExtensibleFunction {
   i (t) {
     let arr = Array(this.range.length - 1)
     for (let r = 0; r < arr.length; r++) {
-      arr[r] = MathOfT.IINRANGE(t, [
+      arr[r] = Foft.IINRANGE(t, [
         this.range[r],
         this.range[r + 1]
       ], this.segmentDivisor)
@@ -494,15 +468,15 @@ class MathOfT extends ExtensibleFunction {
    * @return {boolean}
    */
   isInRange (t) {
-    return MathOfT.INRANGE(t, this.range)
+    return Foft.INRANGE(t, this.range)
   }
   /**
   * oft - evaluate all of the terms held by this Mathoft for the
   * given t value.
   *
-  * When evaluating a Function or MathOfT term, the function or MathOfT is called with a this object containing certain useful data regarding the calling instance's evaluation of t @see TTHIS_TEMPLATE
+  * When evaluating a Function or Foft term, the function or Foft is called with a this object containing certain useful data regarding the calling instance's evaluation of t @see TTHIS_TEMPLATE
   *
-  * When evaluating a MathOfT term, any t that falls outside that term's evaluation range will produce a null result. If the filterNulls parameter is true, then null values will be stripped from the returned result.
+  * When evaluating a Foft term, any t that falls outside that term's evaluation range will produce a null result. If the filterNulls parameter is true, then null values will be stripped from the returned result.
   * @see isInRange
   * @param  {Number} [t=t0]
   * @param {boolean} [filterNulls=false]
@@ -511,7 +485,7 @@ class MathOfT extends ExtensibleFunction {
   */
   oft (t, filterNulls, maketthis) {
     // console.log(this)
-    t = MathOfT.ISCALCULABLE(t)
+    t = Foft.ISCALCULABLE(t)
       ? t
       : this.t0
     filterNulls = (typeof filterNulls === 'boolean')
@@ -522,7 +496,7 @@ class MathOfT extends ExtensibleFunction {
       : true
     // debugger;
     let tthis = (maketthis)
-      ? MathOfT.TTHIS_TEMPLATE(t, this)
+      ? Foft.TTHIS_TEMPLATE(t, this)
       : (typeof this.tthis === 'object')
         ? this.tthis
         : null
@@ -530,9 +504,9 @@ class MathOfT extends ExtensibleFunction {
     let result = []
     for (let i in this.terms) {
       let _term = this.terms[i]
-      if ((typeof _term === 'function') && !(_term instanceof MathOfT)) {
+      if ( typeof _term === 'function') {
         result[i] = _term.call(tthis, t)
-      } else if ((typeof _term === 'function') && (_term instanceof MathOfT)) {
+      } else if (_term instanceof Foft) {
         // console.log(_term);
         let subres = _term.isInRange(t)
           ? _term.oft.call(Object.assign(_term, { tthis }), t, null, false)
@@ -570,7 +544,7 @@ class MathOfT extends ExtensibleFunction {
   }
 
   /**
-  * oftNormal - Accepts a Number tNormal that falls within MathOfT.DEFAULT_RANGE, inclusive, and when provided
+  * oftNormal - Accepts a Number tNormal that falls within Foft.DEFAULT_RANGE, inclusive, and when provided
   *  1 . A NaN value, return NaN
   *  2.  +Infinity, returns evaluation from end bound of range
   *  3.  -Infinity, returns evaluation from start bound of range
@@ -585,13 +559,13 @@ class MathOfT extends ExtensibleFunction {
   * @return {(Number|Array.<Number>)}
   */
   oftNormal (tNormal) {
-    let dNormal = MathOfT.DEFAULT_RANGE[1] - MathOfT.DEFAULT_RANGE[0]
-    let midNormal = MathOfT.DEFAULT_RANGE[0] + dNormal / 2
-    tNormal = MathOfT.ISNUMBER(tNormal)
+    let dNormal = Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0]
+    let midNormal = Foft.DEFAULT_RANGE[0] + dNormal / 2
+    tNormal = Foft.ISNUMBER(tNormal)
       ? tNormal
       : midNormal
     let t; let midt = (this.tt - this.t0) / 2 + this.t0
-    if (MathOfT.ISCALCULABLE(tNormal)) {
+    if (Foft.ISCALCULABLE(tNormal)) {
       t = midt + (tNormal - midNormal) * this.drange / 2
     }
     // debugger;
@@ -606,7 +580,7 @@ class MathOfT extends ExtensibleFunction {
 
   /**
   * oftOp - Calculate the value of performing an operation _op on the
-  * values returned by calculating this MathOfT instance's terms for
+  * values returned by calculating this Foft instance's terms for
   * some evaluation value t. When given a parameter _acc, the calculation of _op will use _acc as its starting value.
   *
   * This is intended to facilitate convenient manipulation of terms and results.
@@ -614,18 +588,18 @@ class MathOfT extends ExtensibleFunction {
   * @see oft
   *
   * @param  {Number} t the t to evaluate
-  * @param  {string} [_op=this.opcode]  an opcode to perform @see MathOfT.OPS
-  * @param  {(Number|Array.<Number>|Array.<Array>)} [_acc=null] an accumulator value to start with @see MathOfT.OPS -> base
+  * @param  {string} [_op=this.opcode]  an opcode to perform @see Foft.OPS
+  * @param  {(Number|Array.<Number>|Array.<Array>)} [_acc=null] an accumulator value to start with @see Foft.OPS -> base
   * @return {(Number|Array.<Number>|Array.<Array>)}
   */
   oftOp (_t, _op, _acc) {
-    _op = (_op in MathOfT.OPS)
+    _op = (_op in Foft.OPS)
       ? _op
       : this.opcode
-    const op = MathOfT.OPS[_op]
+    const op = Foft.OPS[_op]
     // debugger;
     _acc = ((_acc || Number.isNaN(_acc)))
-      ? (MathOfT.ARENUMBERS(_acc))
+      ? (Foft.ARENUMBERS(_acc))
         ? _acc
         : NaN
       : null // op.base
@@ -633,17 +607,17 @@ class MathOfT extends ExtensibleFunction {
     const transform = (acc, val) => {
       let transformRes
       // console.log(acc,val);
-      switch (MathOfT.MATHTYPEOF(val)) {
-        case MathOfT.MATHTYPES.numberlike:
-          if (MathOfT.ISARRAYLIKE(acc)) {
+      switch (Foft.MATHTYPEOF(val)) {
+        case Foft.MATHTYPES.numberlike:
+          if (Foft.ISARRAYLIKE(acc)) {
             throw new TypeError('Can\'t apply an arraylike accumulator to a scalar.')
-          } else if (MathOfT.ISNUMBER(acc)) {
+          } else if (Foft.ISNUMBER(acc)) {
             transformRes = op(acc, val)
           }
           break
-        case MathOfT.MATHTYPES.arraylike:
-          let isNested = MathOfT.ISARRAYLIKE(val[0])
-          if (MathOfT.ISARRAYLIKE(acc)) {
+        case Foft.MATHTYPES.arraylike:
+          let isNested = Foft.ISARRAYLIKE(val[0])
+          if (Foft.ISARRAYLIKE(acc)) {
             if (acc.length !== val.length) {
               let areMismatched = (isNested)
                 ? acc.length !== val[0].length
@@ -659,7 +633,7 @@ class MathOfT extends ExtensibleFunction {
                 val[i] = transform(acc[i], val[i]) // overwrite in place
               }
             }
-          } else if (MathOfT.ISNUMBER(acc)) {
+          } else if (Foft.ISNUMBER(acc)) {
             for (let i = 0; i < val.length; i++) {
               val[i] = transform(acc, val[i]) // overwrite in place
             }
@@ -687,7 +661,7 @@ class MathOfT extends ExtensibleFunction {
         break
       default:
         res = (_acc || Number.isNaN(_acc))
-          ? MathOfT.ISARRAYLIKE(_acc)
+          ? Foft.ISARRAYLIKE(_acc)
             ? transform(_acc, _oft)
             : _oft.reduce(transform, _acc)
           : _oft.reduce(transform)
@@ -776,7 +750,7 @@ class MathOfT extends ExtensibleFunction {
    * @return {string}
    */
   toString () {
-    let res = 'MathOfT\n'
+    let res = 'Foft\n'
     res += `range:\n\t[${this.range}]\n`
     res += `segments:\n\t[${this.numSegments}]\n`
     res += `terms:\n`
@@ -794,7 +768,7 @@ class MathOfT extends ExtensibleFunction {
    * @return {string}
    */
   get [Symbol.toStringTag] () {
-    return 'MathOfT Function'
+    return 'Foft Function'
   }
 
   /**
@@ -817,7 +791,7 @@ class MathOfT extends ExtensibleFunction {
     ]
     // only do so many tests
     let testnum = 0
-    const maxtest = MathOfT.ISCALCULABLE(maxtestnum)
+    const maxtest = Foft.ISCALCULABLE(maxtestnum)
       ? maxtestnum
       : 144
     // tests[0]
@@ -862,49 +836,6 @@ class MathOfT extends ExtensibleFunction {
     return res
   }
 
-  // TODO: static SIN_OF_PI_WARN
-  /* js: (0=== Math.sin(-Math.PI))=false
-
-in electron:
-
-0=== Math.sin(0)
-true
-(0=== Math.sin(-Math.PI))
-false
-
- Math.sin(-Math.PI)
--1.2246467991473532e-16
- Math.sin(Math.PI)
-1.2246467991473532e-16
-
-in node:
-
->  Math.sin(-Math.PI)
--1.2246467991473532e-16
->  Math.sin(-Math.PI)
--1.2246467991473532e-16
-
-in node with decimal.js(https://github.com/MikeMcl/decimal.js):
-
-console.log(Decimal.sin(-Math.PI).toPrecision(20))
--2.3846264338327950288e-16
-undefined
->  console.log(Decimal.sin(-Math.PI).toPrecision(80))
--2.3846264338327950288000000000000000000000000000000000000000000000000000000000000e-16
-undefined
->  console.log(Decimal.sin(3.1415926535897932384626433832795028841971693993751).toPrecision(80))
-2.3846264338327950288000000000000000000000000000000000000000000000000000000000000e-16
-undefined
->  console.log(Decimal.sin(3.1415926535897932384626433832795028841971693993751*2).toPrecision(80))
--4.7692528676655900577000000000000000000000000000000000000000000000000000000000000e-16
-undefined
->  console.log(Decimal.sin(3.1415926535897932384626433832795028841971693993751*2).toPrecision(80))
--4.7692528676655900577000000000000000000000000000000000000000000000000000000000000e-16
-undefined
->  console.log(Decimal.sin(Decimal('3.1415926535897932384626433832795028841971693993751')).toPrecision(80))
-5.8209749445923078164000000000000000000000000000000000000000000000000000000000000e-51
-undefined */
-
   /**
    * @static ISNUMBER - return true IFF both of the following conditions are met
    *   1. there was ONE argument provided, and
@@ -923,7 +854,7 @@ undefined */
    * 2. argument is not NaN
    * 3. argument is not +/-Infinity
    *
-   * This function does more calls than just using isFinite, however, it is used in the MathOfT class because the class also deals with arrays and objects.
+   * This function does more calls than just using isFinite, however, it is used in the Foft class because the class also deals with arrays and objects.
    *
    * @see ISNUMBER
    *
@@ -934,7 +865,7 @@ undefined */
   }
 
   /**
-   * @static ISARRAYLIKE - determine whether a given argument x is "like" an array for the purposees of MathOfT calculations and parsing, returning true IFF x satisfies one of the following conditions:
+   * @static ISARRAYLIKE - determine whether a given argument x is "like" an array for the purposees of Foft calculations and parsing, returning true IFF x satisfies one of the following conditions:
    * 1 - It is an Array
    * 2 - It is a TypedArray
    * 3 - It provides a Symbol.iterator property
@@ -968,9 +899,9 @@ undefined */
       return false
     } else {
       return [...arguments].every(v => {
-        return MathOfT.ISARRAYLIKE(v)
-          ? MathOfT.ARENUMBERS(...v)
-          : MathOfT.ISNUMBER(v)
+        return Foft.ISARRAYLIKE(v)
+          ? Foft.ARENUMBERS(...v)
+          : Foft.ISNUMBER(v)
       })
     }
   };
@@ -996,9 +927,9 @@ undefined */
       return false
     } else {
       return [...arguments].every(v => {
-        return MathOfT.ISARRAYLIKE(v)
-          ? MathOfT.ARECALCULABLES(...v)
-          : MathOfT.ISCALCULABLE(v)
+        return Foft.ISARRAYLIKE(v)
+          ? Foft.ARECALCULABLES(...v)
+          : Foft.ISCALCULABLE(v)
       })
     }
   };
@@ -1006,7 +937,7 @@ undefined */
   /**
    * @static INRANGE - determine whether a given number n falls
    * within any of the follwoing inclusive ranges
-   *    0. [ MathOfT.DEFAULT_RANGE[0], MathOfT.DEFAULT_RANGE[1] ]
+   *    0. [ Foft.DEFAULT_RANGE[0], Foft.DEFAULT_RANGE[1] ]
    *    1. [0, m],
    *    2. [0, m[0]], (when provided unit-length array)
    *    3. [m[0], m[m.length-1]]
@@ -1028,20 +959,20 @@ undefined */
           ? a >= c
           : true // a === b
     }
-    if (!(MathOfT.ARENUMBERS(...arguments) && MathOfT.ISNUMBER(n))) {
+    if (!(Foft.ARENUMBERS(...arguments) && Foft.ISNUMBER(n))) {
       return false
     } else {
       if (arguments.length === 1) {
-        return MathOfT.INRANGE(n, MathOfT.DEFAULT_RANGE)
-      } else if (MathOfT.ISARRAYLIKE(m)) {
+        return Foft.INRANGE(n, Foft.DEFAULT_RANGE)
+      } else if (Foft.ISARRAYLIKE(m)) {
         // console.log(n,m)
         return (m.length === 1)
           ? test(n, 0, m[0])
           : test(n, m[0], m[m.length - 1])
-      } else if (MathOfT.ISNUMBER(m)) {
-        if (!MathOfT.ISNUMBER(mm)) {
+      } else if (Foft.ISNUMBER(m)) {
+        if (!Foft.ISNUMBER(mm)) {
           return test(n, 0, m)
-        } else if (MathOfT.ISNUMBER(mm)) {
+        } else if (Foft.ISNUMBER(mm)) {
           return test(n, m, mm)
         }
       }
@@ -1049,7 +980,7 @@ undefined */
   }
 
   /**
-   * @static NORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to an optional range NN or MathOfT.DEFAULT_RANGE)
+   * @static NORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to an optional range NN or Foft.DEFAULT_RANGE)
    * representation of the ratio between the two deltas A and B where
    *   1. A is the difference betewen t and TT[first]
    *   2. B is the difference between TT[last] and TT[first]
@@ -1066,14 +997,14 @@ undefined */
    * @param  {Array<number>} [NN=DEFAULT_RANGE] the target normalization range * @return {number}
    */
   static NORMALIZETORANGE (t, TT, NN) {
-    if (!MathOfT.ISNUMBER(t)) {
+    if (!Foft.ISNUMBER(t)) {
       t = 0
     }
-    if (!MathOfT.ARENUMBERS(NN)) {
-      NN = MathOfT.DEFAULT_RANGE
+    if (!Foft.ARENUMBERS(NN)) {
+      NN = Foft.DEFAULT_RANGE
     }
-    if (!MathOfT.ARENUMBERS(TT)) {
-      TT = MathOfT.DEFAULT_RANGE
+    if (!Foft.ARENUMBERS(TT)) {
+      TT = Foft.DEFAULT_RANGE
     }
     let [normA, normB] = NN
     let minNorm = (normA < normB)
@@ -1085,7 +1016,7 @@ undefined */
     let res = (t - TT[0]) / (TT[1] - TT[0]) // [0-1]
     res = normA + (normB - normA) * res // [normA, normB]
 
-    if (!MathOfT.INRANGE(res, normA, normB)) {
+    if (!Foft.INRANGE(res, normA, normB)) {
       res = (res < minNorm)
         ? -Infinity
         : Infinity
@@ -1095,7 +1026,7 @@ undefined */
   }
 
   /**
-   * @static ANTINORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to MathOfT.DEFAULT_RANGE)
+   * @static ANTINORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to Foft.DEFAULT_RANGE)
    * representation of the ratio between the two deltas A and B where
    *   1. A is the difference betewen t and TT[last]
    *   2. B is the difference between TT[last] and TT[first]
@@ -1111,16 +1042,16 @@ undefined */
    * @return {number}
    */
   static ANTINORMALIZETORANGE (t, TT, NN) {
-    if (!MathOfT.ISNUMBER(t)) {
+    if (!Foft.ISNUMBER(t)) {
       t = 0
     }
-    if (!MathOfT.ARENUMBERS(TT)) {
-      TT = MathOfT.DEFAULT_RANGE
+    if (!Foft.ARENUMBERS(TT)) {
+      TT = Foft.DEFAULT_RANGE
     }
-    if (!MathOfT.ARENUMBERS(NN)) {
-      NN = MathOfT.DEFAULT_RANGE
+    if (!Foft.ARENUMBERS(NN)) {
+      NN = Foft.DEFAULT_RANGE
     }
-    let res = MathOfT.NORMALIZETORANGE(t, TT, NN)
+    let res = Foft.NORMALIZETORANGE(t, TT, NN)
     return (Math.abs(res) === Infinity)
       ? -res
       : NN[NN.length - 1] - res
@@ -1137,10 +1068,10 @@ undefined */
    * @return {null|number}
    */
   static IINRANGE (t, TT, d) {
-    d = (MathOfT.ISNUMBER(d))
+    d = (Foft.ISNUMBER(d))
       ? Math.floor(d)
-      : Math.floor(MathOfT.DEFAULT_SEGMENT_DIVISOR)
-    let res = MathOfT.NORMALIZETORANGE(t, TT, [0, 1])
+      : Math.floor(Foft.DEFAULT_SEGMENT_DIVISOR)
+    let res = Foft.NORMALIZETORANGE(t, TT, [0, 1])
     return (res === Infinity)
       ? null
       : (res === -Infinity)
@@ -1156,15 +1087,15 @@ undefined */
    */
   static DIMENSIONS (x) {
     let dim = Promise.resolve([])
-    if (MathOfT.ISNUMBER(x)) {
+    if (Foft.ISNUMBER(x)) {
       return dim.then(dimarr => dimarr.concat(0))
-    } else if (MathOfT.ISARRAYLIKE(x)) {
+    } else if (Foft.ISARRAYLIKE(x)) {
       if (x.length === 0) {
         return dim.then(dimarr => dimarr.concat(0))
       } else {
         let subarrayIndices = []
         let isNotSubarrayTest = (acc, v, i) => {
-          if (!MathOfT.ISARRAYLIKE(v)) {
+          if (!Foft.ISARRAYLIKE(v)) {
             return acc && true
           } else {
             subarrayIndices.push(i)
@@ -1178,16 +1109,16 @@ undefined */
             return Promise.all(subarrayIndices.map((v) => {
               let xSubArr = x[v]
               // console.log(xSubArr)
-              return MathOfT.DIMENSIONS(xSubArr)
+              return Foft.DIMENSIONS(xSubArr)
             })).then(subdims => {
               // console.log(subdims, x.length)
-              let flatsubdims = MathOfT.OPS['...'](subdims)
+              let flatsubdims = Foft.OPS['...'](subdims)
               // console.log(flatsubdims, x.length)
               let mag
-              if (MathOfT.EQUAL(flatsubdims.length, subdims.length, x.length)) {
-                mag = MathOfT.OPS.magest(...flatsubdims)
+              if (Foft.EQUAL(flatsubdims.length, subdims.length, x.length)) {
+                mag = Foft.OPS.magest(...flatsubdims)
               } else {
-                mag = MathOfT.OPS.magest(...subdims)
+                mag = Foft.OPS.magest(...subdims)
               }
               // mag = (Number.isNaN(mag) || mag === 0)
               //   ? []
@@ -1221,20 +1152,20 @@ undefined */
       return !Number.isNaN(arguments[0])
     }
     const a0 = arguments[0]
-    const a0type = MathOfT.MATHTYPEOF(a0)
+    const a0type = Foft.MATHTYPEOF(a0)
     let res = true
-    // const dim = MathOfT.DIMENSIONS(arguments[0]);
+    // const dim = Foft.DIMENSIONS(arguments[0]);
     for (let i = 1; i < arguments.length; i++) {
       let a = arguments[i]
-      if (MathOfT.MATHTYPEOF(a) !== a0type) return false
+      if (Foft.MATHTYPEOF(a) !== a0type) return false
       switch (a0type) {
-        case MathOfT.MATHTYPES.arraylike:
+        case Foft.MATHTYPES.arraylike:
           if (a.length !== a0.length) return false
           for (let ai = 0; ai < a0.length; ai++) {
-            if (!MathOfT.EQUAL(a0[ai], a[ai])) return false
+            if (!Foft.EQUAL(a0[ai], a[ai])) return false
           }
           break
-        case MathOfT.MATHTYPES.numberlike:
+        case Foft.MATHTYPES.numberlike:
           res = res && (a === a0)
           break
         default:
@@ -1246,47 +1177,47 @@ undefined */
   }
 
   /**
-   * @static MATHTYPEOF - tell whether the given argument a is of one of the types that MathOfT can do math with  and if so, which type
+   * @static MATHTYPEOF - tell whether the given argument a is of one of the types that Foft can do math with  and if so, which type
    *
    * @param  {?} [a]
    * @return {(Symbol|null)}
    */
   static MATHTYPEOF (a) {
-    return MathOfT.ISARRAYLIKE(a)
-      ? MathOfT.MATHTYPES.arraylike
-      : MathOfT.ISNUMBER(a)
-        ? MathOfT.MATHTYPES.numberlike
+    return Foft.ISARRAYLIKE(a)
+      ? Foft.MATHTYPES.arraylike
+      : Foft.ISNUMBER(a)
+        ? Foft.MATHTYPES.numberlike
         : null
   }
 
   /**
-   * @static TTHIS_TEMPLATE - given a t and a MathOfT instance, produces an object with some keys for inter-instance communication corresponding to:
+   * @static TTHIS_TEMPLATE - given a t and a Foft instance, produces an object with some keys for inter-instance communication corresponding to:
    * 1 the result of evaluating certain methods of the calling instance for t @see FUNCKEYS
    * 2 certain members of the calling instance @see MEMBERKEYS
    *
    * @see oft
    * @param  {Number} t the t of the instance communicatiing
-   * @param {MathOfT} mathoft the instance doing communication
+   * @param {Foft} foft the instance doing communication
    * @return {object|Array<string>} communication object, or array of communication keys
    */
-  static TTHIS_TEMPLATE (t, mathoft) {
-    let o = (MathOfT.ISCALCULABLE(t))
+  static TTHIS_TEMPLATE (t, foft) {
+    let o = (Foft.ISCALCULABLE(t))
       ? { t }
       : { }
-    let populateFunc = (mathoft instanceof MathOfT) && (MathOfT.ISCALCULABLE(t))
+    let populateFunc = (foft instanceof Foft) && (Foft.ISCALCULABLE(t))
       ? (key) => {
-        o[key] = mathoft[key](t)
+        o[key] = foft[key](t)
       }
       : () => null
-    let populateMemb = (mathoft instanceof MathOfT)
+    let populateMemb = (foft instanceof Foft)
       ? (key) => {
-        o[key] = mathoft[key]
+        o[key] = foft[key]
       }
       : () => null
-    MathOfT.FUNCKEYS.map(fkey => populateFunc(fkey))
-    MathOfT.MEMBERKEYS.map(mkey => populateMemb(mkey))
+    Foft.FUNCKEYS.map(fkey => populateFunc(fkey))
+    Foft.MEMBERKEYS.map(mkey => populateMemb(mkey))
     if (Object.keys(o).length === 0) {
-      return MathOfT.FUNCKEYS.concat(MathOfT.MEMBERKEYS)
+      return Foft.FUNCKEYS.concat(Foft.MEMBERKEYS)
     } else {
       return o
     }
@@ -1294,35 +1225,35 @@ undefined */
 
   /**
    * @static ISOP - given a string codeToParse, return true when code is found
-   *  in MathOfT.OPDICT
-   * @see MathOfT.OPDICT
+   *  in Foft.OPDICT
+   * @see Foft.OPDICT
    * @param  {string} codeToParse
    * @return {boolean}
    */
   static ISOP (codeToParse) {
-    return MathOfT.OPDICT.includes(codeToParse)
+    return Foft.OPDICT.includes(codeToParse)
   }
 
   /**
    * @static OPPARSE - given a string codeToParse, return
-   * the corresponding operation function from MathOfT.OPS
+   * the corresponding operation function from Foft.OPS
    *
-   * @see MathOfT.OPS
+   * @see Foft.OPS
    * @param  {string} codeToParse
-   * @return {function} MathOfT.OPS function corresponding to op
+   * @return {function} Foft.OPS function corresponding to op
    */
   static OPPARSE (codeToParse) {
-    return (MathOfT.ISOP(codeToParse))
-      ? MathOfT.OPS[codeToParse]
-      : MathOfT.OPS[null]
+    return (Foft.ISOP(codeToParse))
+      ? Foft.OPS[codeToParse]
+      : Foft.OPS[null]
   }
 }
 
-Object.defineProperties(MathOfT, {
+Object.defineProperties(Foft, {
   /**
-   * @static MATHTYPES - valid types that MathOfT can do math on
-   * @see MathOfT.MATHTYPEOF
-   * @memberof MathOfT
+   * @static MATHTYPES - valid types that Foft can do math on
+   * @see Foft.MATHTYPEOF
+   * @memberof Foft
    */
   'MATHTYPES': {
     value: (() => {
@@ -1341,8 +1272,8 @@ Object.defineProperties(MathOfT, {
   },
   /**
    * @static OPDICT - an array of valid op keys
-   * @see MathOfT.OPS
-   * @memberof MathOfT
+   * @see Foft.OPS
+   * @memberof Foft
    */
   'OPDICT': {
     value: [null, '+', '-', '*', '/', '**', '...', 'magest', 'magesti'],
@@ -1354,20 +1285,20 @@ Object.defineProperties(MathOfT, {
    * @static OPS - an object containing operations, or ops, that
    * perform mathematical functions corresponding to their keys
    * @hamespace OPS
-   * @see MathOfT.ISOP
-   * @see MathOfT.OPDICT
-   * @see MathOfT.OPPARSE
-   * @see MathOfT.ARENUMBERS
-   * @memberof MathOfT
+   * @see Foft.ISOP
+   * @see Foft.OPDICT
+   * @see Foft.OPPARSE
+   * @see Foft.ARENUMBERS
+   * @memberof Foft
    */
   'OPS': {
     value: Object.defineProperties({}, {
       'opfunc': {
         value: (code, f) => {
           if (typeof code !== 'string') {
-            throw new TypeError('MathOfT.OPS.opfunc takes one string')
-          } else if (!MathOfT.OPDICT.includes(code)) {
-            throw new RangeError('MathOfT.OPS.opfunc takes one string in MathOfT.OPDICT')
+            throw new TypeError('Foft.OPS.opfunc takes one string')
+          } else if (!Foft.OPDICT.includes(code)) {
+            throw new RangeError('Foft.OPS.opfunc takes one string in Foft.OPDICT')
           }
           return (args) => [...args].reduce((acc, c, i) => f(acc, c))
         },
@@ -1377,18 +1308,18 @@ Object.defineProperties(MathOfT, {
       },
       'resfunc': {
         value: (code, f, base, args) => {
-          if (!MathOfT.ISCALCULABLE(base)) {
-            throw new TypeError('MathOfT.OPS.resfunc requires a calculable base parameter')
+          if (!Foft.ISCALCULABLE(base)) {
+            throw new TypeError('Foft.OPS.resfunc requires a calculable base parameter')
           }
-          if (!MathOfT.ISARRAYLIKE(args)) {
-            throw new TypeError('MathOfT.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter')
+          if (!Foft.ISARRAYLIKE(args)) {
+            throw new TypeError('Foft.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter')
           }
-          if (MathOfT.ARENUMBERS(...args)) {
-            return MathOfT.OPS.opfunc(code, f)(args)
+          if (Foft.ARENUMBERS(...args)) {
+            return Foft.OPS.opfunc(code, f)(args)
           }
           let nullsReplaced = [...args].map(v => (v === null) ? base : v)
-          if (MathOfT.ARENUMBERS(nullsReplaced)) {
-            return MathOfT.OPS.opfunc(code, f)(nullsReplaced)
+          if (Foft.ARENUMBERS(nullsReplaced)) {
+            return Foft.OPS.opfunc(code, f)(nullsReplaced)
           }
           return NaN
         },
@@ -1424,7 +1355,7 @@ Object.defineProperties(MathOfT, {
           let desc = 'summation'
           return Object.assign(
             function () {
-              return MathOfT.OPS.resfunc(code, (a, b) => a + b, base, arguments)
+              return Foft.OPS.resfunc(code, (a, b) => a + b, base, arguments)
             }, {
               code,
               base,
@@ -1443,7 +1374,7 @@ Object.defineProperties(MathOfT, {
           let desc = 'subtraction'
           return Object.assign(
             function () {
-              return MathOfT.OPS.resfunc(code, (a, b) => a - b, base, arguments)
+              return Foft.OPS.resfunc(code, (a, b) => a - b, base, arguments)
             },
             {
               code,
@@ -1463,7 +1394,7 @@ Object.defineProperties(MathOfT, {
           let desc = 'multiplication'
           return Object.assign(
             function () {
-              return MathOfT.OPS.resfunc(code, (a, b) => a * b, base, arguments)
+              return Foft.OPS.resfunc(code, (a, b) => a * b, base, arguments)
             },
             {
               code,
@@ -1483,7 +1414,7 @@ Object.defineProperties(MathOfT, {
           let desc = 'division'
           return Object.assign(
             function () {
-              return MathOfT.OPS.resfunc(code, (a, b) => a / b, base, arguments)
+              return Foft.OPS.resfunc(code, (a, b) => a / b, base, arguments)
             },
             {
               code,
@@ -1503,7 +1434,7 @@ Object.defineProperties(MathOfT, {
           let desc = 'exponentiation'
           return Object.assign(
             function () {
-              return MathOfT.OPS.resfunc(code, (a, b) => a ** b, base, arguments)
+              return Foft.OPS.resfunc(code, (a, b) => a ** b, base, arguments)
             },
             {
               code,
@@ -1531,11 +1462,11 @@ Object.defineProperties(MathOfT, {
           let desc = 'flatten'
           return Object.assign(
             function flatten (arr) {
-              if (!MathOfT.ISARRAYLIKE(arr)) {
+              if (!Foft.ISARRAYLIKE(arr)) {
                 return arr
               } else {
                 return arr.reduce((acc, v) => {
-                  return (MathOfT.ISARRAYLIKE(v))
+                  return (Foft.ISARRAYLIKE(v))
                     ? acc.concat(flatten(v))
                     : acc.concat(v)
                 }, base)
@@ -1569,11 +1500,11 @@ Object.defineProperties(MathOfT, {
           return Object.assign(
             function (...args) {
               let max = base
-              if ([...arguments].every(MathOfT.ISARRAYLIKE) && (arguments.length > 1)) {
+              if ([...arguments].every(Foft.ISARRAYLIKE) && (arguments.length > 1)) {
                 let maxmagest = base
                 let magesti = base
                 for (let i = 0; i < arguments.length; i++) {
-                  let cur = MathOfT.OPS['magest'](...arguments[i])
+                  let cur = Foft.OPS['magest'](...arguments[i])
                   // console.log(cur)
                   if (cur > maxmagest) {
                     maxmagest = cur
@@ -1581,7 +1512,7 @@ Object.defineProperties(MathOfT, {
                   }
                 }
                 return arguments[magesti]
-              } else if (MathOfT.ARECALCULABLES(...arguments)) {
+              } else if (Foft.ARECALCULABLES(...arguments)) {
                 for (var i = 0; i < arguments.length; i++) {
                   let cur = Math.abs(arguments[i])
                   max = (cur > max)
@@ -1621,15 +1552,15 @@ Object.defineProperties(MathOfT, {
               let magests = Array(arguments.length)
               for (let i = 0; i < arguments.length; i++) {
                 let a = arguments[i]
-                magests[i] = (MathOfT.ISARRAYLIKE(a))
-                  ? MathOfT.OPS['magest'](...a)
-                  : MathOfT.OPS['magest'](a)
+                magests[i] = (Foft.ISARRAYLIKE(a))
+                  ? Foft.OPS['magest'](...a)
+                  : Foft.OPS['magest'](a)
               }
               let index = magests.findIndex((v) => {
                 // console.log(v)
-                return MathOfT.EQUAL(
+                return Foft.EQUAL(
                   v,
-                  MathOfT.OPS['magest'](...magests)
+                  Foft.OPS['magest'](...magests)
                 )
               })
               return index
@@ -1652,7 +1583,7 @@ Object.defineProperties(MathOfT, {
   },
   /**
    * @static R - dimensional labeling
-   * @memberof MathOfT
+   * @memberof Foft
    */
   'R': {
     value: ['x', 'y', 'z'],
@@ -1663,7 +1594,7 @@ Object.defineProperties(MathOfT, {
   /**
    * @static FUNCKEYS - methods for inter-instance communication
    * @see TTHIS_TEMPLATE
-   * @memberof MathOfT
+   * @memberof Foft
    */
   'FUNCKEYS': {
     value: [
@@ -1678,7 +1609,7 @@ Object.defineProperties(MathOfT, {
   /**
    * @static MEMBERKEYS - members for inter-instance communication
    * @see TTHIS_TEMPLATE
-   * @memberof MathOfT
+   * @memberof Foft
    */
   'MEMBERKEYS': {
     value: [
@@ -1692,10 +1623,10 @@ Object.defineProperties(MathOfT, {
     writable: false
   },
   /**
-   * @static DEFAULT_SEGMENT_DIVISOR By default, MathOfT instances divide into
+   * @static DEFAULT_SEGMENT_DIVISOR By default, Foft instances divide into
    * this many segments
    * @type {Number}
-   * @memberof MathOfT
+   * @memberof Foft
    * @default 10
    */
   'DEFAULT_SEGMENT_DIVISOR': {
@@ -1706,20 +1637,20 @@ Object.defineProperties(MathOfT, {
   },
   /**
    * @static MAX_SAFE_DIVISOR the maximum safe to use divisor
-   * @borrows MathOfT.CALC_PRECISION_WARN
-   * @memberof MathOfT
+   * @borrows Foft.CALC_PRECISION_WARN
+   * @memberof Foft
    */
   'MAX_SAFE_DIVISOR': {
-    value: MathOfT.CALC_PRECISION_WARN(),
+    value: Foft.CALC_PRECISION_WARN(),
     enumerable: true,
     configurable: false,
     writable: false
   },
   /**
-   * @static DEFAULT_RANGE By default, MathOfT instances evaluate functions over this range
+   * @static DEFAULT_RANGE By default, Foft instances evaluate functions over this range
    * @type {Array.<Number>}
    * @default [-1,1]
-   * @memberof MathOfT
+   * @memberof Foft
    */
   'DEFAULT_RANGE': {
     value: [-1, 1],
@@ -1729,4 +1660,4 @@ Object.defineProperties(MathOfT, {
   }
 })
 
-export { MathOfT }
+export { Foft }
