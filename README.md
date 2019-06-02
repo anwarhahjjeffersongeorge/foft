@@ -35,10 +35,9 @@ Foft exports a single class, `Foft` that can create an instance as well as provi
 	m = new Foft({
         terms: [t => 2*t],
         range: [0, 10],
-        segmentDivisor: 10 //one less than resultant number of evaluation points
+        segmentDivisor: 10 // 10
     });
-	[...m] // Array(11) [ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 ]
-  m(5.13) // 10.26
+	[...m] // Array(11) [ 0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 ] // 10+1
 
 ### Generally, a Foft instance can evaluate:
 
