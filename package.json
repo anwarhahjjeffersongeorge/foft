@@ -1,11 +1,11 @@
 {
   "name": "foft",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Syntactic sugar for discontinuous (mathematical) functions.",
   "main": "src/index.js",
   "module": "src/main.js",
   "scripts": {
-    "lint":  "standard --fix src/*",
+    "lint": "standard --fix src/*",
     "clean": "rm -rf docs test disttest .nyc_output coverage dist lib ./foftmochajs.html",
     "coverage": "codecov",
     "predoc": "clear && rm -rf docs",
