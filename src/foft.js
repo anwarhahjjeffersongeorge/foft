@@ -24,7 +24,7 @@
 */
 class Foft {
   /**
-  * constructor - create a Foft instance that evaluates its Function terms
+  * create a Foft instance that evaluates its Function terms
   *    when given some parameter "t".
   * @param  {(Object|Function|Array)} params
   * @param {(Number|Array.<Number>)} [params.range] Range of two numerical values over which t is evaluated inclusively. If given a single number t0, range is [-t0,t0]
@@ -102,7 +102,7 @@ class Foft {
   // }
 
   /**
-  * get terms - the Function terms of this Foft object
+  * the Function terms of this Foft object
   *
   * @return {Array}
   */
@@ -111,7 +111,7 @@ class Foft {
   }
 
   /**
-  * addTerm - add a term to the terms of this Foft instance
+  * add a term to the terms of this Foft instance
   *
   * @param  {(function|Foft)} term A Function that takes a parameter (t) or
   *   Foft
@@ -180,7 +180,7 @@ class Foft {
   }
 
   /**
-   * get numSegments - The number of actual segments the Foft divides the evaluation range into
+   * The number of actual segments the Foft divides the evaluation range into
    *
    * @return {Number}
    */
@@ -189,7 +189,7 @@ class Foft {
   }
 
   /**
-   * get dt - get the delta for t between the first and final values of the
+   * get the delta for t between the first and final values of the
    * evaluation range. May be innacurate when the range has more than two
    * terms
    *
@@ -213,7 +213,7 @@ class Foft {
     }
   }
   /**
-  * get range - the evaluation range is the minimum and maximum values for t
+  * the evaluation range is the minimum and maximum values for t
   *
   * @return {Array.<Number>}
   */
@@ -231,7 +231,7 @@ class Foft {
   }
 
   /**
-  * get tt - the last value of t in the evaluation range T
+  * the last value of t in the evaluation range T
   * @see T
   * @return {Number}
   */
@@ -240,7 +240,7 @@ class Foft {
   }
 
   /**
-  * get opcode - a Foft can have an opcode as defined in
+  * a Foft can have an opcode as defined in
   * Foft.OPS. These codes represent mathematical operations
   * between Numbers and other types. They are useful for performing
   * said operations when the Function or Foft in the terms
@@ -267,7 +267,7 @@ class Foft {
   }
 
   /**
-   * get dSubrange - given indices n & nn
+   * given indices n & nn
    * returns the delta between sub values in the Foft instance's
    * evaluation range, or: range[nn%range.length]-range[n%range.length],
    *
@@ -301,7 +301,7 @@ class Foft {
   }
 
   /**
-  * get drange - the delta between the the first and final values of the evaluation range
+  * the delta between the the first and final values of the evaluation range
   *
   * @return {Number}
   */
@@ -309,7 +309,7 @@ class Foft {
     return this.range[this.range.length - 1] - this.range[0]
   }
   /**
-  * get dabsrange - the absolute value of the delta
+  * the absolute value of the delta
   * between the first and final values of the evaluation range
   *
   * @return {Number}
@@ -319,9 +319,7 @@ class Foft {
   }
 
   /**
-   * subT - get a generator function that yields segmentDivisor+1 values of t spanning the range [this.range[n], this.range[n+1]], where if n or n+1 fall beyond the bounds of this.range.length, they are constrained to fit
-   *
-   *
+   * get a generator function that yields segmentDivisor+1 values of t spanning the range [this.range[n], this.range[n+1]], where if n or n+1 fall beyond the bounds of this.range.length, they are constrained to fit
    *
    * @param  {Number} [n=0] integer start index of range
    *
@@ -354,7 +352,7 @@ class Foft {
   }
 
   /**
-  * get T -  get a Generator yielding all values of t across instance evaluation range
+  *  get a Generator yielding all values of t across instance evaluation range
   * @example
   * // get the default t values for which a Foft is
   * // evaluated
@@ -381,7 +379,7 @@ class Foft {
   }
 
   /**
-  * normalizeT - given a Number t, return a normalized (to Foft.DEFAULT_RANGE)
+  * given a Number t, return a normalized (to Foft.DEFAULT_RANGE)
   * representation of the ratio between t and the delta of the evaluation
   * range of this Foft
   *
@@ -417,7 +415,7 @@ class Foft {
   }
 
   /**
-   * antinormalizeT - given a number t return a normalized representation of the ratio of a quantity n to the delta of the instance evaluation range such that the ratio of t to the delta of the evaluation range N satisfies
+   * given a number t return a normalized representation of the ratio of a quantity n to the delta of the instance evaluation range such that the ratio of t to the delta of the evaluation range N satisfies
    * 1.n = maximum normal - N
    *
    * This is the remaining range for the normalized value provided by normalizeT
@@ -434,7 +432,7 @@ class Foft {
   }
 
   /**
-   * i - given a Number t within a the evaluation range of this instance
+   * given a Number t within a the evaluation range of this instance
    * (inclusive), return the value of the corresponding i such that
    *   1. i is proportional to the location of t within the range
    *   2. i is scaled to segmentDivisor
@@ -462,7 +460,7 @@ class Foft {
   }
 
   /**
-   * isInRange - return true IFF a given t falls within the evaluation range of this instance
+   * return true IFF a given t falls within the evaluation range of this instance
    *
    * @param  {number} t
    * @return {boolean}
@@ -471,7 +469,7 @@ class Foft {
     return Foft.INRANGE(t, this.range)
   }
   /**
-  * oft - evaluate all of the terms held by this Mathoft for the
+  * evaluate all of the terms held by this Mathoft for the
   * given t value.
   *
   * When evaluating a Function or Foft term, the function or Foft is called with a this object containing certain useful data regarding the calling instance's evaluation of t @see TTHIS_TEMPLATE
@@ -504,7 +502,7 @@ class Foft {
     let result = []
     for (let i in this.terms) {
       let _term = this.terms[i]
-      if ( typeof _term === 'function') {
+      if (typeof _term === 'function') {
         result[i] = _term.call(tthis, t)
       } else if (_term instanceof Foft) {
         // console.log(_term);
@@ -523,7 +521,7 @@ class Foft {
   }
 
   /**
-  * get ofFirstt - return the oft for the first t in the evaluation range
+  * return the oft for the first t in the evaluation range
   *
   * @see t0
   * @see oft
@@ -533,7 +531,7 @@ class Foft {
     return this.oft(this.t0)
   }
   /**
-  * get ofLastt - return the oft for the final t in the evaluation range
+  * return the oft for the final t in the evaluation range
   *
   * @see range
   * @see oft
@@ -544,7 +542,7 @@ class Foft {
   }
 
   /**
-  * oftNormal - Accepts a Number tNormal that falls within Foft.DEFAULT_RANGE, inclusive, and when provided
+  * Accepts a Number tNormal that falls within Foft.DEFAULT_RANGE, inclusive, and when provided
   *  1 . A NaN value, return NaN
   *  2.  +Infinity, returns evaluation from end bound of range
   *  3.  -Infinity, returns evaluation from start bound of range
@@ -579,7 +577,7 @@ class Foft {
   }
 
   /**
-  * oftOp - Calculate the value of performing an operation _op on the
+  * Calculate the value of performing an operation _op on the
   * values returned by calculating this Foft instance's terms for
   * some evaluation value t. When given a parameter _acc, the calculation of _op will use _acc as its starting value.
   *
@@ -671,7 +669,7 @@ class Foft {
   }
 
   /**
-  * get ofAlltT - get a Generator that yields
+  * get a Generator that yields
   * all Array=[t, this.oft(t)] for t in evaluation range
   * in form [t, this.oft(t)]
   *
@@ -690,7 +688,7 @@ class Foft {
   }
 
   /**
-  * get - Symbol.iterator get a Generator that yields
+  * Symbol.iterator get a Generator that yields
   *    all this.oft(t) for t in evaluation range
   * @see oft
   * @return {Generator} Generator function yielding this.oft(t)
@@ -702,7 +700,7 @@ class Foft {
   }
 
   /**
-  * get ofAlltTOp - get a Generator that yields all
+  * get a Generator that yields all
   * this.oftOp(_t, _acc, _op) for _t in T,
   * _acc, _op provided by user
   *
@@ -716,7 +714,7 @@ class Foft {
   }
 
   /**
-  * map - apply the Array.map native function to the elements yielded by
+  * apply the Array.map native function to the elements yielded by
   * this[Symbol.iterator] with the given callback function and this argument
   *    *
   * @see get [Symbol.iterator]
@@ -730,7 +728,7 @@ class Foft {
   }
 
   /**
-  * mapTOp - apply the Array.map native function to the elements of
+  * apply the Array.map native function to the elements of
   * this.ofAllTOp() with the given callback function and this argument
   * @see Array.map
   * @see ofAllTOp
@@ -772,7 +770,7 @@ class Foft {
   }
 
   /**
-   * @static CALC_PRECISION_WARN - give precision warning in the form of an object that can be converted to a primitive.
+   * give precision warning in the form of an object that can be converted to a primitive.
    *
    * Floating point math has inherent imprecisions. This function is useful for quantifying them and identifying potentially problematic operations. It uses a few different tests to highlight sources of error, including:
    *  1. a*\frac{1}{a} // Multiplicative Identity
@@ -780,6 +778,7 @@ class Foft {
    * @return {object}  the object with primitive values:
    *         {number}  the maximum value for which no precision is lost
    *         {string}  as brief message
+   * @static
    */
   static CALC_PRECISION_WARN (maxtestnum) {
     let res
@@ -837,19 +836,20 @@ class Foft {
   }
 
   /**
-   * @static ISNUMBER - return true IFF both of the following conditions are met
+   * return true IFF both of the following conditions are met
    *   1. there was ONE argument provided, and
    *   2. the sole provided argument was a Number
    *
    *
    * @return {boolean}
+   * @static
    */
   static ISNUMBER () {
     return (arguments.length === 1) && (typeof arguments[0] === 'number')
   }
 
   /**
-   * @static ISCALCULABLE - return true IFF all of the following conditions are met
+   * return true IFF all of the following conditions are met
    * 1. argument satisfies ISNUMBER (One Number argument)
    * 2. argument is not NaN
    * 3. argument is not +/-Infinity
@@ -859,13 +859,14 @@ class Foft {
    * @see ISNUMBER
    *
    * @return {boolean}  description
+   * @static
    */
   static ISCALCULABLE () {
     return (arguments.length === 1) && Number.isFinite(arguments[0])
   }
 
   /**
-   * @static ISARRAYLIKE - determine whether a given argument x is "like" an array for the purposees of Foft calculations and parsing, returning true IFF x satisfies one of the following conditions:
+   * determine whether a given argument x is "like" an array for the purposees of Foft calculations and parsing, returning true IFF x satisfies one of the following conditions:
    * 1 - It is an Array
    * 2 - It is a TypedArray
    * 3 - It provides a Symbol.iterator property
@@ -874,13 +875,14 @@ class Foft {
    *
    * @param  {?} x
    * @return {boolean}
+   * @static
    */
   static ISARRAYLIKE (x) {
     return x && (Object.getOwnPropertySymbols(x).includes(Symbol.iterator) || Array.isArray(x) || ArrayBuffer.isView(x))
   }
 
   /**
-   * @static ARENUMBERS return true IFF one of these conditions are met
+   * ARENUMBERS return true IFF one of these conditions are met
    *   1. The provided arguments are ALL of Number type,
    *   2. The sole provided argument is an Array whose members are ALL of Number type,
    *   3. Any provided argument is an Array whose members are
@@ -893,6 +895,7 @@ class Foft {
    * @params {} [arguments] figure out whether the arguments are numbers or
    *  an Array thereof
    * @return {boolean}
+   * @static
    */
   static ARENUMBERS () {
     if (arguments.length === 0) {
@@ -907,7 +910,7 @@ class Foft {
   };
 
   /**
-   * @static ARECALCULABLES return true IFF one of these conditions are met
+   * ARECALCULABLES return true IFF one of these conditions are met
    *   1. The provided arguments are ALL of Number type,
    *   2. The sole provided argument is an Array whose members are ALL of Number type,
    *   3. Any provided argument is an Array whose members are
@@ -921,6 +924,7 @@ class Foft {
    * @params {} [arguments] figure out whether the arguments are numbers or
    *  an Array thereof
    * @return {boolean}
+   * @static
    */
   static ARECALCULABLES () {
     if (arguments.length === 0) {
@@ -935,7 +939,7 @@ class Foft {
   };
 
   /**
-   * @static INRANGE - determine whether a given number n falls
+   * determine whether a given number n falls
    * within any of the follwoing inclusive ranges
    *    0. [ Foft.DEFAULT_RANGE[0], Foft.DEFAULT_RANGE[1] ]
    *    1. [0, m],
@@ -949,6 +953,7 @@ class Foft {
    *                                       the begining of range ending in mm, or
    * @param  {Number} [mm] the optional end of the range
    * @return {boolean}
+   * @static
    */
   static INRANGE (n, m, mm) {
     let test = (a, b, c) => {
@@ -980,7 +985,7 @@ class Foft {
   }
 
   /**
-   * @static NORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to an optional range NN or Foft.DEFAULT_RANGE)
+   * given a Number t, amd a ramge TT, return a normalized (to an optional range NN or Foft.DEFAULT_RANGE)
    * representation of the ratio between the two deltas A and B where
    *   1. A is the difference betewen t and TT[first]
    *   2. B is the difference between TT[last] and TT[first]
@@ -995,6 +1000,7 @@ class Foft {
    * @param  {number} [t=0] the t to evaluate
    * @param  {Array<number>} [TT=DEFAULT_RANGE] the range in which to test for TT
    * @param  {Array<number>} [NN=DEFAULT_RANGE] the target normalization range * @return {number}
+   * @static
    */
   static NORMALIZETORANGE (t, TT, NN) {
     if (!Foft.ISNUMBER(t)) {
@@ -1026,7 +1032,7 @@ class Foft {
   }
 
   /**
-   * @static ANTINORMALIZETORANGE - given a Number t, amd a ramge TT, return a normalized (to Foft.DEFAULT_RANGE)
+   * given a Number t, amd a ramge TT, return a normalized (to Foft.DEFAULT_RANGE)
    * representation of the ratio between the two deltas A and B where
    *   1. A is the difference betewen t and TT[last]
    *   2. B is the difference between TT[last] and TT[first]
@@ -1040,6 +1046,7 @@ class Foft {
    * @param  {number} [t=0] the t to evaluate
    * @param  {Array<number>} [TT=DEFAULT_RANGE] the range in which to test for TT
    * @return {number}
+   * @static
    */
   static ANTINORMALIZETORANGE (t, TT, NN) {
     if (!Foft.ISNUMBER(t)) {
@@ -1058,7 +1065,7 @@ class Foft {
   }
 
   /**
-   * @static IINRANGE - given a number t, a range TT and a divisor d, return the value of the corresponding i such that
+   * given a number t, a range TT and a divisor d, return the value of the corresponding i such that
    *   1. i is proportional to the location of t within the range
    *   2. i is proportional to d
    *
@@ -1066,6 +1073,7 @@ class Foft {
    * @param  {Array<number>} TT range
    * @param  {type} d  divisor
    * @return {null|number}
+   * @static
    */
   static IINRANGE (t, TT, d) {
     d = (Foft.ISNUMBER(d))
@@ -1080,10 +1088,11 @@ class Foft {
   }
 
   /**
-   * @static DIMENSIONS - return the size of the given x, where x can be a number or an arraylike or a nested arraylike
+   * return the size of the given x, where x can be a number or an arraylike or a nested arraylike
    *
    * @param  {(number|Array)} x the structure to get dimensions of
    * @return {Array}
+   * @static
    */
   static DIMENSIONS (x) {
     let dim = Promise.resolve([])
@@ -1133,7 +1142,7 @@ class Foft {
   }
 
   /**
-   * @static EQUAL - determine whether the given number or Array-like arguments are satisfying the conditions:
+   * determine whether the given number or Array-like arguments are satisfying the conditions:
    * 1) all of a single shared type,
    * 2) if numbers, of equal value,
    * 3) if arrays, composed of equal positional elements
@@ -1143,6 +1152,7 @@ class Foft {
    *
    * @params {?} [arguments]
    * @return {boolean}
+   * @static
    */
   static EQUAL () {
     if (arguments.length === 0) {
@@ -1177,10 +1187,11 @@ class Foft {
   }
 
   /**
-   * @static MATHTYPEOF - tell whether the given argument a is of one of the types that Foft can do math with  and if so, which type
+   * tell whether the given argument a is of one of the types that Foft can do math with  and if so, which type
    *
    * @param  {?} [a]
    * @return {(Symbol|null)}
+   * @static
    */
   static MATHTYPEOF (a) {
     return Foft.ISARRAYLIKE(a)
@@ -1191,7 +1202,7 @@ class Foft {
   }
 
   /**
-   * @static TTHIS_TEMPLATE - given a t and a Foft instance, produces an object with some keys for inter-instance communication corresponding to:
+   * given a t and a Foft instance, produces an object with some keys for inter-instance communication corresponding to:
    * 1 the result of evaluating certain methods of the calling instance for t @see FUNCKEYS
    * 2 certain members of the calling instance @see MEMBERKEYS
    *
@@ -1199,6 +1210,7 @@ class Foft {
    * @param  {Number} t the t of the instance communicatiing
    * @param {Foft} foft the instance doing communication
    * @return {object|Array<string>} communication object, or array of communication keys
+   * @static
    */
   static TTHIS_TEMPLATE (t, foft) {
     let o = (Foft.ISCALCULABLE(t))
@@ -1224,23 +1236,25 @@ class Foft {
   };
 
   /**
-   * @static ISOP - given a string codeToParse, return true when code is found
+   * given a string codeToParse, return true when code is found
    *  in Foft.OPDICT
    * @see Foft.OPDICT
    * @param  {string} codeToParse
    * @return {boolean}
+   * @static
    */
   static ISOP (codeToParse) {
     return Foft.OPDICT.includes(codeToParse)
   }
 
   /**
-   * @static OPPARSE - given a string codeToParse, return
+   * given a string codeToParse, return
    * the corresponding operation function from Foft.OPS
    *
    * @see Foft.OPS
    * @param  {string} codeToParse
    * @return {function} Foft.OPS function corresponding to op
+   * @static
    */
   static OPPARSE (codeToParse) {
     return (Foft.ISOP(codeToParse))
@@ -1251,9 +1265,10 @@ class Foft {
 
 Object.defineProperties(Foft, {
   /**
-   * @static MATHTYPES - valid types that Foft can do math on
+   * valid types that Foft can do math on
    * @see Foft.MATHTYPEOF
    * @memberof Foft
+   * @static
    */
   'MATHTYPES': {
     value: (() => {
@@ -1271,9 +1286,10 @@ Object.defineProperties(Foft, {
     writable: false
   },
   /**
-   * @static OPDICT - an array of valid op keys
+   * an array of valid op keys
    * @see Foft.OPS
    * @memberof Foft
+   * @static
    */
   'OPDICT': {
     value: [null, '+', '-', '*', '/', '**', '...', 'magest', 'magesti'],
@@ -1282,14 +1298,14 @@ Object.defineProperties(Foft, {
     writable: false
   },
   /**
-   * @static OPS - an object containing operations, or ops, that
+   * OPS an object containing operations, or ops, that
    * perform mathematical functions corresponding to their keys
-   * @hamespace OPS
    * @see Foft.ISOP
    * @see Foft.OPDICT
    * @see Foft.OPPARSE
    * @see Foft.ARENUMBERS
    * @memberof Foft
+   * @static
    */
   'OPS': {
     value: Object.defineProperties({}, {
@@ -1450,7 +1466,7 @@ Object.defineProperties(Foft, {
        * ... recursive arraylike flatten. given parameter arr, return
        * - if arr is arraylike, a 1-d  Array containing the elements of arr with their order preserved, or
        * - if arr isn't arraylike, arr
-       *
+       * @memberof Foft#OPS
        * @param {arraylike} arr
        * @return {arraylike|?}
        */
@@ -1582,8 +1598,9 @@ Object.defineProperties(Foft, {
     writable: false
   },
   /**
-   * @static R - dimensional labeling
+   * dimensional labeling
    * @memberof Foft
+   * @static
    */
   'R': {
     value: ['x', 'y', 'z'],
@@ -1592,9 +1609,10 @@ Object.defineProperties(Foft, {
     writable: false
   },
   /**
-   * @static FUNCKEYS - methods for inter-instance communication
+   * methods for inter-instance communication
    * @see TTHIS_TEMPLATE
    * @memberof Foft
+   * @static
    */
   'FUNCKEYS': {
     value: [
@@ -1607,9 +1625,10 @@ Object.defineProperties(Foft, {
     writable: false
   },
   /**
-   * @static MEMBERKEYS - members for inter-instance communication
+   * members for inter-instance communication
    * @see TTHIS_TEMPLATE
    * @memberof Foft
+   * @static
    */
   'MEMBERKEYS': {
     value: [
@@ -1623,11 +1642,12 @@ Object.defineProperties(Foft, {
     writable: false
   },
   /**
-   * @static DEFAULT_SEGMENT_DIVISOR By default, Foft instances divide into
+   * DEFAULT_SEGMENT_DIVISOR By default, Foft instances divide into
    * this many segments
    * @type {Number}
    * @memberof Foft
    * @default 10
+   * @static
    */
   'DEFAULT_SEGMENT_DIVISOR': {
     value: 10,
@@ -1636,9 +1656,10 @@ Object.defineProperties(Foft, {
     writable: false
   },
   /**
-   * @static MAX_SAFE_DIVISOR the maximum safe to use divisor
+   * MAX_SAFE_DIVISOR the maximum safe to use divisor
    * @borrows Foft.CALC_PRECISION_WARN
    * @memberof Foft
+   * @static
    */
   'MAX_SAFE_DIVISOR': {
     value: Foft.CALC_PRECISION_WARN(),
@@ -1647,10 +1668,11 @@ Object.defineProperties(Foft, {
     writable: false
   },
   /**
-   * @static DEFAULT_RANGE By default, Foft instances evaluate functions over this range
+   * DEFAULT_RANGE By default, Foft instances evaluate functions over this range
    * @type {Array.<Number>}
    * @default [-1,1]
    * @memberof Foft
+   * @static
    */
   'DEFAULT_RANGE': {
     value: [-1, 1],
