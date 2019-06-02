@@ -37,13 +37,6 @@
 				</ul>
 			</li>
 			
-			<li class="dropdown">
-				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
-				<ul class="dropdown-menu inline">
-					<li><a href="global.html#%2522...%2522">"..."</a></li>
-				</ul>
-			</li>
-			
 		</ul>
         
             <div class="col-sm-3 col-md-3">
@@ -108,8 +101,15 @@ generally receive and return objects of type</p>
 
     
     <div class="description">
-        <p>constructor - create a Foft instance that evaluates its Function terms<br>
+        <p>create a Foft instance that evaluates its Function terms<br>
 when given some parameter &quot;t&quot;.</p>
+<p>accepts an argument params that may be a(n):</p>
+<ul>
+<li>function see params.terms for details</li>
+<li>object see params for details</li>
+<li>array of numbers see params.range for details</li>
+<li>Foft instance will return a copy of the instance</li>
+</ul>
     </div>
     
 
@@ -156,7 +156,10 @@ when given some parameter &quot;t&quot;.</p>
 <span class="param-type">function</span>
 |
 
-<span class="param-type">Array</span>
+<span class="param-type">Array.&lt;Number></span>
+|
+
+<span class="param-type"><a href="Foft.html">Foft</a></span>
 
 
 
@@ -447,7 +450,7 @@ when given some parameter &quot;t&quot;.</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-37">line 37</a>
+				 <a href="foft.js.html#sunlight-1-line-44">line 44</a>
 			</li>
 		</ul>
 	</dd>
@@ -539,6 +542,10 @@ of the Function or Foft objects in its terms</pre>
 </dt>
 <dd>
     
+    <div class="description">
+        <p>DEFAULT_RANGE By default, Foft instances evaluate functions over this range</p>
+    </div>
+    
 
     
         <h5>Type:</h5>
@@ -596,7 +603,7 @@ of the Function or Foft objects in its terms</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1655">line 1655</a>
+				 <a href="foft.js.html#sunlight-1-line-1677">line 1677</a>
 			</li>
 		</ul>
 	</dd>
@@ -622,6 +629,11 @@ of the Function or Foft objects in its terms</pre>
     
 </dt>
 <dd>
+    
+    <div class="description">
+        <p>DEFAULT_SEGMENT_DIVISOR By default, Foft instances divide into<br>
+this many segments</p>
+    </div>
     
 
     
@@ -680,7 +692,7 @@ of the Function or Foft objects in its terms</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1632">line 1632</a>
+				 <a href="foft.js.html#sunlight-1-line-1652">line 1652</a>
 			</li>
 		</ul>
 	</dd>
@@ -706,6 +718,10 @@ of the Function or Foft objects in its terms</pre>
     
 </dt>
 <dd>
+    
+    <div class="description">
+        <p>methods for inter-instance communication</p>
+    </div>
     
 
     
@@ -746,7 +762,7 @@ of the Function or Foft objects in its terms</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1599">line 1599</a>
+				 <a href="foft.js.html#sunlight-1-line-1617">line 1617</a>
 			</li>
 		</ul>
 	</dd>
@@ -780,6 +796,10 @@ of the Function or Foft objects in its terms</pre>
 </dt>
 <dd>
     
+    <div class="description">
+        <p>valid types that Foft can do math on</p>
+    </div>
+    
 
     
 
@@ -819,7 +839,7 @@ of the Function or Foft objects in its terms</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1258">line 1258</a>
+				 <a href="foft.js.html#sunlight-1-line-1273">line 1273</a>
 			</li>
 		</ul>
 	</dd>
@@ -853,6 +873,10 @@ of the Function or Foft objects in its terms</pre>
 </dt>
 <dd>
     
+    <div class="description">
+        <p>MAX_SAFE_DIVISOR the maximum safe to use divisor</p>
+    </div>
+    
 
     
 
@@ -892,7 +916,7 @@ of the Function or Foft objects in its terms</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1643">line 1643</a>
+				 <a href="foft.js.html#sunlight-1-line-1664">line 1664</a>
 			</li>
 		</ul>
 	</dd>
@@ -919,6 +943,10 @@ of the Function or Foft objects in its terms</pre>
 </dt>
 <dd>
     
+    <div class="description">
+        <p>members for inter-instance communication</p>
+    </div>
+    
 
     
 
@@ -958,7 +986,7 @@ of the Function or Foft objects in its terms</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1614">line 1614</a>
+				 <a href="foft.js.html#sunlight-1-line-1633">line 1633</a>
 			</li>
 		</ul>
 	</dd>
@@ -992,78 +1020,9 @@ of the Function or Foft objects in its terms</pre>
 </dt>
 <dd>
     
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1278">line 1278</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
-	<dd class="tag-see">
-		<ul>
-			<li><a href="Foft.html#.OPS">Foft.OPS</a></li>
-			</ul>
-	</dd>
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id=".OPS">
-    <h4 id=".OPS"><span class="type-signature">&lt;static> </span>OPS<span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
+    <div class="description">
+        <p>an array of valid op keys</p>
+    </div>
     
 
     
@@ -1116,13 +1075,7 @@ of the Function or Foft objects in its terms</pre>
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
-			<li><a href="Foft.html#.ISOP">Foft.ISOP</a></li>
-			
-			<li><a href="Foft.html#.OPDICT">Foft.OPDICT</a></li>
-			
-			<li><a href="Foft.html#.OPPARSE">Foft.OPPARSE</a></li>
-			
-			<li><a href="Foft.html#.ARENUMBERS">Foft.ARENUMBERS</a></li>
+			<li><a href="Foft.html#.OPS">Foft.OPS</a></li>
 			</ul>
 	</dd>
 	
@@ -1137,12 +1090,17 @@ of the Function or Foft objects in its terms</pre>
         
             
 <hr>
-<dt class="name" id=".R">
-    <h4 id=".R"><span class="type-signature">&lt;static> </span>R<span class="type-signature"></span></h4>
+<dt class="name" id=".OPS">
+    <h4 id=".OPS"><span class="type-signature">&lt;static> </span>OPS<span class="type-signature"></span></h4>
 
     
 </dt>
 <dd>
+    
+    <div class="description">
+        <p>OPS an object containing operations, or ops, that<br>
+perform mathematical functions corresponding to their keys</p>
+    </div>
     
 
     
@@ -1183,7 +1141,90 @@ of the Function or Foft objects in its terms</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1588">line 1588</a>
+				 <a href="foft.js.html#sunlight-1-line-1310">line 1310</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="Foft.html#.ISOP">Foft.ISOP</a></li>
+			
+			<li><a href="Foft.html#.OPDICT">Foft.OPDICT</a></li>
+			
+			<li><a href="Foft.html#.OPPARSE">Foft.OPPARSE</a></li>
+			
+			<li><a href="Foft.html#.ARENUMBERS">Foft.ARENUMBERS</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".R">
+    <h4 id=".R"><span class="type-signature">&lt;static> </span>R<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>dimensional labeling</p>
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="foft.js.html">foft.js</a>,
+				 <a href="foft.js.html#sunlight-1-line-1605">line 1605</a>
 			</li>
 		</ul>
 	</dd>
@@ -1211,7 +1252,7 @@ of the Function or Foft objects in its terms</pre>
 <dd>
     
     <div class="description">
-        <p>get dabsrange - the absolute value of the delta<br>
+        <p>the absolute value of the delta<br>
 between the first and final values of the evaluation range</p>
     </div>
     
@@ -1282,7 +1323,7 @@ between the first and final values of the evaluation range</p>
 <dd>
     
     <div class="description">
-        <p>get drange - the delta between the the first and final values of the evaluation range</p>
+        <p>the delta between the the first and final values of the evaluation range</p>
     </div>
     
 
@@ -1352,7 +1393,7 @@ between the first and final values of the evaluation range</p>
 <dd>
     
     <div class="description">
-        <p>get dt - get the delta for t between the first and final values of the<br>
+        <p>get the delta for t between the first and final values of the<br>
 evaluation range. May be innacurate when the range has more than two<br>
 terms</p>
     </div>
@@ -1424,7 +1465,7 @@ terms</p>
 <dd>
     
     <div class="description">
-        <p>get numSegments - The number of actual segments the Foft divides the evaluation range into</p>
+        <p>The number of actual segments the Foft divides the evaluation range into</p>
     </div>
     
 
@@ -1494,7 +1535,7 @@ terms</p>
 <dd>
     
     <div class="description">
-        <p>get ofAlltT - get a Generator that yields<br>
+        <p>get a Generator that yields<br>
 all Array=[t, this.oft(t)] for t in evaluation range<br>
 in form [t, this.oft(t)]</p>
     </div>
@@ -1538,7 +1579,7 @@ in form [t, this.oft(t)]</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-681">line 681</a>
+				 <a href="foft.js.html#sunlight-1-line-679">line 679</a>
 			</li>
 		</ul>
 	</dd>
@@ -1573,7 +1614,7 @@ in form [t, this.oft(t)]</p>
 <dd>
     
     <div class="description">
-        <p>get ofAlltTOp - get a Generator that yields all<br>
+        <p>get a Generator that yields all<br>
 this.oftOp(_t, _acc, _op) for _t in T,<br>
 _acc, _op provided by user</p>
     </div>
@@ -1617,7 +1658,7 @@ _acc, _op provided by user</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-712">line 712</a>
+				 <a href="foft.js.html#sunlight-1-line-710">line 710</a>
 			</li>
 		</ul>
 	</dd>
@@ -1652,7 +1693,7 @@ _acc, _op provided by user</p>
 <dd>
     
     <div class="description">
-        <p>get ofFirstt - return the oft for the first t in the evaluation range</p>
+        <p>return the oft for the first t in the evaluation range</p>
     </div>
     
 
@@ -1694,7 +1735,7 @@ _acc, _op provided by user</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-532">line 532</a>
+				 <a href="foft.js.html#sunlight-1-line-530">line 530</a>
 			</li>
 		</ul>
 	</dd>
@@ -1731,7 +1772,7 @@ _acc, _op provided by user</p>
 <dd>
     
     <div class="description">
-        <p>get ofLastt - return the oft for the final t in the evaluation range</p>
+        <p>return the oft for the final t in the evaluation range</p>
     </div>
     
 
@@ -1773,7 +1814,7 @@ _acc, _op provided by user</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-542">line 542</a>
+				 <a href="foft.js.html#sunlight-1-line-540">line 540</a>
 			</li>
 		</ul>
 	</dd>
@@ -1810,7 +1851,7 @@ _acc, _op provided by user</p>
 <dd>
     
     <div class="description">
-        <p>get opcode - a Foft can have an opcode as defined in<br>
+        <p>a Foft can have an opcode as defined in<br>
 Foft.OPS. These codes represent mathematical operations<br>
 between Numbers and other types. They are useful for performing<br>
 said operations when the Function or Foft in the terms<br>
@@ -2034,7 +2075,7 @@ defined in Foft.OPS</p>
 <dd>
     
     <div class="description">
-        <p>get range - the evaluation range is the minimum and maximum values for t</p>
+        <p>get the evaluation range is the minimum and maximum values for t</p>
     </div>
     
 
@@ -2251,7 +2292,7 @@ in this Foft</p>
 <dd>
     
     <div class="description">
-        <p>get T -  get a Generator yielding all values of t across instance evaluation range</p>
+        <p>get a Generator yielding all values of t across instance evaluation range</p>
     </div>
     
 
@@ -2293,7 +2334,7 @@ in this Foft</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-369">line 369</a>
+				 <a href="foft.js.html#sunlight-1-line-367">line 367</a>
 			</li>
 		</ul>
 	</dd>
@@ -2334,7 +2375,7 @@ let T = [...MoT.T()]</pre>
 <dd>
     
     <div class="description">
-        <p>get t0 - the first value of t in the evaluation range T</p>
+        <p>get the first value of t in the evaluation range T</p>
     </div>
     
 
@@ -2411,7 +2452,7 @@ let T = [...MoT.T()]</pre>
 <dd>
     
     <div class="description">
-        <p>get terms - the Function terms of this Foft object</p>
+        <p>the Function terms of this Foft object</p>
     </div>
     
 
@@ -2481,7 +2522,7 @@ let T = [...MoT.T()]</pre>
 <dd>
     
     <div class="description">
-        <p>get tt - the last value of t in the evaluation range T</p>
+        <p>the last value of t in the evaluation range T</p>
     </div>
     
 
@@ -2563,6 +2604,21 @@ let T = [...MoT.T()]</pre>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>given a Number t, amd a ramge TT, return a normalized (to Foft.DEFAULT_RANGE)<br>
+representation of the ratio between the two deltas A and B where</p>
+<ol>
+<li>A is the difference betewen t and TT[last]</li>
+<li>B is the difference between TT[last] and TT[first]</li>
+</ol>
+<p>If t falls out of bounds of range, the value is returned as -/+ Infinity,<br>
+where:</p>
+<ol>
+<li>+Infinity corresponding to beyond the bound of TT[first], and</li>
+<li>-Infinity corresponding to beyond the bound of TT[last]</li>
+</ol>
+    </div>
     
 
     
@@ -2718,7 +2774,7 @@ let T = [...MoT.T()]</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1044">line 1044</a>
+				 <a href="foft.js.html#sunlight-1-line-1051">line 1051</a>
 			</li>
 		</ul>
 	</dd>
@@ -2785,6 +2841,19 @@ let T = [...MoT.T()]</pre>
 <dd>
 
     
+    <div class="description">
+        <p>ARECALCULABLES return true IFF one of these conditions are met</p>
+<ol>
+<li>The provided arguments are ALL of Number type,</li>
+<li>The sole provided argument is an Array whose members are ALL of Number type,</li>
+<li>Any provided argument is an Array whose members are<br>
+A. ALL of Number type, or<br>
+B. nested Arrays whose submembers are all number types or Array,<br>
+and ALL other arguments are Number type or Array with ALL members of Number type, and</li>
+<li>All arguments of number type are neither NaN nor -/+Infinity</li>
+</ol>
+    </div>
+    
 
     
 
@@ -2829,7 +2898,7 @@ let T = [...MoT.T()]</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-925">line 925</a>
+				 <a href="foft.js.html#sunlight-1-line-929">line 929</a>
 			</li>
 		</ul>
 	</dd>
@@ -2896,6 +2965,18 @@ let T = [...MoT.T()]</pre>
 <dd>
 
     
+    <div class="description">
+        <p>ARENUMBERS return true IFF one of these conditions are met</p>
+<ol>
+<li>The provided arguments are ALL of Number type,</li>
+<li>The sole provided argument is an Array whose members are ALL of Number type,</li>
+<li>Any provided argument is an Array whose members are<br>
+A. ALL of Number type, or<br>
+B. nested Arrays whose submembers are all number types or Arrays<br>
+and ALL other arguments are Number type or Array with ALL members of Number type,</li>
+</ol>
+    </div>
+    
 
     
 
@@ -2940,7 +3021,7 @@ let T = [...MoT.T()]</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-897">line 897</a>
+				 <a href="foft.js.html#sunlight-1-line-900">line 900</a>
 			</li>
 		</ul>
 	</dd>
@@ -3007,6 +3088,15 @@ let T = [...MoT.T()]</pre>
 <dd>
 
     
+    <div class="description">
+        <p>give precision warning in the form of an object that can be converted to a primitive.</p>
+<p>Floating point math has inherent imprecisions. This function is useful for quantifying them and identifying potentially problematic operations. It uses a few different tests to highlight sources of error, including:</p>
+<ol>
+<li>a*\frac{1}{a} // Multiplicative Identity</li>
+<li>\sum_{i=1}^{a} 1/a // Sum of Inverses</li>
+</ol>
+    </div>
+    
 
     
 
@@ -3051,7 +3141,7 @@ let T = [...MoT.T()]</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-784">line 784</a>
+				 <a href="foft.js.html#sunlight-1-line-783">line 783</a>
 			</li>
 		</ul>
 	</dd>
@@ -3116,6 +3206,10 @@ let T = [...MoT.T()]</pre>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>return the size of the given x, where x can be a number or an arraylike or a nested arraylike</p>
+    </div>
     
 
     
@@ -3214,7 +3308,7 @@ let T = [...MoT.T()]</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1088">line 1088</a>
+				 <a href="foft.js.html#sunlight-1-line-1097">line 1097</a>
 			</li>
 		</ul>
 	</dd>
@@ -3274,6 +3368,17 @@ let T = [...MoT.T()]</pre>
 <dd>
 
     
+    <div class="description">
+        <p>determine whether the given number or Array-like arguments are satisfying the conditions:</p>
+<ol>
+<li>all of a single shared type,</li>
+<li>if numbers, of equal value,</li>
+<li>if arrays, composed of equal positional elements</li>
+<li>if other types, satisfying strict equality test</li>
+</ol>
+<p>When comparing values that are NaN or containing NaN in the same positions, the function will return false because NaN doesn't equal NaN</p>
+    </div>
+    
 
     
 
@@ -3318,7 +3423,7 @@ let T = [...MoT.T()]</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1147">line 1147</a>
+				 <a href="foft.js.html#sunlight-1-line-1157">line 1157</a>
 			</li>
 		</ul>
 	</dd>
@@ -3377,6 +3482,14 @@ let T = [...MoT.T()]</pre>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>given a number t, a range TT and a divisor d, return the value of the corresponding i such that</p>
+<ol>
+<li>i is proportional to the location of t within the range</li>
+<li>i is proportional to d</li>
+</ol>
+    </div>
     
 
     
@@ -3520,7 +3633,7 @@ let T = [...MoT.T()]</pre>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1070">line 1070</a>
+				 <a href="foft.js.html#sunlight-1-line-1078">line 1078</a>
 			</li>
 		</ul>
 	</dd>
@@ -3582,6 +3695,18 @@ let T = [...MoT.T()]</pre>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>determine whether a given number n falls<br>
+within any of the follwoing inclusive ranges<br>
+0. [ Foft.DEFAULT_RANGE[0], Foft.DEFAULT_RANGE[1] ]</p>
+<ol>
+<li>[0, m],</li>
+<li>[0, m[0]], (when provided unit-length array)</li>
+<li>[m[0], m[m.length-1]]<br>
+4, [m, mm]</li>
+</ol>
+    </div>
     
 
     
@@ -3760,7 +3885,7 @@ the begining of range ending in mm, or</p></td>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-953">line 953</a>
+				 <a href="foft.js.html#sunlight-1-line-958">line 958</a>
 			</li>
 		</ul>
 	</dd>
@@ -3819,6 +3944,14 @@ the begining of range ending in mm, or</p></td>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>determine whether a given argument x is &quot;like&quot; an array for the purposees of Foft calculations and parsing, returning true IFF x satisfies one of the following conditions:<br>
+1 - It is an Array<br>
+2 - It is a TypedArray<br>
+3 - It provides a Symbol.iterator property</p>
+<p>The third condition allows for the parsing of various iterable objects, but it does not guarantee that such actions will produce calculable values.</p>
+    </div>
     
 
     
@@ -3914,7 +4047,7 @@ the begining of range ending in mm, or</p></td>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-878">line 878</a>
+				 <a href="foft.js.html#sunlight-1-line-880">line 880</a>
 			</li>
 		</ul>
 	</dd>
@@ -3974,6 +4107,16 @@ the begining of range ending in mm, or</p></td>
 <dd>
 
     
+    <div class="description">
+        <p>return true IFF all of the following conditions are met</p>
+<ol>
+<li>argument satisfies ISNUMBER (One Number argument)</li>
+<li>argument is not NaN</li>
+<li>argument is not +/-Infinity</li>
+</ol>
+<p>This function does more calls than just using isFinite, however, it is used in the Foft class because the class also deals with arrays and objects.</p>
+    </div>
+    
 
     
 
@@ -4018,7 +4161,7 @@ the begining of range ending in mm, or</p></td>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-863">line 863</a>
+				 <a href="foft.js.html#sunlight-1-line-864">line 864</a>
 			</li>
 		</ul>
 	</dd>
@@ -4088,6 +4231,14 @@ the begining of range ending in mm, or</p></td>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>return true IFF both of the following conditions are met</p>
+<ol>
+<li>there was ONE argument provided, and</li>
+<li>the sole provided argument was a Number</li>
+</ol>
+    </div>
     
 
     
@@ -4193,6 +4344,11 @@ the begining of range ending in mm, or</p></td>
 <dd>
 
     
+    <div class="description">
+        <p>given a string codeToParse, return true when code is found<br>
+in Foft.OPDICT</p>
+    </div>
+    
 
     
 
@@ -4287,7 +4443,7 @@ the begining of range ending in mm, or</p></td>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1233">line 1233</a>
+				 <a href="foft.js.html#sunlight-1-line-1246">line 1246</a>
 			</li>
 		</ul>
 	</dd>
@@ -4353,6 +4509,10 @@ the begining of range ending in mm, or</p></td>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>tell whether the given argument a is of one of the types that Foft can do math with  and if so, which type</p>
+    </div>
     
 
     
@@ -4460,7 +4620,7 @@ the begining of range ending in mm, or</p></td>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1185">line 1185</a>
+				 <a href="foft.js.html#sunlight-1-line-1196">line 1196</a>
 			</li>
 		</ul>
 	</dd>
@@ -4522,6 +4682,21 @@ the begining of range ending in mm, or</p></td>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>given a Number t, amd a ramge TT, return a normalized (to an optional range NN or Foft.DEFAULT_RANGE)<br>
+representation of the ratio between the two deltas A and B where</p>
+<ol>
+<li>A is the difference betewen t and TT[first]</li>
+<li>B is the difference between TT[last] and TT[first]</li>
+</ol>
+<p>If t falls out of bounds of range, the value is returned as -/+ Infinity,<br>
+where:</p>
+<ol>
+<li>-Infinity corresponding to beyond the bound of TT[first], and</li>
+<li>+Infinity corresponding to beyond the bound of TT[last]</li>
+</ol>
+    </div>
     
 
     
@@ -4717,7 +4892,7 @@ the begining of range ending in mm, or</p></td>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-999">line 999</a>
+				 <a href="foft.js.html#sunlight-1-line-1005">line 1005</a>
 			</li>
 		</ul>
 	</dd>
@@ -4756,6 +4931,11 @@ the begining of range ending in mm, or</p></td>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>given a string codeToParse, return<br>
+the corresponding operation function from Foft.OPS</p>
+    </div>
     
 
     
@@ -4851,7 +5031,7 @@ the begining of range ending in mm, or</p></td>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1245">line 1245</a>
+				 <a href="foft.js.html#sunlight-1-line-1259">line 1259</a>
 			</li>
 		</ul>
 	</dd>
@@ -4921,6 +5101,12 @@ the begining of range ending in mm, or</p></td>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>given a t and a Foft instance, produces an object with some keys for inter-instance communication corresponding to:<br>
+1 the result of evaluating certain methods of the calling instance for t @see FUNCKEYS<br>
+2 certain members of the calling instance @see MEMBERKEYS</p>
+    </div>
     
 
     
@@ -5040,7 +5226,7 @@ the begining of range ending in mm, or</p></td>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-1203">line 1203</a>
+				 <a href="foft.js.html#sunlight-1-line-1215">line 1215</a>
 			</li>
 		</ul>
 	</dd>
@@ -5115,7 +5301,7 @@ the begining of range ending in mm, or</p></td>
 
     
     <div class="description">
-        <p>addTerm - add a term to the terms of this Foft instance</p>
+        <p>add a term to the terms of this Foft instance</p>
     </div>
     
 
@@ -5339,7 +5525,7 @@ reference the same-named parameters of this instance.</p></td>
 
     
     <div class="description">
-        <p>antinormalizeT - given a number t return a normalized representation of the ratio of a quantity n to the delta of the instance evaluation range such that the ratio of t to the delta of the evaluation range N satisfies<br>
+        <p>given a number t return a normalized representation of the ratio of a quantity n to the delta of the instance evaluation range such that the ratio of t to the delta of the evaluation range N satisfies<br>
 1.n = maximum normal - N</p>
 <p>This is the remaining range for the normalized value provided by normalizeT</p>
 <p>if t falls beyond the lower bound of the evaluation range, return +Infinity<br>
@@ -5440,7 +5626,7 @@ if t falls beyond the upper bound of the evaluation range, return -Infinity</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-432">line 432</a>
+				 <a href="foft.js.html#sunlight-1-line-430">line 430</a>
 			</li>
 		</ul>
 	</dd>
@@ -5512,7 +5698,7 @@ if t falls beyond the upper bound of the evaluation range, return -Infinity</p>
 
     
     <div class="description">
-        <p>get dSubrange - given indices n &amp; nn<br>
+        <p>given indices n &amp; nn<br>
 returns the delta between sub values in the Foft instance's<br>
 evaluation range, or: range[nn%range.length]-range[n%range.length],</p>
 <p>when given no parameters, it uses 0 and 1</p>
@@ -5761,7 +5947,7 @@ evaluation range, or: range[nn%range.length]-range[n%range.length],</p>
 
     
     <div class="description">
-        <p>i - given a Number t within a the evaluation range of this instance<br>
+        <p>given a Number t within a the evaluation range of this instance<br>
 (inclusive), return the value of the corresponding i such that</p>
 <ol>
 <li>i is proportional to the location of t within the range</li>
@@ -5865,7 +6051,7 @@ evaluation range, or: range[nn%range.length]-range[n%range.length],</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-451">line 451</a>
+				 <a href="foft.js.html#sunlight-1-line-449">line 449</a>
 			</li>
 		</ul>
 	</dd>
@@ -5947,7 +6133,7 @@ evaluation range, or: range[nn%range.length]-range[n%range.length],</p>
 
     
     <div class="description">
-        <p>isInRange - return true IFF a given t falls within the evaluation range of this instance</p>
+        <p>return true IFF a given t falls within the evaluation range of this instance</p>
     </div>
     
 
@@ -6044,7 +6230,7 @@ evaluation range, or: range[nn%range.length]-range[n%range.length],</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-470">line 470</a>
+				 <a href="foft.js.html#sunlight-1-line-468">line 468</a>
 			</li>
 		</ul>
 	</dd>
@@ -6105,7 +6291,7 @@ evaluation range, or: range[nn%range.length]-range[n%range.length],</p>
 
     
     <div class="description">
-        <p>map - apply the Array.map native function to the elements yielded by<br>
+        <p>apply the Array.map native function to the elements yielded by<br>
 this[Symbol.iterator] with the given callback function and this argument<br>
 *</p>
     </div>
@@ -6250,7 +6436,7 @@ this[Symbol.iterator] with the given callback function and this argument<br>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-727">line 727</a>
+				 <a href="foft.js.html#sunlight-1-line-725">line 725</a>
 			</li>
 		</ul>
 	</dd>
@@ -6322,7 +6508,7 @@ this[Symbol.iterator] with the given callback function and this argument<br>
 
     
     <div class="description">
-        <p>mapTOp - apply the Array.map native function to the elements of<br>
+        <p>apply the Array.map native function to the elements of<br>
 this.ofAllTOp() with the given callback function and this argument</p>
     </div>
     
@@ -6466,7 +6652,7 @@ this.ofAllTOp() with the given callback function and this argument</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-741">line 741</a>
+				 <a href="foft.js.html#sunlight-1-line-739">line 739</a>
 			</li>
 		</ul>
 	</dd>
@@ -6540,7 +6726,7 @@ this.ofAllTOp() with the given callback function and this argument</p>
 
     
     <div class="description">
-        <p>normalizeT - given a Number t, return a normalized (to Foft.DEFAULT_RANGE)<br>
+        <p>given a Number t, return a normalized (to Foft.DEFAULT_RANGE)<br>
 representation of the ratio between t and the delta of the evaluation<br>
 range of this Foft</p>
 <p>If t falls out of bounds of range, the value is returned as -/+ Infinity</p>
@@ -6703,7 +6889,7 @@ and returns an Array of normalized values corresponding to each range</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-400">line 400</a>
+				 <a href="foft.js.html#sunlight-1-line-398">line 398</a>
 			</li>
 		</ul>
 	</dd>
@@ -6776,7 +6962,7 @@ and returns an Array of normalized values corresponding to each range</p>
 
     
     <div class="description">
-        <p>oft - evaluate all of the terms held by this Mathoft for the<br>
+        <p>evaluate all of the terms held by this Mathoft for the<br>
 given t value.</p>
 <p>When evaluating a Function or Foft term, the function or Foft is called with a this object containing certain useful data regarding the calling instance's evaluation of t @see TTHIS_TEMPLATE</p>
 <p>When evaluating a Foft term, any t that falls outside that term's evaluation range will produce a null result. If the filterNulls parameter is true, then null values will be stripped from the returned result.</p>
@@ -6976,7 +7162,7 @@ given t value.</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-486">line 486</a>
+				 <a href="foft.js.html#sunlight-1-line-484">line 484</a>
 			</li>
 		</ul>
 	</dd>
@@ -7050,7 +7236,7 @@ given t value.</p>
 
     
     <div class="description">
-        <p>oftNormal - Accepts a Number tNormal that falls within Foft.DEFAULT_RANGE, inclusive, and when provided<br>
+        <p>Accepts a Number tNormal that falls within Foft.DEFAULT_RANGE, inclusive, and when provided<br>
 1 . A NaN value, return NaN<br>
 2.  +Infinity, returns evaluation from end bound of range<br>
 3.  -Infinity, returns evaluation from start bound of range<br>
@@ -7171,7 +7357,7 @@ given t value.</p>
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-561">line 561</a>
+				 <a href="foft.js.html#sunlight-1-line-559">line 559</a>
 			</li>
 		</ul>
 	</dd>
@@ -7250,7 +7436,7 @@ given t value.</p>
 
     
     <div class="description">
-        <p>oftOp - Calculate the value of performing an operation _op on the<br>
+        <p>Calculate the value of performing an operation _op on the<br>
 values returned by calculating this Foft instance's terms for<br>
 some evaluation value t. When given a parameter _acc, the calculation of _op will use _acc as its starting value.</p>
 <p>This is intended to facilitate convenient manipulation of terms and results.</p>
@@ -7452,7 +7638,7 @@ some evaluation value t. When given a parameter _acc, the calculation of _op wil
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-595">line 595</a>
+				 <a href="foft.js.html#sunlight-1-line-593">line 593</a>
 			</li>
 		</ul>
 	</dd>
@@ -7526,7 +7712,7 @@ some evaluation value t. When given a parameter _acc, the calculation of _op wil
 
     
     <div class="description">
-        <p>subT - get a generator function that yields segmentDivisor+1 values of t spanning the range [this.range[n], this.range[n+1]], where if n or n+1 fall beyond the bounds of this.range.length, they are constrained to fit</p>
+        <p>get a generator function that yields segmentDivisor+1 values of t spanning the range [this.range[n], this.range[n+1]], where if n or n+1 fall beyond the bounds of this.range.length, they are constrained to fit</p>
     </div>
     
 
@@ -7643,7 +7829,7 @@ some evaluation value t. When given a parameter _acc, the calculation of _op wil
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-330">line 330</a>
+				 <a href="foft.js.html#sunlight-1-line-328">line 328</a>
 			</li>
 		</ul>
 	</dd>
@@ -7755,7 +7941,7 @@ some evaluation value t. When given a parameter _acc, the calculation of _op wil
 		<ul class="dummy">
 			<li>
 				<a href="foft.js.html">foft.js</a>,
-				 <a href="foft.js.html#sunlight-1-line-752">line 752</a>
+				 <a href="foft.js.html#sunlight-1-line-750">line 750</a>
 			</li>
 		</ul>
 	</dd>
@@ -7858,7 +8044,7 @@ some evaluation value t. When given a parameter _acc, the calculation of _op wil
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on  2019 0601 2307+0000
+		on  2019 0602 2240+0000
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
