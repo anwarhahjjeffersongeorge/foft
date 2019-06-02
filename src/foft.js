@@ -26,7 +26,14 @@ class Foft {
   /**
   * create a Foft instance that evaluates its Function terms
   *    when given some parameter "t".
-  * @param  {(Object|Function|Array)} params
+  *
+  * accepts an argument params that may be a(n):
+  * - function see params.terms for details
+  * - object see params for details
+  * - array of numbers see params.range for details
+  * - Foft instance will return a copy of the instance
+  *
+  * @param  {(Object|Function|Array.<Number>|Foft)} params
   * @param {(Number|Array.<Number>)} [params.range] Range of two numerical values over which t is evaluated inclusively. If given a single number t0, range is [-t0,t0]
   * @param {Number} [params.segmentDivisor] The number of segments to divide the range into when picking t values for evaluation.
   * @param {(Function|Array.<Function>|Array.<Foft>)} [params.terms=[]] A function that accepts a parameter t and returns a result of some operation on t
@@ -37,7 +44,7 @@ class Foft {
   constructor (params) {
     params = params || {}
 
-    if ((typeof params === 'function') || (params instanceof Foft)) {
+    if (typeof params === 'function') {
       let thefunc = params
       params = {
         terms: thefunc
@@ -47,6 +54,10 @@ class Foft {
       params = {
         range: thearray
       }
+    } else if (params instanceof Foft) {
+      let thefoft = params
+      let { segmentDivisor, range, terms } = thefoft
+      params = { segmentDivisor, range: Array.from(range), terms: Array.from(terms) }
     }
 
     // define the division of the evaluation range
@@ -88,18 +99,7 @@ class Foft {
     // console.log(params.opcode)
     // debugger;
     this.opcode = params.opcode
-    // return this.bind(this);
-    // this['__call__']=(...args)=>{
-    //   console.log('__call__', this._range)
-    //   return this.oft.call(...args);
-    // }
   }
-
-  //
-  // '__call__'(t, filterNulls){
-  //   console.log('__call__', this.range)
-  //   return this.oft(t, filterNulls,false);
-  // }
 
   /**
   * the Function terms of this Foft object
@@ -213,7 +213,7 @@ class Foft {
     }
   }
   /**
-  * the evaluation range is the minimum and maximum values for t
+  * get the evaluation range is the minimum and maximum values for t
   *
   * @return {Array.<Number>}
   */
@@ -222,7 +222,7 @@ class Foft {
   }
 
   /**
-  * get t0 - the first value of t in the evaluation range T
+  * get the first value of t in the evaluation range T
   * @see T
   * @return {Number}
   */

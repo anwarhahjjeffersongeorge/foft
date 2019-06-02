@@ -1057,6 +1057,56 @@ function domaintest (Foft) {
       })
     })
     describe('Foft constructor', function () {
+      describe('can do a copy constructor', () => {
+        const paramsToCopy = [
+          'range',
+          'segmentDivisor',
+          'terms'
+        ]
+        it(`copies members: .${paramsToCopy.join(' .')}`, function () {
+          const testParamsObj = {
+            terms: [(t) => Math.sin(t) / 5, (t) => Math.cos(3 * t) / 7, (t) => Math.sin(5 * t) / 9],
+            segmentDivisor: 15,
+            range: [0, -PI]
+          }
+          const f = new Foft(testParamsObj)
+          const g = new Foft(f)
+          for (let p of paramsToCopy) {
+            switch (p) {
+              case 'terms':
+                g[p].should.deep.equal(f[p])
+                const t = Math.random() * g.range[1]
+                g.oft(t).should.deep.equal(f.oft(t))
+                break
+              case 'range':
+                g[p].should.deep.equal(f[p])
+                break
+              default:
+                g[p].should.equal(f[p])
+            }
+          }
+        })
+        it('ensures that the members copied remain dereferenced from their copy sources', function () {
+          const testParamsObj = {
+            terms: [(t) => Math.sin(t) / 5, (t) => Math.cos(3 * t) / 7, (t) => Math.sin(5 * t) / 9],
+            segmentDivisor: 15,
+            range: [0, -PI]
+          }
+
+          const f = new Foft(testParamsObj)
+          const g = new Foft(f)
+
+          f.range = [2, 22]
+          f.segmentDivisor = 9
+          f.terms.push((t) => Math.cos(7 * t) / 11)
+
+          const t = Math.random() * g.range[1]
+          g.range.should.not.equal(f.range)
+          g.segmentDivisor.should.not.equal(f.segmentDivisor)
+          g.terms.should.not.deep.equal(f.terms)
+          g.oft(t).should.not.deep.equal(f.oft(t))
+        })
+      })
       describe('rejects certain bad parameters', () => {
         it('should throw TypeError when given non arraylike range parameter', () => {
           let badFunc = () => new Foft({
@@ -2779,6 +2829,6 @@ function domaintest (Foft) {
   describe('nodejs Functionality', function () {
     // body...
   })
-
 }
+
 export { domaintest }
