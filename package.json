@@ -13,8 +13,8 @@
     "test": "cross-env NODE_ENV=test nyc --require esm --reporter=text --reporter=html --show-process-tree mocha ./test/mocha/nodetestrunner.js",
     "preqtest": "clear && rm -rf test && rsync -rv src/* test",
     "qtest": "echo \"quick test\" && standard \"src/* test/* lib/index.js lib/main.js lib/foft.js\" && cross-env NODE_ENV=test mocha --require esm ./test/mocha/nodetestrunner.js",
-    "pretestw": "clear && rm -rf test && rsync -rv src/* test",
-    "testw": "standard \"src/* test/* lib/index.js lib/main.js lib/foft.js\" && cross-env NODE_ENV=test mocha --watch --reporter=min --require esm ./test/mocha/nodetestrunner.js",
+    "prewtest": "clear && rm -rf test && rsync -rv src/* test",
+    "wtest": "standard \"src/* test/* lib/index.js lib/main.js lib/foft.js\" && cross-env NODE_ENV=test mocha --watch --reporter=min --require esm ./test/mocha/nodetestrunner.js",
     "preversion": "npm test && npm run doc",
     "postversion": "git push"
   },
