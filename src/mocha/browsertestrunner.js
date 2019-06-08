@@ -13,10 +13,10 @@ let envcontext = window
 envcontext.Foft = Foft
 // envcontext.env = env;
 
-console.warn('' + Foft.MAX_SAFE_DIVISOR, '\n')
+console.warn('' + Foft.maxSafeDivisor, '\n')
 
 document.getElementById('custominfo')
   .innerHTML =
     // `<p>${env.descriptions()}</p>`
     `<p>Foft specs:</p>` +
-    `<p>${Foft.MAX_SAFE_DIVISOR}</p>`
+    `<p>${Foft.maxSafeDivisor}</p>`

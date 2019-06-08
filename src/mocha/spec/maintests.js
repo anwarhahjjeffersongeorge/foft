@@ -28,30 +28,30 @@ function domaintest (Foft) {
       // these are the static properties and types that should be in Foft
       const staticpropsandtypes = {
         R: 'Array',
-        CALC_PRECISION_WARN: 'function',
-        ISNUMBER: 'function',
-        ISCALCULABLE: 'function',
-        ARENUMBERS: 'function',
-        ARECALCULABLES: 'function',
-        DIMENSIONS: 'function',
-        ISARRAYLIKE: 'function',
-        EQUAL: 'function',
-        MATHTYPEOF: 'function',
-        MATHTYPES: 'Object',
-        OPDICT: 'Array',
-        MEMBERKEYS: 'Array',
-        FUNCKEYS: 'Array',
-        ISOP: 'function',
-        OPPARSE: 'function',
-        INRANGE: 'function',
-        NORMALIZETORANGE: 'function',
-        ANTINORMALIZETORANGE: 'function',
-        IINRANGE: 'function',
-        TTHIS_TEMPLATE: 'function',
-        OPS: 'Object',
-        DEFAULT_SEGMENT_DIVISOR: 'Number',
-        DEFAULT_RANGE: 'Array',
-        MAX_SAFE_DIVISOR: 'Object'
+        precision: 'function',
+        isNum: 'function',
+        isCalculable: 'function',
+        areNums: 'function',
+        areCalculables: 'function',
+        dimensions: 'function',
+        isArrayLike: 'function',
+        equiv: 'function',
+        mathTypeOf: 'function',
+        mathTypes: 'Object',
+        opDict: 'Array',
+        membKeys: 'Array',
+        funcKeys: 'Array',
+        isOp: 'function',
+        opParse: 'function',
+        inRange: 'function',
+        normToRange: 'function',
+        antiNormToRange: 'function',
+        iInRange: 'function',
+        tThis: 'function',
+        ops: 'Object',
+        divisor: 'Number',
+        sweep: 'Array',
+        maxSafeDivisor: 'Object'
       }
       Object.keys(staticpropsandtypes).forEach((propname) => {
         let typename = staticpropsandtypes[propname]
@@ -62,11 +62,11 @@ function domaintest (Foft) {
       })
 
       describe('with the functionalities such that', function () {
-        describe(`Foft.CALC_PRECISION_WARN`, function () {
+        describe(`Foft.precision`, function () {
           describe('when given no parameter should return an object that', () => {
             let res
             before(function () {
-              res = Foft.CALC_PRECISION_WARN()
+              res = Foft.precision()
             })
             it('can collapse to a number or string that includes said number', () => {
               res.should.be.an('object');
@@ -88,7 +88,7 @@ function domaintest (Foft) {
           describe('when given one calculable parameter should return an object that', () => {
             let res
             before(function () {
-              res = Foft.CALC_PRECISION_WARN(55)
+              res = Foft.precision(55)
             })
             it('can collapse to a number or string that includes said number', () => {
               res.should.be.an('object');
@@ -109,257 +109,257 @@ function domaintest (Foft) {
           })
         })
 
-        describe(`Foft.MAX_SAFE_DIVISOR`, function () {
+        describe(`Foft.maxSafeDivisor`, function () {
           let res
           before(function () {
-            res = Foft.MAX_SAFE_DIVISOR
+            res = Foft.maxSafeDivisor
           })
           it('should be an object that can collapse to a number or string', () => {
             res.should.be.an('object');
             (+res).should.be.a('number');
             ('' + res).should.be.a('string')
           })
-          it('should be equal to Foft.CALC_PRECISION_WARN()', function () {
-            (+res).should.equal(+Foft.CALC_PRECISION_WARN());
-            ('' + res).should.equal('' + Foft.CALC_PRECISION_WARN())
+          it('should be equal to Foft.precision()', function () {
+            (+res).should.equal(+Foft.precision());
+            ('' + res).should.equal('' + Foft.precision())
           })
         })
-        describe(`Foft.ISCALCULABLE`, function () {
+        describe(`Foft.isCalculable`, function () {
           it('returns true when provided a SINGLE argument of Number type that is not NaN, +Infinity or -Infinity', function () {
-            Foft.ISCALCULABLE(3.3).should.be.true()
-            Foft.ISCALCULABLE(0).should.be.true()
-            Foft.ISCALCULABLE(NaN).should.be.false()
-            Foft.ISCALCULABLE(Infinity).should.be.false()
-            Foft.ISCALCULABLE(-Infinity).should.be.false()
-            Foft.ISCALCULABLE(Math.random()).should.be.true()
+            Foft.isCalculable(3.3).should.be.true()
+            Foft.isCalculable(0).should.be.true()
+            Foft.isCalculable(NaN).should.be.false()
+            Foft.isCalculable(Infinity).should.be.false()
+            Foft.isCalculable(-Infinity).should.be.false()
+            Foft.isCalculable(Math.random()).should.be.true()
           })
         })
-        describe(`Foft.ARECALCULABLES`, function () {
+        describe(`Foft.areCalculables`, function () {
           it('returns true when ALL arguments are numbers(excluding NaN, Infinity)', function () {
-            Foft.ARECALCULABLES(Math.random(), Math.random()).should.be.true()
-            Foft.ARECALCULABLES(0, 1, 2, 3, 4, 6, 7, 8, 99).should.be.true()
-            Foft.ARECALCULABLES(0, NaN, 44).should.be.false()
-            Foft.ARECALCULABLES(0, Infinity, 44).should.be.false()
+            Foft.areCalculables(Math.random(), Math.random()).should.be.true()
+            Foft.areCalculables(0, 1, 2, 3, 4, 6, 7, 8, 99).should.be.true()
+            Foft.areCalculables(0, NaN, 44).should.be.false()
+            Foft.areCalculables(0, Infinity, 44).should.be.false()
           })
           it('returns false when ANY arguments are not numbers', function () {
-            Foft.ARECALCULABLES('l').should.be.false()
-            Foft.ARECALCULABLES('55', 5).should.be.false()
-            Foft.ARECALCULABLES(55, 55, 5.4, NaN, Infinity, 5).should.be.false()
-            Foft.ARECALCULABLES(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false()
+            Foft.areCalculables('l').should.be.false()
+            Foft.areCalculables('55', 5).should.be.false()
+            Foft.areCalculables(55, 55, 5.4, NaN, Infinity, 5).should.be.false()
+            Foft.areCalculables(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false()
           })
           it('returns false when arguments are null', function () {
-            Foft.ARECALCULABLES().should.be.false()
+            Foft.areCalculables().should.be.false()
           })
           it('returns true when ALL array members are numbers(excluding NaN, Infinity)',
             function () {
-              Foft.ARECALCULABLES([Math.random(), Math.random()]).should.be.true()
-              Foft.ARECALCULABLES([0, 1, 2, 3, 4, 6, 7, 8, 99]).should.be.true()
-              Foft.ARECALCULABLES([0, NaN, 44]).should.be.false()
-              Foft.ARECALCULABLES([0, Infinity, 44]).should.be.false()
+              Foft.areCalculables([Math.random(), Math.random()]).should.be.true()
+              Foft.areCalculables([0, 1, 2, 3, 4, 6, 7, 8, 99]).should.be.true()
+              Foft.areCalculables([0, NaN, 44]).should.be.false()
+              Foft.areCalculables([0, Infinity, 44]).should.be.false()
             })
           it('returns false when ANY array members are not finite numbers', function () {
-            Foft.ARECALCULABLES(['l']).should.be.false()
-            Foft.ARECALCULABLES(['55', 5]).should.be.false()
-            Foft.ARECALCULABLES([55, 55, 5.4, NaN, Infinity, 5]).should.be.false()
-            Foft.ARECALCULABLES([55, 55, 5.4, '535', 5]).should.be.false()
+            Foft.areCalculables(['l']).should.be.false()
+            Foft.areCalculables(['55', 5]).should.be.false()
+            Foft.areCalculables([55, 55, 5.4, NaN, Infinity, 5]).should.be.false()
+            Foft.areCalculables([55, 55, 5.4, '535', 5]).should.be.false()
           })
           it('returns false for null array', function () {
-            Foft.ARECALCULABLES([]).should.be.false()
+            Foft.areCalculables([]).should.be.false()
           })
           it('returns true for arrays whose nested array members contain submembers that are ALL finite numbers', function () {
-            Foft.ARECALCULABLES([1, 2, 3, [1, 34]]).should.be.true()
-            Foft.ARECALCULABLES([[NaN, Infinity]]).should.be.false()
+            Foft.areCalculables([1, 2, 3, [1, 34]]).should.be.true()
+            Foft.areCalculables([[NaN, Infinity]]).should.be.false()
           })
           it('returns false for arrays whose nested array members contain submembers that are NOT ALL finite numbers', function () {
-            Foft.ARECALCULABLES([1, 2, 3, [1, 'b', 34]]).should.be.false()
-            Foft.ARECALCULABLES([[NaN, {}, Infinity]]).should.be.false()
+            Foft.areCalculables([1, 2, 3, [1, 'b', 34]]).should.be.false()
+            Foft.areCalculables([[NaN, {}, Infinity]]).should.be.false()
           })
           it('returns true for mixed args of numbers and arrays whose nested array members contain submembers that are ALL numbers or finite Number-filled Arrays', function () {
-            Foft.ARECALCULABLES(1, 2, 3, [1, 34]).should.be.true()
-            Foft.ARECALCULABLES([NaN, Infinity], 2, 4).should.be.false()
+            Foft.areCalculables(1, 2, 3, [1, 34]).should.be.true()
+            Foft.areCalculables([NaN, Infinity], 2, 4).should.be.false()
           })
           it('returns false for mixed args of numbers and arrays whose nested array members contain submembers that are NOT ALL numbers or Number-filled Arrays', function () {
-            Foft.ARECALCULABLES(1, 2, 3, {}, [1, 34]).should.be.false()
-            Foft.ARECALCULABLES(['popo', NaN, Infinity], 2, 4).should.be.false()
+            Foft.areCalculables(1, 2, 3, {}, [1, 34]).should.be.false()
+            Foft.areCalculables(['popo', NaN, Infinity], 2, 4).should.be.false()
           })
         })
-        describe(`Foft.ISNUMBER`, function () {
+        describe(`Foft.isNum`, function () {
           it('returns true when provided a SINGLE argument of Number type', function () {
-            Foft.ISNUMBER(3).should.be.true()
-            Foft.ISNUMBER(NaN).should.be.true()
-            Foft.ISNUMBER(Infinity).should.be.true()
-            Foft.ISNUMBER(Math.random()).should.be.true()
+            Foft.isNum(3).should.be.true()
+            Foft.isNum(NaN).should.be.true()
+            Foft.isNum(Infinity).should.be.true()
+            Foft.isNum(Math.random()).should.be.true()
           })
           it('returns false when provided argument NOT of Number type', function () {
-            Foft.ISNUMBER('3').should.be.false()
-            Foft.ISNUMBER(undefined).should.be.false()
-            Foft.ISNUMBER(null).should.be.false()
-            Foft.ISNUMBER({}).should.be.false()
-            Foft.ISNUMBER([]).should.be.false()
-            Foft.ISNUMBER(Math.random).should.be.false()
+            Foft.isNum('3').should.be.false()
+            Foft.isNum(undefined).should.be.false()
+            Foft.isNum(null).should.be.false()
+            Foft.isNum({}).should.be.false()
+            Foft.isNum([]).should.be.false()
+            Foft.isNum(Math.random).should.be.false()
           })
           it('returns false when NOT provided a SINGLE argument', function () {
-            Foft.ISNUMBER(3, 3).should.be.false()
-            Foft.ISNUMBER().should.be.false()
+            Foft.isNum(3, 3).should.be.false()
+            Foft.isNum().should.be.false()
           })
         })
 
-        describe(`Foft.ARENUMBERS`, function () {
+        describe(`Foft.areNums`, function () {
           it('returns true when ALL arguments are numbers(including NaN, Infinity)', function () {
-            Foft.ARENUMBERS(Math.random(), Math.random()).should.be.true()
-            Foft.ARENUMBERS(0, 1, 2, 3, 4, 6, 7, 8, 99).should.be.true()
-            Foft.ARENUMBERS(0, NaN, 44).should.be.true()
-            Foft.ARENUMBERS(0, Infinity, 44).should.be.true()
+            Foft.areNums(Math.random(), Math.random()).should.be.true()
+            Foft.areNums(0, 1, 2, 3, 4, 6, 7, 8, 99).should.be.true()
+            Foft.areNums(0, NaN, 44).should.be.true()
+            Foft.areNums(0, Infinity, 44).should.be.true()
           })
           it('returns false when ANY arguments are not numbers', function () {
-            Foft.ARENUMBERS('l').should.be.false()
-            Foft.ARENUMBERS('55', 5).should.be.false()
-            Foft.ARENUMBERS(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false()
-            Foft.ARENUMBERS(55, 55, 5.4, '535', 5).should.be.false()
+            Foft.areNums('l').should.be.false()
+            Foft.areNums('55', 5).should.be.false()
+            Foft.areNums(55, 55, 5.4, NaN, Infinity, '535', 5).should.be.false()
+            Foft.areNums(55, 55, 5.4, '535', 5).should.be.false()
           })
           it('returns false when arguments are null', function () {
-            Foft.ARENUMBERS().should.be.false()
+            Foft.areNums().should.be.false()
           })
           it('returns true when ALL array members are numbers(including NaN, Infinity)',
             function () {
-              Foft.ARENUMBERS([Math.random(), Math.random()]).should.be.true()
-              Foft.ARENUMBERS([0, 1, 2, 3, 4, 6, 7, 8, 99]).should.be.true()
-              Foft.ARENUMBERS([0, NaN, 44]).should.be.true()
-              Foft.ARENUMBERS([0, Infinity, 44]).should.be.true()
+              Foft.areNums([Math.random(), Math.random()]).should.be.true()
+              Foft.areNums([0, 1, 2, 3, 4, 6, 7, 8, 99]).should.be.true()
+              Foft.areNums([0, NaN, 44]).should.be.true()
+              Foft.areNums([0, Infinity, 44]).should.be.true()
             })
           it('returns false when ANY array members are not numbers', function () {
-            Foft.ARENUMBERS(['l']).should.be.false()
-            Foft.ARENUMBERS(['55', 5]).should.be.false()
-            Foft.ARENUMBERS([55, 55, 5.4, NaN, Infinity, '535', 5]).should.be.false()
-            Foft.ARENUMBERS([55, 55, 5.4, '535', 5]).should.be.false()
+            Foft.areNums(['l']).should.be.false()
+            Foft.areNums(['55', 5]).should.be.false()
+            Foft.areNums([55, 55, 5.4, NaN, Infinity, '535', 5]).should.be.false()
+            Foft.areNums([55, 55, 5.4, '535', 5]).should.be.false()
           })
           it('returns false for null array', function () {
-            Foft.ARENUMBERS([]).should.be.false()
+            Foft.areNums([]).should.be.false()
           })
           it('returns true for arrays whose nested array members contain submembers that are ALL numbers', function () {
-            Foft.ARENUMBERS([1, 2, 3, [1, 34]]).should.be.true()
-            Foft.ARENUMBERS([[NaN, Infinity]]).should.be.true()
+            Foft.areNums([1, 2, 3, [1, 34]]).should.be.true()
+            Foft.areNums([[NaN, Infinity]]).should.be.true()
           })
           it('returns false for arrays whose nested array members contain submembers that are NOT ALL numbers', function () {
-            Foft.ARENUMBERS([1, 2, 3, [1, 'b', 34]]).should.be.false()
-            Foft.ARENUMBERS([[NaN, {}, Infinity]]).should.be.false()
+            Foft.areNums([1, 2, 3, [1, 'b', 34]]).should.be.false()
+            Foft.areNums([[NaN, {}, Infinity]]).should.be.false()
           })
           it('returns true for mixed args of numbers and arrays whose nested array members contain submembers that are ALL numbers or Number-filled Arrays', function () {
-            Foft.ARENUMBERS(1, 2, 3, [1, 34]).should.be.true()
-            Foft.ARENUMBERS([NaN, Infinity], 2, 4).should.be.true()
+            Foft.areNums(1, 2, 3, [1, 34]).should.be.true()
+            Foft.areNums([NaN, Infinity], 2, 4).should.be.true()
           })
           it('returns false for mixed args of numbers and arrays whose nested array members contain submembers that are NOT ALL numbers or Number-filled Arrays', function () {
-            Foft.ARENUMBERS(1, 2, 3, {}, [1, 34]).should.be.false()
-            Foft.ARENUMBERS(['popo', NaN, Infinity], 2, 4).should.be.false()
+            Foft.areNums(1, 2, 3, {}, [1, 34]).should.be.false()
+            Foft.areNums(['popo', NaN, Infinity], 2, 4).should.be.false()
           })
         })
-        describe('Foft.INRANGE', function () {
-          it('returns false when arguments provided don\'t satisfy Foft.ARENUMBERS', function () {
-            Foft.INRANGE(3, 'a').should.be.false()
+        describe('Foft.inRange', function () {
+          it('returns false when arguments provided don\'t satisfy Foft.areNums', function () {
+            Foft.inRange(3, 'a').should.be.false()
           })
-          it('returns false when FIRST argument provided doesn\'t satisfy Foft.ISNUMBER', function () {
-            Foft.INRANGE([3]).should.be.false()
+          it('returns false when FIRST argument provided doesn\'t satisfy Foft.isNum', function () {
+            Foft.inRange([3]).should.be.false()
           })
-          it(`returns true when sole argument n falls within Foft.DEFAULT_RANGE`, function () {
-            let testval = Foft.DEFAULT_RANGE[0] +
-              (Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0]) / 2
-            Foft.INRANGE(testval).should.be.true()
+          it(`returns true when sole argument n falls within Foft.sweep`, function () {
+            let testval = Foft.sweep[0] +
+              (Foft.sweep[1] - Foft.sweep[0]) / 2
+            Foft.inRange(testval).should.be.true()
           })
-          it(`returns false when sole argument n falls outside of Foft.DEFAULT_RANGE`, function () {
-            let testval = Foft.DEFAULT_RANGE[0] +
-              (Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0]) * 2
-            Foft.INRANGE(testval).should.be.false()
+          it(`returns false when sole argument n falls outside of Foft.sweep`, function () {
+            let testval = Foft.sweep[0] +
+              (Foft.sweep[1] - Foft.sweep[0]) * 2
+            Foft.inRange(testval).should.be.false()
           })
           it(`returns true when n of arguments (n,m) with m being a Number falls within [0, m]`, function () {
             let testN = Math.random()
             let testM = testN * 2
-            Foft.INRANGE(testN, testM).should.be.true()
+            Foft.inRange(testN, testM).should.be.true()
           })
           it(`returns false when n of arguments (n,m) with m being a Number falls outside of [0, m]`, function () {
             let testN = Math.random()
             let testM = testN / 2
-            Foft.INRANGE(testN, testM).should.be.false()
+            Foft.inRange(testN, testM).should.be.false()
           })
           it(`returns true when n of arguments (n,m) with m being a unit-length Array falls within [0, m[0]]`, function () {
             let testN = Math.random()
             let testM = [testN * 2]
-            Foft.INRANGE(testN, testM).should.be.true()
+            Foft.inRange(testN, testM).should.be.true()
           })
           it(`returns false when n of arguments (n,m) with m being a unit-length Array falls outside of [0, m[0]]`, function () {
             let testN = Math.random()
             let testM = [testN / 2]
-            Foft.INRANGE(testN, testM).should.be.false()
+            Foft.inRange(testN, testM).should.be.false()
           })
           it(`returns true when n of arguments (n,m) with m being an Array falls within [m[0], m[m.length-1]]`, function () {
             let testN = Math.random()
             let testM = [testN / 2, testN * 2]
-            Foft.INRANGE(testN, testM).should.be.true()
+            Foft.inRange(testN, testM).should.be.true()
             let testM2 = [testN / 2, testN / 2, testN * 2]
-            Foft.INRANGE(testN, testM2).should.be.true()
+            Foft.inRange(testN, testM2).should.be.true()
           })
           it(`returns false when n of arguments (n,m) with m being an Array falls outside of [m[0], m[m.length-1]]`, function () {
             let testN = Math.random()
             let testM = [testN / 2, testN / 4]
-            Foft.INRANGE(testN, testM).should.be.false()
+            Foft.inRange(testN, testM).should.be.false()
             let testM2 = [testN / 2, testN * 2, testN / 4]
-            Foft.INRANGE(testN, testM2).should.be.false()
+            Foft.inRange(testN, testM2).should.be.false()
           })
           it(`returns true when n of arguments (n,m,mm) falls within [m, mm]`, function () {
             let testN = Math.random()
             let testM = testN / 2
             let testMM = testN * 2
-            Foft.INRANGE(testN, testM, testMM).should.be.true()
+            Foft.inRange(testN, testM, testMM).should.be.true()
           })
           it(`returns false when n of arguments (n,m,mm) falls outside of [m, mm]`, function () {
             let testN = Math.random()
             let testM = testN / 2
             let testMM = testN / 4
-            Foft.INRANGE(testN, testM, testMM).should.be.false()
+            Foft.inRange(testN, testM, testMM).should.be.false()
           })
           it('returns true when n is one of the edge values of the given test range', function () {
-            Foft.INRANGE(Foft.DEFAULT_RANGE[0]).should.be.true()
+            Foft.inRange(Foft.sweep[0]).should.be.true()
             let testN = Math.random()
             let testM = Math.random()
             // let testMM = Math.random()
-            Foft.INRANGE(testN, testN).should.be.true() // [0, m]
-            Foft.INRANGE(testN, [testN]).should.be.true() // [0, m[0]]
-            Foft.INRANGE(testN, [testN, testM]).should.be.true() // [m[0], m[1]]
-            Foft.INRANGE(testN, [testM, testN]).should.be.true() // [m[0], m[1]]
-            Foft.INRANGE(testN, testN, testM).should.be.true() // [m, mm]
-            Foft.INRANGE(testN, testM, testN).should.be.true() // [m, mm]
+            Foft.inRange(testN, testN).should.be.true() // [0, m]
+            Foft.inRange(testN, [testN]).should.be.true() // [0, m[0]]
+            Foft.inRange(testN, [testN, testM]).should.be.true() // [m[0], m[1]]
+            Foft.inRange(testN, [testM, testN]).should.be.true() // [m[0], m[1]]
+            Foft.inRange(testN, testN, testM).should.be.true() // [m, mm]
+            Foft.inRange(testN, testM, testN).should.be.true() // [m, mm]
           })
         })
 
-        describe(`Foft.DIMENSIONS`, function () {
+        describe(`Foft.dimensions`, function () {
           it('identifies the dimensions of a Number as 0', function () {
-            return Foft.DIMENSIONS(3).should.eventually.deep.equal([0])
+            return Foft.dimensions(3).should.eventually.deep.equal([0])
           })
           it('doesnt try to identify the dimensions of non-Array-like object', function () {
-            return Foft.DIMENSIONS({}).should.eventually.deep.equal([])
+            return Foft.dimensions({}).should.eventually.deep.equal([])
           })
           it('identifies the dimension of an empty Array-like object as 0', () => {
-            return Foft.DIMENSIONS([]).should.eventually.deep.equal([0])
+            return Foft.dimensions([]).should.eventually.deep.equal([0])
           })
           it('identifies the dimension of a non-nested Array-like object as its length', function () {
             return Promise.all([
-              Foft.DIMENSIONS([1, 3]).should.eventually.deep.equal([2]),
-              Foft.DIMENSIONS([1, 2, null, 3]).should.eventually.deep.equal([4])
+              Foft.dimensions([1, 3]).should.eventually.deep.equal([2]),
+              Foft.dimensions([1, 2, null, 3]).should.eventually.deep.equal([4])
             ])
           })
           it('identifies the dimensions of a regular 2-D nested array correctly (1)', () => {
-            return Foft.DIMENSIONS([
+            return Foft.dimensions([
               [1, 2, 4],
               [21, 43, 44]
             ]).should.eventually.deep.equal([2, 3])
           })
           it('identifies the dimensions of a regular 2-D nested array correctly (2)', () => {
-            return Foft.DIMENSIONS([
+            return Foft.dimensions([
               [1, 2],
               [41, 43]
             ]).should.eventually.deep.equal([2, 2])
           })
           it('identifies the dimensions of a regular 3-D nested array correctly(1)', () => {
-            return Foft.DIMENSIONS([
+            return Foft.dimensions([
               [
                 [1, 2, 4, 5],
                 [1, 3, 1, 4],
@@ -373,7 +373,7 @@ function domaintest (Foft) {
             ]).should.eventually.deep.equal([2, 3, 4])
           })
           it('identifies the dimensions of a regular 3-D nested array correctly(2)', () => {
-            return Foft.DIMENSIONS([
+            return Foft.dimensions([
               [
                 [1, 2, 4],
                 [1, 3, 1],
@@ -387,13 +387,13 @@ function domaintest (Foft) {
             ]).should.eventually.deep.equal([2, 3, 3])
           })
           it('identifies the dimensions of an irregular 2-D array correctly by using the subarray of greatest length', () => {
-            return Foft.DIMENSIONS([
+            return Foft.dimensions([
               [1, 2, 4],
               [1, 3, 4, 33]
             ]).should.eventually.deep.equal([2, 4])
           })
           it('identifies the dimensions of an irregular 3-D array correctly by using the subarray of greatest length', () => {
-            return Foft.DIMENSIONS([
+            return Foft.dimensions([
               [
                 [1, 2, 4],
                 [1, 3, 3, 3, 3],
@@ -407,66 +407,66 @@ function domaintest (Foft) {
             ]).should.eventually.deep.equal([2, 3, 5])
           })
         })
-        describe('Foft.EQUAL', () => {
+        describe('Foft.equiv', () => {
           it('should return true for a single non-NaN argument or false for a single NaN argument ', () => {
-            Foft.EQUAL(5).should.be.true()
-            Foft.EQUAL(NaN).should.be.false()
-            Foft.EQUAL('a').should.be.true()
+            Foft.equiv(5).should.be.true()
+            Foft.equiv(NaN).should.be.false()
+            Foft.equiv('a').should.be.true()
           })
           it('should return false for no arguments', () => {
-            Foft.EQUAL().should.be.false()
+            Foft.equiv().should.be.false()
           })
-          it('should return false for parameters of dissimilar Foft.MATHTYPEOF', () => {
-            Foft.EQUAL(5, [5]).should.be.false()
+          it('should return false for parameters of dissimilar Foft.mathTypeOf', () => {
+            Foft.equiv(5, [5]).should.be.false()
           })
-          it('should return === result for multiple parameter first parameter not of Foft.MATHTYPEOF', () => {
-            Foft.EQUAL('5', [5]).should.be.false()
-            Foft.EQUAL('5', '5').should.be.true()
-            Foft.EQUAL('5', 5).should.be.false()
-            Foft.EQUAL('aea', 'aea').should.be.true()
+          it('should return === result for multiple parameter first parameter not of Foft.mathTypeOf', () => {
+            Foft.equiv('5', [5]).should.be.false()
+            Foft.equiv('5', '5').should.be.true()
+            Foft.equiv('5', 5).should.be.false()
+            Foft.equiv('aea', 'aea').should.be.true()
           })
           it('should return true for any number of congruent number arguments', () => {
-            Foft.EQUAL(1, 1, 1, 1).should.be.true()
-            Foft.EQUAL(Infinity, Infinity).should.be.true()
-            Foft.EQUAL(0, 0, 0, 0, 0, 7 - 7).should.be.true()
+            Foft.equiv(1, 1, 1, 1).should.be.true()
+            Foft.equiv(Infinity, Infinity).should.be.true()
+            Foft.equiv(0, 0, 0, 0, 0, 7 - 7).should.be.true()
           })
           it('should return false for any number of incongruent number arguments', () => {
-            Foft.EQUAL(1, 3, 1, 1).should.be.false()
-            Foft.EQUAL(NaN, NaN).should.be.false()
-            Foft.EQUAL(NaN, 2).should.be.false()
-            Foft.EQUAL(-Infinity, Infinity).should.be.false()
-            Foft.EQUAL(0, 0, 0, 0, 0, 7).should.be.false()
+            Foft.equiv(1, 3, 1, 1).should.be.false()
+            Foft.equiv(NaN, NaN).should.be.false()
+            Foft.equiv(NaN, 2).should.be.false()
+            Foft.equiv(-Infinity, Infinity).should.be.false()
+            Foft.equiv(0, 0, 0, 0, 0, 7).should.be.false()
           })
           it('should return true for any number of congruent, non-nested array arguments of any lengths', () => {
-            Foft.EQUAL([1, 1], [1, 1]).should.be.true()
-            Foft.EQUAL([Infinity, Infinity], [Infinity, Infinity]).should.be.true()
-            Foft.EQUAL([0, 0, 0], [0, 0, 0], [0, 0, 7 - 7]).should.be.true()
+            Foft.equiv([1, 1], [1, 1]).should.be.true()
+            Foft.equiv([Infinity, Infinity], [Infinity, Infinity]).should.be.true()
+            Foft.equiv([0, 0, 0], [0, 0, 0], [0, 0, 7 - 7]).should.be.true()
           })
           it('should return false for any number of incongruent, non-nested array arguments of any lengths', () => {
-            Foft.EQUAL([1, 1], [1, 1, 1]).should.be.false()
-            Foft.EQUAL([NaN], [111]).should.be.false()
-            Foft.EQUAL([NaN], [NaN]).should.be.false()
-            Foft.EQUAL([Infinity, -Infinity], [Infinity, Infinity]).should.be.false()
-            Foft.EQUAL([0, 0, 0], [0, 0, 0], [0, 0, -7]).should.be.false()
+            Foft.equiv([1, 1], [1, 1, 1]).should.be.false()
+            Foft.equiv([NaN], [111]).should.be.false()
+            Foft.equiv([NaN], [NaN]).should.be.false()
+            Foft.equiv([Infinity, -Infinity], [Infinity, Infinity]).should.be.false()
+            Foft.equiv([0, 0, 0], [0, 0, 0], [0, 0, -7]).should.be.false()
           })
           it('should return true for any number of congruent, nested array arguments of any lengths', () => {
-            Foft.EQUAL([[1, 1], [1, 1]],
+            Foft.equiv([[1, 1], [1, 1]],
               [[1, 1], [1, 1]]).should.be.true()
-            Foft.EQUAL([Infinity, [Infinity]], [Infinity, [Infinity]]).should.be.true()
-            Foft.EQUAL([[0, 0, 0], [3, 5, 1]],
+            Foft.equiv([Infinity, [Infinity]], [Infinity, [Infinity]]).should.be.true()
+            Foft.equiv([[0, 0, 0], [3, 5, 1]],
               [[0, 0, 0], [3, 5, 1]],
               [[0, 0, 7 - 7], [6 - 3, 0 + 5, 1 / 1]]).should.be.true()
           })
           it('should return false for any number of incongruent, nested array arguments of any lengths', () => {
-            Foft.EQUAL([1, 1], [1, 1, 1]).should.be.false()
-            Foft.EQUAL([NaN], [111]).should.be.false()
-            Foft.EQUAL([[NaN]], [[NaN]]).should.be.false()
-            Foft.EQUAL([Infinity, -Infinity], [Infinity, Infinity]).should.be.false()
-            Foft.EQUAL([0, 0, 0], [0, 0, 0], [0, 0, -7]).should.be.false()
+            Foft.equiv([1, 1], [1, 1, 1]).should.be.false()
+            Foft.equiv([NaN], [111]).should.be.false()
+            Foft.equiv([[NaN]], [[NaN]]).should.be.false()
+            Foft.equiv([Infinity, -Infinity], [Infinity, Infinity]).should.be.false()
+            Foft.equiv([0, 0, 0], [0, 0, 0], [0, 0, -7]).should.be.false()
           })
         })
 
-        describe('Foft.NORMALIZETORANGE', function () {
+        describe('Foft.normToRange', function () {
           let outofboundsA, outofboundsB, testRangeArr, dTestRangeArr
           describe('for any t and range TT that has two elements', function () {
             beforeEach(function () {
@@ -478,65 +478,65 @@ function domaintest (Foft) {
               ]
             })
             it('should when given parameter t correctly calculate the corresponding normalized value', function () {
-              Foft.NORMALIZETORANGE(testRangeArr[0], testRangeArr).should.equal(Foft.DEFAULT_RANGE[0])
-              Foft.NORMALIZETORANGE(testRangeArr[1], testRangeArr).should.equal(Foft.DEFAULT_RANGE[1])
+              Foft.normToRange(testRangeArr[0], testRangeArr).should.equal(Foft.sweep[0])
+              Foft.normToRange(testRangeArr[1], testRangeArr).should.equal(Foft.sweep[1])
               let midVal = testRangeArr[0] + (testRangeArr[1] - testRangeArr[0]) / 2
-              let fullRangeVal = Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0]
-              let midRangeVal = Foft.DEFAULT_RANGE[0] + fullRangeVal / 2
-              Foft.NORMALIZETORANGE(midVal, testRangeArr).should.almost.equal(midRangeVal)
+              let fullRangeVal = Foft.sweep[1] - Foft.sweep[0]
+              let midRangeVal = Foft.sweep[0] + fullRangeVal / 2
+              Foft.normToRange(midVal, testRangeArr).should.almost.equal(midRangeVal)
               // ex.
               testRangeArr = [0, 1]
               let normt = 0.35
               let testval = normt * dTestRangeArr() + testRangeArr[0]
-              Foft.NORMALIZETORANGE(testval, testRangeArr).should.equal(Foft.DEFAULT_RANGE[0] + fullRangeVal * normt)
+              Foft.normToRange(testval, testRangeArr).should.equal(Foft.sweep[0] + fullRangeVal * normt)
             })
             it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function () {
-              Foft.NORMALIZETORANGE(outofboundsA, testRangeArr).should.equal(-Infinity)
-              Foft.NORMALIZETORANGE(outofboundsB, testRangeArr).should.equal(Infinity)
+              Foft.normToRange(outofboundsA, testRangeArr).should.equal(-Infinity)
+              Foft.normToRange(outofboundsB, testRangeArr).should.equal(Infinity)
             })
             it('should when given non-number parameter t calculate the normalized value for t=0 with any other TT and NN parameters', function () {
-              Foft.NORMALIZETORANGE(
+              Foft.normToRange(
                 null,
                 testRangeArr
               ).should.equal(
-                Foft.NORMALIZETORANGE(
+                Foft.normToRange(
                   0,
                   testRangeArr
                 )
               )
               let normarr = [0, 100]
-              Foft.NORMALIZETORANGE(
+              Foft.normToRange(
                 null,
                 testRangeArr,
                 normarr
               ).should.equal(
-                Foft.NORMALIZETORANGE(
+                Foft.normToRange(
                   0,
                   testRangeArr,
                   normarr
                 )
               )
             })
-            it('should when given non-number parameters TT calculate the normalized value for TT=Foft.DEFAULT_RANGE, with any other t and NN parameters', function () {
+            it('should when given non-number parameters TT calculate the normalized value for TT=Foft.sweep, with any other t and NN parameters', function () {
               let t = Math.random()
-              Foft.NORMALIZETORANGE(
+              Foft.normToRange(
                 t,
                 null
               ).should.equal(
-                Foft.NORMALIZETORANGE(
+                Foft.normToRange(
                   t,
-                  Foft.DEFAULT_RANGE
+                  Foft.sweep
                 )
               )
               let normarr = [0, 100]
-              Foft.NORMALIZETORANGE(
+              Foft.normToRange(
                 t,
                 null,
                 normarr
               ).should.equal(
-                Foft.NORMALIZETORANGE(
+                Foft.normToRange(
                   t,
-                  Foft.DEFAULT_RANGE,
+                  Foft.sweep,
                   normarr
                 )
               )
@@ -546,13 +546,13 @@ function domaintest (Foft) {
               let normarr = [0, 100]
               let normt = 0.35
               // let testval = normt * dTestRangeArr() + testRangeArr[0]
-              Foft.NORMALIZETORANGE(normt, testRangeArr, normarr).should.equal(35)
+              Foft.normToRange(normt, testRangeArr, normarr).should.equal(35)
               normarr = [100, 0]
-              Foft.NORMALIZETORANGE(normt, testRangeArr, normarr).should.equal(65)
+              Foft.normToRange(normt, testRangeArr, normarr).should.equal(65)
             })
           })
         })
-        describe('Foft.ANTINORMALIZETORANGE', function () {
+        describe('Foft.antiNormToRange', function () {
           let outofboundsA, outofboundsB, testRangeArr, dTestRangeArr
           describe('for any t and range TT that has two elements', function () {
             beforeEach(function () {
@@ -564,66 +564,66 @@ function domaintest (Foft) {
               ]
             })
             it('should when given parameter t correctly calculate the corresponding normalized value', function () {
-              Foft.ANTINORMALIZETORANGE(testRangeArr[0], testRangeArr).should.equal(Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0])
-              Foft.ANTINORMALIZETORANGE(testRangeArr[1], testRangeArr).should.equal(0)
+              Foft.antiNormToRange(testRangeArr[0], testRangeArr).should.equal(Foft.sweep[1] - Foft.sweep[0])
+              Foft.antiNormToRange(testRangeArr[1], testRangeArr).should.equal(0)
               let midVal = testRangeArr[0] + (testRangeArr[1] - testRangeArr[0]) / 2
-              let fullRangeVal = Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0]
-              let midRangeVal = Foft.DEFAULT_RANGE[0] + fullRangeVal / 2
-              Foft.ANTINORMALIZETORANGE(midVal, testRangeArr).should.almost.equal(Foft.DEFAULT_RANGE[1] - midRangeVal)
+              let fullRangeVal = Foft.sweep[1] - Foft.sweep[0]
+              let midRangeVal = Foft.sweep[0] + fullRangeVal / 2
+              Foft.antiNormToRange(midVal, testRangeArr).should.almost.equal(Foft.sweep[1] - midRangeVal)
               // ex.
               testRangeArr = [0, 1]
               let normt = 0.35
               // let antinormt = testRangeArr[1] - normt
               let testval = normt * dTestRangeArr() + testRangeArr[0]
-              Foft.ANTINORMALIZETORANGE(testval, testRangeArr).should.equal(1.3)
+              Foft.antiNormToRange(testval, testRangeArr).should.equal(1.3)
             })
             it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function () {
-              Foft.ANTINORMALIZETORANGE(outofboundsA, testRangeArr).should.equal(Infinity)
-              Foft.ANTINORMALIZETORANGE(outofboundsB, testRangeArr).should.equal(-Infinity)
+              Foft.antiNormToRange(outofboundsA, testRangeArr).should.equal(Infinity)
+              Foft.antiNormToRange(outofboundsB, testRangeArr).should.equal(-Infinity)
             })
             it('should when given non-number parameter t calculate the normalized value for t=0 with any other TT and NN parameters', function () {
-              Foft.ANTINORMALIZETORANGE(
+              Foft.antiNormToRange(
                 null,
                 testRangeArr
               ).should.equal(
-                Foft.ANTINORMALIZETORANGE(
+                Foft.antiNormToRange(
                   0,
                   testRangeArr
                 )
               )
               let normarr = [0, 100]
-              Foft.ANTINORMALIZETORANGE(
+              Foft.antiNormToRange(
                 null,
                 testRangeArr,
                 normarr
               ).should.equal(
-                Foft.ANTINORMALIZETORANGE(
+                Foft.antiNormToRange(
                   0,
                   testRangeArr,
                   normarr
                 )
               )
             })
-            it('should when given non-number parameters TT calculate the normalized value for TT=Foft.DEFAULT_RANGE, with any other t and NN parameters', function () {
+            it('should when given non-number parameters TT calculate the normalized value for TT=Foft.sweep, with any other t and NN parameters', function () {
               let t = Math.random()
-              Foft.ANTINORMALIZETORANGE(
+              Foft.antiNormToRange(
                 t,
                 null
               ).should.equal(
-                Foft.ANTINORMALIZETORANGE(
+                Foft.antiNormToRange(
                   t,
-                  Foft.DEFAULT_RANGE
+                  Foft.sweep
                 )
               )
               let normarr = [0, 100]
-              Foft.ANTINORMALIZETORANGE(
+              Foft.antiNormToRange(
                 t,
                 null,
                 normarr
               ).should.equal(
-                Foft.ANTINORMALIZETORANGE(
+                Foft.antiNormToRange(
                   t,
-                  Foft.DEFAULT_RANGE,
+                  Foft.sweep,
                   normarr
                 )
               )
@@ -633,45 +633,45 @@ function domaintest (Foft) {
               let normarr = [0, 100]
               let normt = 0.35
               // let testval = normt * dTestRangeArr() + testRangeArr[0]
-              Foft.ANTINORMALIZETORANGE(normt, testRangeArr, normarr).should.equal(65)
+              Foft.antiNormToRange(normt, testRangeArr, normarr).should.equal(65)
             })
           })
         })
-        describe('Foft.MATHTYPEOF', () => {
+        describe('Foft.mathTypeOf', () => {
           it('should recognize number-like types', function () {
-            Foft.MATHTYPEOF(3).should.equal(Foft.MATHTYPES.numberlike)
-            Foft.MATHTYPEOF(Infinity).should.equal(Foft.MATHTYPES.numberlike)
-            Foft.MATHTYPEOF(NaN).should.equal(Foft.MATHTYPES.numberlike)
+            Foft.mathTypeOf(3).should.equal(Foft.mathTypes.numberlike)
+            Foft.mathTypeOf(Infinity).should.equal(Foft.mathTypes.numberlike)
+            Foft.mathTypeOf(NaN).should.equal(Foft.mathTypes.numberlike)
           })
           it('should recognize array-like types', function () {
-            Foft.MATHTYPEOF([9]).should.equal(Foft.MATHTYPES.arraylike)
-            Foft.MATHTYPEOF([]).should.equal(Foft.MATHTYPES.arraylike)
-            // Foft.MATHTYPEOF().should.equal(Foft.MATHTYPES.arraylike);
+            Foft.mathTypeOf([9]).should.equal(Foft.mathTypes.arraylike)
+            Foft.mathTypeOf([]).should.equal(Foft.mathTypes.arraylike)
+            // Foft.mathTypeOf().should.equal(Foft.mathTypes.arraylike);
           })
           it('should return null for unrecognized types', function () {
-            expect(Foft.MATHTYPEOF('3')).to.be.null()
-            expect(Foft.MATHTYPEOF({ Infinity })).to.be.null()
-            expect(Foft.MATHTYPEOF((a) => a)).to.be.null()
+            expect(Foft.mathTypeOf('3')).to.be.null()
+            expect(Foft.mathTypeOf({ Infinity })).to.be.null()
+            expect(Foft.mathTypeOf((a) => a)).to.be.null()
           })
         })
-        describe('Foft.ISARRAYLIKE', () => {
+        describe('Foft.isArrayLike', () => {
           it('should return true for Array types', function () {
-            Foft.ISARRAYLIKE([9]).should.be.true()
-            Foft.ISARRAYLIKE([]).should.be.true()
-            Foft.ISARRAYLIKE([[1, 1], [3, 3]]).should.be.true()
+            Foft.isArrayLike([9]).should.be.true()
+            Foft.isArrayLike([]).should.be.true()
+            Foft.isArrayLike([[1, 1], [3, 3]]).should.be.true()
           })
           it('should return true for Array types', function () {
-            Foft.ISARRAYLIKE(new Float32Array([1, 1, 1, 33, 53])).should.be.true()
-            Foft.ISARRAYLIKE(new Int8Array()).should.be.true()
-            // Foft.ISARRAYLIKE([[1,1],[3,3]]).should.be.true();
+            Foft.isArrayLike(new Float32Array([1, 1, 1, 33, 53])).should.be.true()
+            Foft.isArrayLike(new Int8Array()).should.be.true()
+            // Foft.isArrayLike([[1,1],[3,3]]).should.be.true();
           })
           it('should return false for non-Array-like types', function () {
-            Foft.ISARRAYLIKE('3').should.be.false()
-            Foft.ISARRAYLIKE({ Infinity }).should.be.false()
-            Foft.ISARRAYLIKE((a) => a).should.be.false()
+            Foft.isArrayLike('3').should.be.false()
+            Foft.isArrayLike({ Infinity }).should.be.false()
+            Foft.isArrayLike((a) => a).should.be.false()
           })
         })
-        describe('Foft.IINRANGE', () => {
+        describe('Foft.iInRange', () => {
           let outofboundsA, outofboundsB, testRangeArr, dTestRangeArr, d
           describe('for any number t, array TT and number d', function () {
             beforeEach(function () {
@@ -684,92 +684,92 @@ function domaintest (Foft) {
               ]
             })
             it('should when given parameter t correctly calculate the integer corresponding to the position of t in TT times the given d ', function () {
-              Foft.IINRANGE(testRangeArr[0], testRangeArr, d).should.equal(0)
-              Foft.IINRANGE(testRangeArr[1], testRangeArr, d).should.equal(d)
-              Foft.IINRANGE(0.5, [0, 1], 10).should.equal(5)
-              Foft.IINRANGE(0.11, [0, 1], 200).should.equal(22)
-              Foft.IINRANGE(30, [0, 200], 10).should.equal(1)
-              Foft.IINRANGE(0.5, [0, 1], 50).should.equal(25)
+              Foft.iInRange(testRangeArr[0], testRangeArr, d).should.equal(0)
+              Foft.iInRange(testRangeArr[1], testRangeArr, d).should.equal(d)
+              Foft.iInRange(0.5, [0, 1], 10).should.equal(5)
+              Foft.iInRange(0.11, [0, 1], 200).should.equal(22)
+              Foft.iInRange(30, [0, 200], 10).should.equal(1)
+              Foft.iInRange(0.5, [0, 1], 50).should.equal(25)
             })
-            it('should when given parameter t, array parameter TT and no d return the result as if d=Foft.DEFAULT_SEGMENT_DIVISOR', function () {
-              Foft.IINRANGE(
+            it('should when given parameter t, array parameter TT and no d return the result as if d=Foft.divisor', function () {
+              Foft.iInRange(
                 0.1421,
                 [0, 1],
                 null
               ).should.equal(
-                Foft.IINRANGE(
+                Foft.iInRange(
                   0.1421,
                   [0, 1],
-                  Foft.DEFAULT_SEGMENT_DIVISOR
+                  Foft.divisor
                 )
               )
-              Foft.IINRANGE(
+              Foft.iInRange(
                 testRangeArr[0],
                 testRangeArr,
                 null
               ).should.equal(
-                Foft.IINRANGE(
+                Foft.iInRange(
                   testRangeArr[0],
                   testRangeArr,
-                  Foft.DEFAULT_SEGMENT_DIVISOR
+                  Foft.divisor
                 )
               )
-              Foft.IINRANGE(
+              Foft.iInRange(
                 testRangeArr[1],
                 testRangeArr,
                 null
               ).should.equal(
-                Foft.IINRANGE(
+                Foft.iInRange(
                   testRangeArr[1],
                   testRangeArr,
-                  Foft.DEFAULT_SEGMENT_DIVISOR
+                  Foft.divisor
                 )
               )
             })
             it('should when given parameter t correctly calculate the corresponding normalized value, returning null for out-of-bounds t', function () {
-              should.not.exist(Foft.IINRANGE(outofboundsA, testRangeArr, d))
-              should.not.exist(Foft.IINRANGE(outofboundsB, testRangeArr, d))
+              should.not.exist(Foft.iInRange(outofboundsA, testRangeArr, d))
+              should.not.exist(Foft.iInRange(outofboundsB, testRangeArr, d))
             })
           })
         })
 
-        describe('Foft.TTHIS_TEMPLATE', function () {
+        describe('Foft.tThis', function () {
           it('when called without a valid t or foft method, return an array of keys', function () {
-            let res = Foft.TTHIS_TEMPLATE()
+            let res = Foft.tThis()
             res.should.be.an('array')
           })
-          it('when called with a first parameter that satisfies Foft.ISNUMBER and a second parameter that is a Foft instance, return an object whose members correspond to the Foft\'s computed values for t or own members', function () {
+          it('when called with a first parameter that satisfies Foft.isNum and a second parameter that is a Foft instance, return an object whose members correspond to the Foft\'s computed values for t or own members', function () {
             let testObj = new Foft({
               terms: [t => 3 + t * 2],
               range: [0, 100]
             })
             let testt = 2
-            let res = Foft.TTHIS_TEMPLATE(testt, testObj)
+            let res = Foft.tThis(testt, testObj)
             res.should.be.an('object')
-            for (var fkey of Foft.FUNCKEYS) {
+            for (var fkey of Foft.funcKeys) {
               res[fkey].should.equal(testObj[fkey](testt))
             }
-            for (var mkey of Foft.MEMBERKEYS) {
+            for (var mkey of Foft.membKeys) {
               res[mkey].should.equal(testObj[mkey])
             }
           })
         })
 
-        describe('Foft.OPDICT', function () {
-          // console.log(Foft.OPDICT)
-          Foft.OPDICT.forEach((key) => {
-            it(`contains ${key} in Foft.OPS`, function () {
+        describe('Foft.opDict', function () {
+          // console.log(Foft.opDict)
+          Foft.opDict.forEach((key) => {
+            it(`contains ${key} in Foft.ops`, function () {
               if (key) { // key can be null
-                Foft.OPS.should.have.own.property(key)
+                Foft.ops.should.have.own.property(key)
               }
             })
           })
         })
-        describe('Math.OPPARSE', function () {
-          Foft.OPDICT.forEach((key) => {
-            it(`returns function for ${key} in Foft.OPS`, function () {
+        describe('Math.opParse', function () {
+          Foft.opDict.forEach((key) => {
+            it(`returns function for ${key} in Foft.ops`, function () {
               if (key) { // key can be null
-                Foft.OPPARSE(key).should.be.a('function')
+                Foft.opParse(key).should.be.a('function')
               }
             })
           })
@@ -780,12 +780,12 @@ function domaintest (Foft) {
               badcode = String.fromCharCode(
                 Math.floor(255 * Math.random()))
             }
-            while (Foft.OPDICT.includes(badcode)) {
+            while (Foft.opDict.includes(badcode)) {
               resetbadcode()
             }
-            it(`returns no-op passthrough function for random code ${badcode} not in Foft.OPDICT`, function () {
+            it(`returns no-op passthrough function for random code ${badcode} not in Foft.opDict`, function () {
               let testargs = [Math.random(), Math.random()]
-              let testTarget = Foft.OPPARSE(badcode)
+              let testTarget = Foft.opParse(badcode)
               testTarget.should.be.a('function')
               let testResult = testTarget(...testargs)
               testResult.should.be.an('Array')
@@ -793,11 +793,11 @@ function domaintest (Foft) {
             })
           })
         })
-        describe('Foft.ISOP', function () {
-          let goodtestcodes = Array.from(Foft.OPDICT)
+        describe('Foft.isOp', function () {
+          let goodtestcodes = Array.from(Foft.opDict)
           goodtestcodes.map((code) => {
-            it(`returns true when given Foft.OPDICT code ${code}`, function () {
-              Foft.ISOP(code).should.be.true()
+            it(`returns true when given Foft.opDict code ${code}`, function () {
+              Foft.isOp(code).should.be.true()
             })
           })
           let numbadcodes = 10; let badtestcodes = []
@@ -808,27 +808,27 @@ function domaintest (Foft) {
                 Math.floor(255 * Math.random()))
             }
             resetbadcode()
-            while (Foft.OPDICT.includes(badcode)) {
+            while (Foft.opDict.includes(badcode)) {
               resetbadcode()
             }
             badtestcodes[n] = badcode
           }
           // console.info(badtestcodes.length)
           badtestcodes.forEach((code) => {
-            it(`returns false when given random code ${code} not in Foft.OPDICT`, function () {
-              Foft.ISOP(code).should.be.false()
+            it(`returns false when given random code ${code} not in Foft.opDict`, function () {
+              Foft.isOp(code).should.be.false()
             })
           })
         })
-        describe('Foft.OPS', function () {
-          let opskeys = Foft.OPDICT
+        describe('Foft.ops', function () {
+          let opskeys = Foft.opDict
           // console.log(testTarget)
           let opfunckey = 'opfunc'
           describe(`contains property ${opfunckey}`, function () {
-            let testTarget = Foft.OPS[opfunckey]
-            it(`which is a non-enumerable function that takes one string argument in Foft.OPDICT and one function and returns a function`, function () {
-              Object.keys(Foft.OPS).includes(opfunckey).should.be.false()
-              should.exist(Foft.OPS[opfunckey])
+            let testTarget = Foft.ops[opfunckey]
+            it(`which is a non-enumerable function that takes one string argument in Foft.opDict and one function and returns a function`, function () {
+              Object.keys(Foft.ops).includes(opfunckey).should.be.false()
+              should.exist(Foft.ops[opfunckey])
               testTarget.should.be.a('function')
               testTarget.length.should.equal(2)
               let badfunc = () => {
@@ -843,7 +843,7 @@ function domaintest (Foft) {
                   Math.floor(255 * Math.random()))
               }
               resetbadcode()
-              while (Foft.OPDICT.includes(badcode)) {
+              while (Foft.opDict.includes(badcode)) {
                 resetbadcode()
               }
               badfunc = () => testTarget(badcode)
@@ -855,10 +855,10 @@ function domaintest (Foft) {
           })
           let resfunckey = 'resfunc'
           describe(`contains property ${resfunckey}`, function () {
-            let testTarget = Foft.OPS[resfunckey]
+            let testTarget = Foft.ops[resfunckey]
             it(`which is a non-enumerable function that takes 4 arguments`, function () {
-              Object.keys(Foft.OPS).includes(resfunckey).should.be.false()
-              should.exist(Foft.OPS[resfunckey])
+              Object.keys(Foft.ops).includes(resfunckey).should.be.false()
+              should.exist(Foft.ops[resfunckey])
               testTarget.should.be.a('function')
               testTarget.length.should.equal(4)
             })
@@ -871,7 +871,7 @@ function domaintest (Foft) {
                   Math.floor(255 * Math.random()))
               }
               resetbadcode()
-              while (Foft.OPDICT.includes(badcode)) {
+              while (Foft.opDict.includes(badcode)) {
                 resetbadcode()
               }
               badfunc = () => testTarget(badcode, () => 22, 1, [0, 2, 4])
@@ -887,7 +887,7 @@ function domaintest (Foft) {
             })
           })
           opskeys.forEach((key) => {
-            let testTarget = Foft.OPS[key]
+            let testTarget = Foft.ops[key]
             // console.log(testTarget)
             describe(`contains property ${key}`, function () {
               it(`which is a function that`, function () {
@@ -913,14 +913,14 @@ function domaintest (Foft) {
                   testTarget['desc'].should.be.a('string')
                 })
               }
-              let base = Foft.OPS[key].base
+              let base = Foft.ops[key].base
               switch (key) {
                 case null:
                   it(`should perform null operation on its operands, returning them unchanged in array format`, function () {
-                    let testResult = Foft.OPS[key](1, 2, 3, 4)
+                    let testResult = Foft.ops[key](1, 2, 3, 4)
                     testResult.should.be.an('array')
                     testResult.should.deep.equal([1, 2, 3, 4])
-                    testResult = Foft.OPS[key](1, 2, 3, NaN)
+                    testResult = Foft.ops[key](1, 2, 3, NaN)
                     testResult.should.be.an('array')
                     testResult[0].should.equal(1)
                     testResult[1].should.equal(2)
@@ -931,121 +931,121 @@ function domaintest (Foft) {
                   break
                 case '+':
                   it(`should perform summation on its number operands, substituting ${base} for null operands, and return single operands as-is`, function () {
-                    Foft.OPS[key](5).should.equal(5)
-                    Foft.OPS[key](1, 2, 3, 4).should.equal(1 + 2 + 3 + 4)
-                    Foft.OPS[key](1, null, 3, 4).should.equal(1 + base + 3 + 4)
-                    Foft.OPS[key](1, Infinity, 3, 4).should.equal(Infinity)
-                    Number.isNaN(Foft.OPS[key](1, 2, 3, NaN)).should.be.true()
+                    Foft.ops[key](5).should.equal(5)
+                    Foft.ops[key](1, 2, 3, 4).should.equal(1 + 2 + 3 + 4)
+                    Foft.ops[key](1, null, 3, 4).should.equal(1 + base + 3 + 4)
+                    Foft.ops[key](1, Infinity, 3, 4).should.equal(Infinity)
+                    Number.isNaN(Foft.ops[key](1, 2, 3, NaN)).should.be.true()
                   })
                   it('should return NaN when given any non-number, non-null args', () => {
-                    Number.isNaN(Foft.OPS[key](1, 2, 3, 'NaN')).should.be.true()
+                    Number.isNaN(Foft.ops[key](1, 2, 3, 'NaN')).should.be.true()
                   })
                   break
                 case '-':
                   it(`should perform subtraction on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
-                    Foft.OPS[key](511).should.equal(511)
-                    Foft.OPS[key](1, 2, 3, 4).should.equal(1 - 2 - 3 - 4)
-                    Foft.OPS[key](1, null, 3, 4).should.equal(1 - base - 3 - 4)
-                    Foft.OPS[key](1, Infinity, 3, 4).should.equal(-Infinity)
-                    Number.isNaN(Foft.OPS[key](1, 2, 3, NaN)).should.be.true()
+                    Foft.ops[key](511).should.equal(511)
+                    Foft.ops[key](1, 2, 3, 4).should.equal(1 - 2 - 3 - 4)
+                    Foft.ops[key](1, null, 3, 4).should.equal(1 - base - 3 - 4)
+                    Foft.ops[key](1, Infinity, 3, 4).should.equal(-Infinity)
+                    Number.isNaN(Foft.ops[key](1, 2, 3, NaN)).should.be.true()
                   })
                   it('should return NaN when given any non-number, non-null args', () => {
-                    Number.isNaN(Foft.OPS[key](1, 2, 3, 'NaN')).should.be.true()
+                    Number.isNaN(Foft.ops[key](1, 2, 3, 'NaN')).should.be.true()
                   })
                   break
                 case '*':
                   it(`should perform multiplication on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
-                    Foft.OPS[key](5).should.equal(5)
-                    Foft.OPS[key](1, 2, 3, 4).should.equal(1 * 2 * 3 * 4)
-                    Foft.OPS[key](1, null, 3, 4).should.equal(1 * base * 3 * 4)
-                    Foft.OPS[key](1, Infinity, 3, 4).should.equal(Infinity)
-                    Number.isNaN(Foft.OPS[key](1, 2, 3, NaN)).should.be.true()
+                    Foft.ops[key](5).should.equal(5)
+                    Foft.ops[key](1, 2, 3, 4).should.equal(1 * 2 * 3 * 4)
+                    Foft.ops[key](1, null, 3, 4).should.equal(1 * base * 3 * 4)
+                    Foft.ops[key](1, Infinity, 3, 4).should.equal(Infinity)
+                    Number.isNaN(Foft.ops[key](1, 2, 3, NaN)).should.be.true()
                   })
                   break
                 case '/':
                   it(`should perform division on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
-                    Foft.OPS[key](5).should.equal(5)
-                    Foft.OPS[key](1, 2, 3, 4).should.equal(1 / 2 / 3 / 4); Foft.OPS[key](1, null, 3, 4).should.equal(1 / base / 3 / 4)
-                    Number.isNaN(Foft.OPS[key](1, 2, 3, NaN)).should.be.true()
+                    Foft.ops[key](5).should.equal(5)
+                    Foft.ops[key](1, 2, 3, 4).should.equal(1 / 2 / 3 / 4); Foft.ops[key](1, null, 3, 4).should.equal(1 / base / 3 / 4)
+                    Number.isNaN(Foft.ops[key](1, 2, 3, NaN)).should.be.true()
                   })
                   it('should return NaN when given any non-number, non-null args', () => {
-                    Number.isNaN(Foft.OPS[key](1, 2, 3, 'NaN')).should.be.true()
+                    Number.isNaN(Foft.ops[key](1, 2, 3, 'NaN')).should.be.true()
                   })
                   break
                 case '**':
                   it(`should perform exponentiation on its number operands, substituting ${base} for null operands and return single operands as-is`, function () {
-                    Foft.OPS[key](4).should.equal(4)
-                    Foft.OPS[key](1, 2, 3, 4).should.equal(1 ** 2 ** 3 ** 4)
-                    Foft.OPS[key](1, null, 3, 4).should.equal(1 ** base ** 3 ** 4)
-                    Foft.OPS[key](Infinity, 3, 4).should.equal(Infinity)
-                    Number.isNaN(Foft.OPS[key](1, 2, 3, NaN)).should.be.true()
+                    Foft.ops[key](4).should.equal(4)
+                    Foft.ops[key](1, 2, 3, 4).should.equal(1 ** 2 ** 3 ** 4)
+                    Foft.ops[key](1, null, 3, 4).should.equal(1 ** base ** 3 ** 4)
+                    Foft.ops[key](Infinity, 3, 4).should.equal(Infinity)
+                    Number.isNaN(Foft.ops[key](1, 2, 3, NaN)).should.be.true()
                   })
                   it('should return NaN when given any non-number, non-null args', () => {
-                    Number.isNaN(Foft.OPS[key](1, 2, 3, 'NaN')).should.be.true()
+                    Number.isNaN(Foft.ops[key](1, 2, 3, 'NaN')).should.be.true()
                   })
                   break
                 case '...':
                   // it('should return a promise', function () {
                   //   let testArr = [1, 2, 3, 4]
-                  //   return Foft.OPS[key](testArr).should.be.a('promise')
+                  //   return Foft.ops[key](testArr).should.be.a('promise')
                   // })
                   // it('should resolve returning an already flat array as-is', function () {
                   //   let testArr = [1, 2, 3, 4]
-                  //   return Foft.OPS[key](testArr).should.eventually.deep.equal(testArr)
+                  //   return Foft.ops[key](testArr).should.eventually.deep.equal(testArr)
                   // })
                   // it(`should resolve returning 2-d nested arrays in a 1-d form with same elements`, () => {
                   //   let testArr = [[1, 2, 3, 4],[1, 2, 3, 4]]
                   //   let ansArr = [1, 2, 3, 4, 1, 2, 3, 4]
-                  //   return Foft.OPS[key](testArr).should.eventually.deep.equal(ansArr)
+                  //   return Foft.ops[key](testArr).should.eventually.deep.equal(ansArr)
                   //
                   // })
                   it('should return a non-arraylike as-is', function () {
                     let testArr = 1
-                    Foft.OPS[key](testArr).should.deep.equal(testArr)
+                    Foft.ops[key](testArr).should.deep.equal(testArr)
                   })
                   it('should  return an already flat array as-is', function () {
                     let testArr = [1, 2, 3, 4]
-                    Foft.OPS[key](testArr).should.deep.equal(testArr)
+                    Foft.ops[key](testArr).should.deep.equal(testArr)
                   })
                   it(`should return 2-d nested arrays in a 1-d form with same elements  and ordering`, () => {
                     let testArr = [[1, 2, 3, 4], [1, 2, 3, 4]]
                     let ansArr = [1, 2, 3, 4, 1, 2, 3, 4]
-                    Foft.OPS[key](testArr).should.deep.equal(ansArr)
+                    Foft.ops[key](testArr).should.deep.equal(ansArr)
                   })
                   it(`should return 3-d nested arrays in a 1-d form with same elements and ordering`, () => {
                     let testArr = [[1, 2, [3, 4]], [1, 2, 3, 4]]
                     let ansArr = [1, 2, 3, 4, 1, 2, 3, 4]
-                    Foft.OPS[key](testArr).should.deep.equal(ansArr)
+                    Foft.ops[key](testArr).should.deep.equal(ansArr)
                   })
                   break
                 case 'magest':
                   it('should identify the greatest magnitude in the given calculable operands', function () {
-                    Foft.OPS[key](1, 2, 3, 4).should.equal(4)
-                    Foft.OPS[key](-100, 2, 3, 10).should.equal(100)
-                    Foft.OPS[key](-10, 2, 3, 10).should.equal(10)
+                    Foft.ops[key](1, 2, 3, 4).should.equal(4)
+                    Foft.ops[key](-100, 2, 3, 10).should.equal(100)
+                    Foft.ops[key](-10, 2, 3, 10).should.equal(10)
                   })
                   it('should identify the arraylike with greatest magest in the given arraylike operands', function () {
-                    Foft.OPS[key]([1, 2], [3, 4]).should.deep.equal([3, 4])
-                    Foft.OPS[key]([-100, 2], [3, 10]).should.deep.equal([-100, 2])
-                    Foft.OPS[key]([-10], [2, 3], [10]).should.deep.equal([-10])
+                    Foft.ops[key]([1, 2], [3, 4]).should.deep.equal([3, 4])
+                    Foft.ops[key]([-100, 2], [3, 10]).should.deep.equal([-100, 2])
+                    Foft.ops[key]([-10], [2, 3], [10]).should.deep.equal([-10])
                   })
                   it(`should return NaN when given operands aren't calculables or arraylikes`, () => {
-                    Number.isNaN(Foft.OPS[key](NaN, Infinity, NaN)).should.be.true()
+                    Number.isNaN(Foft.ops[key](NaN, Infinity, NaN)).should.be.true()
                   })
                   break
                 case 'magesti':
                   it('should identify the index of the greatest magnitude in the given calculable operands', function () {
-                    Foft.OPS[key](1, 2, 3, 4).should.equal(3)
-                    Foft.OPS[key](-100, 2, 3, 10).should.equal(0)
-                    Foft.OPS[key](-10, 2, 3, 10).should.equal(0)
+                    Foft.ops[key](1, 2, 3, 4).should.equal(3)
+                    Foft.ops[key](-100, 2, 3, 10).should.equal(0)
+                    Foft.ops[key](-10, 2, 3, 10).should.equal(0)
                   })
                   it('should identify the index of the arraylike with greatest magest in the given arraylike operands', function () {
-                    Foft.OPS[key]([1, 2], [3, 4]).should.equal(1)
-                    Foft.OPS[key]([-100, 2], [3, 10]).should.equal(0)
-                    Foft.OPS[key]([-10], [2, 3], [10]).should.equal(0)
+                    Foft.ops[key]([1, 2], [3, 4]).should.equal(1)
+                    Foft.ops[key]([-100, 2], [3, 10]).should.equal(0)
+                    Foft.ops[key]([-10], [2, 3], [10]).should.equal(0)
                   })
                   it(`should return -1 when given operands aren't calculables or arraylikes`, () => {
-                    Foft.OPS[key](NaN, Infinity, NaN).should.equal(-1)
+                    Foft.ops[key](NaN, Infinity, NaN).should.equal(-1)
                   })
                   break
                 default:
@@ -1301,14 +1301,14 @@ function domaintest (Foft) {
         testObj.should.be.instanceof(Foft)
       })
       describe('should start with default instance members', function () {
-        it(`range (Array) Foft.DEFAULT_RANGE ${Foft.DEFAULT_RANGE}: `, function () {
+        it(`range (Array) Foft.sweep ${Foft.sweep}: `, function () {
           testObj.range.should.be.an('array')
           testObj.range.should.have.lengthOf(2)
-          testObj.range.should.deep.equal(Foft.DEFAULT_RANGE)
+          testObj.range.should.deep.equal(Foft.sweep)
         })
-        it(`segmentDivisor (number): Foft.DEFAULT_SEGMENT_DIVISOR ${Foft.DEFAULT_SEGMENT_DIVISOR}`, function () {
+        it(`segmentDivisor (number): Foft.divisor ${Foft.divisor}`, function () {
           testObj.segmentDivisor.should.be.a('number')
-          testObj.segmentDivisor.should.equal(Foft.DEFAULT_SEGMENT_DIVISOR)
+          testObj.segmentDivisor.should.equal(Foft.divisor)
         })
         it('terms (Array): [ x => x ]', function () {
           testObj.terms.should.be.an('array')
@@ -1330,14 +1330,14 @@ function domaintest (Foft) {
         testObj.should.be.instanceof(Foft)
       })
       describe('should start with range set to given Array', function () {
-        it(`range (Array) Foft.DEFAULT_RANGE ${Foft.DEFAULT_RANGE}`, function () {
+        it(`range (Array) Foft.sweep ${Foft.sweep}`, function () {
           testObj.range.should.be.an('array')
           testObj.range.should.have.lengthOf(2)
-          testObj.range.should.deep.equal(Foft.DEFAULT_RANGE)
+          testObj.range.should.deep.equal(Foft.sweep)
         })
-        it(`segmentDivisor (number): Foft.DEFAULT_SEGMENT_DIVISOR ${Foft.DEFAULT_SEGMENT_DIVISOR}`, function () {
+        it(`segmentDivisor (number): Foft.divisor ${Foft.divisor}`, function () {
           testObj.segmentDivisor.should.be.a('number')
-          testObj.segmentDivisor.should.equal(Foft.DEFAULT_SEGMENT_DIVISOR)
+          testObj.segmentDivisor.should.equal(Foft.divisor)
         })
         it('terms (Array): [function]', function () {
           testObj.terms.should.be.an('array')
@@ -1360,9 +1360,9 @@ function domaintest (Foft) {
           testObj.range.should.have.lengthOf(2)
           testObj.range.should.deep.equal(testRangeArr)
         })
-        it(`segmentDivisor (number): Foft.DEFAULT_SEGMENT_DIVISOR ${Foft.DEFAULT_SEGMENT_DIVISOR}`, function () {
+        it(`segmentDivisor (number): Foft.divisor ${Foft.divisor}`, function () {
           testObj.segmentDivisor.should.be.a('number')
-          testObj.segmentDivisor.should.equal(Foft.DEFAULT_SEGMENT_DIVISOR)
+          testObj.segmentDivisor.should.equal(Foft.divisor)
         })
         // it('terms (Array): [ x => x ]', function(){
         //   testObj.terms.should.be.an('array');
@@ -1698,10 +1698,10 @@ function domaintest (Foft) {
               testObj = new Foft(testRangeArr)
             })
             it('should when given parameter t correctly calculate the corresponding normalized value', function () {
-              testObj.normalizeT(testRangeArr[0]).should.equal(Foft.DEFAULT_RANGE[0])
-              testObj.normalizeT(testRangeArr[1]).should.equal(Foft.DEFAULT_RANGE[1])
+              testObj.normalizeT(testRangeArr[0]).should.equal(Foft.sweep[0])
+              testObj.normalizeT(testRangeArr[1]).should.equal(Foft.sweep[1])
               let midVal = testRangeArr[0] + (testRangeArr[1] - testRangeArr[0]) / 2
-              let midRangeVal = Foft.DEFAULT_RANGE[0] + (Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0]) / 2
+              let midRangeVal = Foft.sweep[0] + (Foft.sweep[1] - Foft.sweep[0]) / 2
               testObj.normalizeT(midVal).should.almost.equal(midRangeVal)
             })
             it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function () {
@@ -1775,11 +1775,11 @@ function domaintest (Foft) {
             testObj = new Foft(testRangeArr)
           })
           it('should when given parameter t correctly calculate the corresponding normalized value', function () {
-            testObj.antinormalizeT(testRangeArr[0]).should.equal(Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0])
+            testObj.antinormalizeT(testRangeArr[0]).should.equal(Foft.sweep[1] - Foft.sweep[0])
             testObj.antinormalizeT(testRangeArr[1]).should.equal(0)
             let midVal = testRangeArr[0] + (testRangeArr[1] - testRangeArr[0]) / 2
-            let midRangeVal = Foft.DEFAULT_RANGE[0] + (Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0]) / 2
-            testObj.antinormalizeT(midVal).should.almost.equal(Foft.DEFAULT_RANGE[1] - midRangeVal)
+            let midRangeVal = Foft.sweep[0] + (Foft.sweep[1] - Foft.sweep[0]) / 2
+            testObj.antinormalizeT(midVal).should.almost.equal(Foft.sweep[1] - midRangeVal)
           })
           it('should when given parameter t correctly calculate the corresponding normalized value, returning -/+ Infinity for out-of-bounds t', function () {
             testObj.antinormalizeT(outofboundsA).should.equal(Infinity)
@@ -1955,22 +1955,22 @@ function domaintest (Foft) {
           })
         })
         describe('when called on a Foft whose term is a non-anonymous Function object', () => {
-          it('should pass a this object to the Function that includes TTHIS_TEMPLATE object values', function () {
+          it('should pass a this object to the Function that includes tThis object values', function () {
             testObj = new Foft(function (t) {
               this.should.be.an('object')
-              let template = Foft.TTHIS_TEMPLATE()
+              let template = Foft.tThis()
               Object.keys(this).every(key => key in template).should.be.true()
             })
             return false
           })
         })
         describe('when called on a Foft whose term is another Foft', () => {
-          it('should pass a this object to the Function with an object member named tthis that includes TTHIS_TEMPLATE object values', function () {
+          it('should pass a this object to the Function with an object member named tthis that includes tThis object values', function () {
             testObj = new Foft(function (t) {
               this.should.be.an('object')
               should.exist(this.tthis)
               this.tthis.should.be.an('object')
-              let template = Foft.TTHIS_TEMPLATE()
+              let template = Foft.tThis()
               Object.keys(this.tthis).every(key => key in template).should.be.true()
             })
           })
@@ -1980,8 +1980,8 @@ function domaintest (Foft) {
           it('default to returning the value of the term for the instance t0 range bound', function () {
             testObj = new Foft((t) => [t * 2, t * 5])
             testObj.oft().should.deep.equal([
-              Foft.DEFAULT_RANGE[0] * 2,
-              Foft.DEFAULT_RANGE[0] * 5
+              Foft.sweep[0] * 2,
+              Foft.sweep[0] * 5
             ])
           })
         })
@@ -2129,8 +2129,8 @@ function domaintest (Foft) {
           Number.isNaN(testObj.oftNormal(NaN)).should.be.true()
         })
         it('should when called with a calculable t value that falls outside of the normalization range correctly calculate the corresponding value', function () {
-          let drange = Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0]
-          let toutofboundsA = Foft.DEFAULT_RANGE[0] - drange; let toutofboundsB = Foft.DEFAULT_RANGE[1] + drange
+          let drange = Foft.sweep[1] - Foft.sweep[0]
+          let toutofboundsA = Foft.sweep[0] - drange; let toutofboundsB = Foft.sweep[1] + drange
           testObj = new Foft({
             terms: [(t) => t + 1],
             range: 50
