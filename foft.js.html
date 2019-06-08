@@ -121,7 +121,7 @@ class Foft {
       params = {
         terms: thefunc
       }
-    } else if (Foft.ISARRAYLIKE(params)) {
+    } else if (Foft.isArrayLike(params)) {
       let thearray = params
       params = {
         range: thearray
@@ -133,7 +133,7 @@ class Foft {
     }
 
     // define the division of the evaluation range
-    const segmentDivisor = params.segmentDivisor || Foft.DEFAULT_SEGMENT_DIVISOR
+    const segmentDivisor = params.segmentDivisor || Foft.divisor
     this.segmentDivisor = segmentDivisor
 
     let rangeoverride = (typeof params.rangeoverride === 'boolean')
@@ -145,11 +145,11 @@ class Foft {
     // create an evaluation range
     let range = (rangeoverride)
       ? [0, this.segmentDivisor]
-      : params.range || Foft.DEFAULT_RANGE
-    range = Foft.ISCALCULABLE(range)
+      : params.range || Foft.sweep
+    range = Foft.isCalculable(range)
       ? [-range, range]
       : range
-    if (!Foft.ISARRAYLIKE(range)) throw new TypeError('range should be array')
+    if (!Foft.isArrayLike(range)) throw new TypeError('range should be array')
     // if(range.length!==2) throw new RangeError('range should have two elements')
     this.range = Array.from(range)
 
@@ -160,7 +160,7 @@ class Foft {
     terms = (typeof terms === 'function')
       ? [terms]
       : terms
-    if (!Foft.ISARRAYLIKE(terms) &amp;&amp; (typeof terms !== 'function') &amp;&amp; !(terms instanceof Foft)) {
+    if (!Foft.isArrayLike(terms) &amp;&amp; (typeof terms !== 'function') &amp;&amp; !(terms instanceof Foft)) {
       throw new TypeError('params.terms should be array, function or Foft instance')
     }
     for (let term of terms) {
@@ -230,10 +230,10 @@ class Foft {
    * @throws {TypeError} segmentDivisor should be calculable number
    */
   set segmentDivisor (segmentDivisor) {
-    segmentDivisor = Foft.ISARRAYLIKE(segmentDivisor)
+    segmentDivisor = Foft.isArrayLike(segmentDivisor)
       ? segmentDivisor[0]
       : segmentDivisor
-    if (!Foft.ISCALCULABLE(segmentDivisor)) {
+    if (!Foft.isCalculable(segmentDivisor)) {
       // console.log('NaN segment Divisor')
       throw new TypeError('segmentDivisor should be calculable number, not: ' + segmentDivisor)
     } else {
@@ -277,7 +277,7 @@ class Foft {
    * @param  {Array&lt;number>} range
    */
   set range (range) {
-    if (!(Foft.ISARRAYLIKE(range) &amp;&amp; Foft.ARECALCULABLES(range))) throw new TypeError('range values should be Array of calculable numbers')
+    if (!(Foft.isArrayLike(range) &amp;&amp; Foft.areCalculables(range))) throw new TypeError('range values should be Array of calculable numbers')
     this._range = Array(range.length)
 
     for (let rangeIndex in range) {
@@ -313,14 +313,14 @@ class Foft {
 
   /**
   * a Foft can have an opcode as defined in
-  * Foft.OPS. These codes represent mathematical operations
+  * Foft.ops. These codes represent mathematical operations
   * between Numbers and other types. They are useful for performing
   * said operations when the Function or Foft in the terms
   * Array
   *
-  * @see Foft.OPS
+  * @see Foft.ops
   * @see terms
-  * @return {string} @see Foft.OPS
+  * @return {string} @see Foft.ops
   */
   get opcode () {
     return this._opcode
@@ -328,12 +328,12 @@ class Foft {
 
   /**
   * set opcode - set the opcode to one of the opcodes
-  *  defined in Foft.OPS
+  *  defined in Foft.ops
   *
-  * @param  {string} [opcode=null] @see Foft.OPS
+  * @param  {string} [opcode=null] @see Foft.ops
   */
   set opcode (opcode) {
-    this._opcode = (Foft.ISOP(opcode))
+    this._opcode = (Foft.isOp(opcode))
       ? opcode
       : null
   }
@@ -351,19 +351,19 @@ class Foft {
    * @throws {TypeError} when given non-number parameter
    */
   dSubrange (n, nn) {
-    n = Foft.ISNUMBER(n)
+    n = Foft.isNum(n)
       ? n
       : 0
-    if (nn &amp;&amp; !Foft.ISNUMBER(nn)) {
+    if (nn &amp;&amp; !Foft.isNum(nn)) {
       throw new TypeError(`Foft.dSubRange only accepts Numbers, given ${[...arguments]}`)
     }
     n = n % this.range.length
     if (!Number.isInteger(n)) {
       throw new RangeError(`Foft.dSubRange only accepts Integers, given ${[...arguments]}`)
     }
-    // for this conditional, we use the explicit ISNUMBER to avoid logical
+    // for this conditional, we use the explicit isNum to avoid logical
     // error for zero case: if(0) is falsy
-    nn = Foft.ISNUMBER(nn)
+    nn = Foft.isNum(nn)
       ? nn % this.range.length
       : (n + 1) % this.range.length
     if (!Number.isInteger(nn)) {
@@ -402,7 +402,7 @@ class Foft {
       ? omitLast
       : false
     let defaultN = 0
-    n = Foft.ISNUMBER(n)
+    n = Foft.isNum(n)
       ? n % this.range.length
       : defaultN
     let a = this.range[n]
@@ -451,7 +451,7 @@ class Foft {
   }
 
   /**
-  * given a Number t, return a normalized (to Foft.DEFAULT_RANGE)
+  * given a Number t, return a normalized (to Foft.sweep)
   * representation of the ratio between t and the delta of the evaluation
   * range of this Foft
   *
@@ -461,8 +461,8 @@ class Foft {
   * then normalizeT checks in each subrange, e.g. [0,1], [1,2]
   * and returns an Array of normalized values corresponding to each range
   *
-  * @see NORMALIZETORANGE
-  * @see DEFAULT_RANGE
+  * @see normToRange
+  * @see sweep
   * @param  {Number} [t=0]
   * @param {boolean} [doAnti=false]
   * @return {Number|Array&lt;Number>}
@@ -472,8 +472,8 @@ class Foft {
       ? doAnti
       : false
     let func = (doAnti)
-      ? Foft.ANTINORMALIZETORANGE
-      : Foft.NORMALIZETORANGE
+      ? Foft.antiNormToRange
+      : Foft.normToRange
     let arr = Array(this.range.length - 1)
     for (let r = 0; r &lt; arr.length; r++) {
       arr[r] = func(t, [
@@ -512,7 +512,7 @@ class Foft {
    * If t falls out of bounds of the range, nothing is returned
    *
    * If the range has more than two elements, return an array of length range-1
-   * @see IINRANGE
+   * @see iInRange
    * @see segmentDivisor
    * @see normalizeT
    * @param  {Number} t
@@ -521,7 +521,7 @@ class Foft {
   i (t) {
     let arr = Array(this.range.length - 1)
     for (let r = 0; r &lt; arr.length; r++) {
-      arr[r] = Foft.IINRANGE(t, [
+      arr[r] = Foft.iInRange(t, [
         this.range[r],
         this.range[r + 1]
       ], this.segmentDivisor)
@@ -538,13 +538,13 @@ class Foft {
    * @return {boolean}
    */
   isInRange (t) {
-    return Foft.INRANGE(t, this.range)
+    return Foft.inRange(t, this.range)
   }
   /**
   * evaluate all of the terms held by this Mathoft for the
   * given t value.
   *
-  * When evaluating a Function or Foft term, the function or Foft is called with a this object containing certain useful data regarding the calling instance's evaluation of t @see TTHIS_TEMPLATE
+  * When evaluating a Function or Foft term, the function or Foft is called with a this object containing certain useful data regarding the calling instance's evaluation of t @see tThis
   *
   * When evaluating a Foft term, any t that falls outside that term's evaluation range will produce a null result. If the filterNulls parameter is true, then null values will be stripped from the returned result.
   * @see isInRange
@@ -555,7 +555,7 @@ class Foft {
   */
   oft (t, filterNulls, maketthis) {
     // console.log(this)
-    t = Foft.ISCALCULABLE(t)
+    t = Foft.isCalculable(t)
       ? t
       : this.t0
     filterNulls = (typeof filterNulls === 'boolean')
@@ -566,7 +566,7 @@ class Foft {
       : true
     // debugger;
     let tthis = (maketthis)
-      ? Foft.TTHIS_TEMPLATE(t, this)
+      ? Foft.tThis(t, this)
       : (typeof this.tthis === 'object')
         ? this.tthis
         : null
@@ -614,28 +614,28 @@ class Foft {
   }
 
   /**
-  * Accepts a Number tNormal that falls within Foft.DEFAULT_RANGE, inclusive, and when provided
+  * Accepts a Number tNormal that falls within Foft.sweep, inclusive, and when provided
   *  1 . A NaN value, return NaN
   *  2.  +Infinity, returns evaluation from end bound of range
   *  3.  -Infinity, returns evaluation from start bound of range
   *  4. Any other number even outside of normal range, returns value of that t.
   *
-  * @see ISCALCULABLE
+  * @see isCalculable
   * @see ofFirstt
   * @see ofLastt
-  * @see DEFAULT_RANGE
+  * @see sweep
   * @see oft
   * @param  {Number} [tNormal=[-1,1]]
   * @return {(Number|Array.&lt;Number>)}
   */
   oftNormal (tNormal) {
-    let dNormal = Foft.DEFAULT_RANGE[1] - Foft.DEFAULT_RANGE[0]
-    let midNormal = Foft.DEFAULT_RANGE[0] + dNormal / 2
-    tNormal = Foft.ISNUMBER(tNormal)
+    let dNormal = Foft.sweep[1] - Foft.sweep[0]
+    let midNormal = Foft.sweep[0] + dNormal / 2
+    tNormal = Foft.isNum(tNormal)
       ? tNormal
       : midNormal
     let t; let midt = (this.tt - this.t0) / 2 + this.t0
-    if (Foft.ISCALCULABLE(tNormal)) {
+    if (Foft.isCalculable(tNormal)) {
       t = midt + (tNormal - midNormal) * this.drange / 2
     }
     // debugger;
@@ -658,18 +658,18 @@ class Foft {
   * @see oft
   *
   * @param  {Number} t the t to evaluate
-  * @param  {string} [_op=this.opcode]  an opcode to perform @see Foft.OPS
-  * @param  {(Number|Array.&lt;Number>|Array.&lt;Array>)} [_acc=null] an accumulator value to start with @see Foft.OPS -> base
+  * @param  {string} [_op=this.opcode]  an opcode to perform @see Foft.ops
+  * @param  {(Number|Array.&lt;Number>|Array.&lt;Array>)} [_acc=null] an accumulator value to start with @see Foft.ops -> base
   * @return {(Number|Array.&lt;Number>|Array.&lt;Array>)}
   */
   oftOp (_t, _op, _acc) {
-    _op = (_op in Foft.OPS)
+    _op = (_op in Foft.ops)
       ? _op
       : this.opcode
-    const op = Foft.OPS[_op]
+    const op = Foft.ops[_op]
     // debugger;
     _acc = ((_acc || Number.isNaN(_acc)))
-      ? (Foft.ARENUMBERS(_acc))
+      ? (Foft.areNums(_acc))
         ? _acc
         : NaN
       : null // op.base
@@ -677,17 +677,17 @@ class Foft {
     const transform = (acc, val) => {
       let transformRes
       // console.log(acc,val);
-      switch (Foft.MATHTYPEOF(val)) {
-        case Foft.MATHTYPES.numberlike:
-          if (Foft.ISARRAYLIKE(acc)) {
+      switch (Foft.mathTypeOf(val)) {
+        case Foft.mathTypes.numberlike:
+          if (Foft.isArrayLike(acc)) {
             throw new TypeError('Can\'t apply an arraylike accumulator to a scalar.')
-          } else if (Foft.ISNUMBER(acc)) {
+          } else if (Foft.isNum(acc)) {
             transformRes = op(acc, val)
           }
           break
-        case Foft.MATHTYPES.arraylike:
-          let isNested = Foft.ISARRAYLIKE(val[0])
-          if (Foft.ISARRAYLIKE(acc)) {
+        case Foft.mathTypes.arraylike:
+          let isNested = Foft.isArrayLike(val[0])
+          if (Foft.isArrayLike(acc)) {
             if (acc.length !== val.length) {
               let areMismatched = (isNested)
                 ? acc.length !== val[0].length
@@ -703,7 +703,7 @@ class Foft {
                 val[i] = transform(acc[i], val[i]) // overwrite in place
               }
             }
-          } else if (Foft.ISNUMBER(acc)) {
+          } else if (Foft.isNum(acc)) {
             for (let i = 0; i &lt; val.length; i++) {
               val[i] = transform(acc, val[i]) // overwrite in place
             }
@@ -731,7 +731,7 @@ class Foft {
         break
       default:
         res = (_acc || Number.isNaN(_acc))
-          ? Foft.ISARRAYLIKE(_acc)
+          ? Foft.isArrayLike(_acc)
             ? transform(_acc, _oft)
             : _oft.reduce(transform, _acc)
           : _oft.reduce(transform)
@@ -844,15 +844,13 @@ class Foft {
   /**
    * give precision warning in the form of an object that can be converted to a primitive.
    *
-   * Floating point math has inherent imprecisions. This function is useful for quantifying them and identifying potentially problematic operations. It uses a few different tests to highlight sources of error, including:
-   *  1. a*\frac{1}{a} // Multiplicative Identity
-   *  2. \sum_{i=1}^{a} 1/a // Sum of Inverses
+   * Floating point math has inherent imprecisions. This function is for examining them.
    * @return {object}  the object with primitive values:
    *         {number}  the maximum value for which no precision is lost
    *         {string}  as brief message
    * @static
    */
-  static CALC_PRECISION_WARN (maxtestnum) {
+  static precision (maxtestnum) {
     let res
     let getmsg = (e) => `Maximum safe unit divisor: ${e}`
     let tests = [
@@ -862,7 +860,7 @@ class Foft {
     ]
     // only do so many tests
     let testnum = 0
-    const maxtest = Foft.ISCALCULABLE(maxtestnum)
+    const maxtest = Foft.isCalculable(maxtestnum)
       ? maxtestnum
       : 144
     // tests[0]
@@ -916,24 +914,24 @@ class Foft {
    * @return {boolean}
    * @static
    */
-  static ISNUMBER () {
+  static isNum () {
     return (arguments.length === 1) &amp;&amp; (typeof arguments[0] === 'number')
   }
 
   /**
    * return true IFF all of the following conditions are met
-   * 1. argument satisfies ISNUMBER (One Number argument)
+   * 1. argument satisfies isNum (One Number argument)
    * 2. argument is not NaN
    * 3. argument is not +/-Infinity
    *
    * This function does more calls than just using isFinite, however, it is used in the Foft class because the class also deals with arrays and objects.
    *
-   * @see ISNUMBER
+   * @see isNum
    *
    * @return {boolean}  description
    * @static
    */
-  static ISCALCULABLE () {
+  static isCalculable () {
     return (arguments.length === 1) &amp;&amp; Number.isFinite(arguments[0])
   }
 
@@ -949,12 +947,12 @@ class Foft {
    * @return {boolean}
    * @static
    */
-  static ISARRAYLIKE (x) {
+  static isArrayLike (x) {
     return x &amp;&amp; (Object.getOwnPropertySymbols(x).includes(Symbol.iterator) || Array.isArray(x) || ArrayBuffer.isView(x))
   }
 
   /**
-   * ARENUMBERS return true IFF one of these conditions are met
+   * areNums return true IFF one of these conditions are met
    *   1. The provided arguments are ALL of Number type,
    *   2. The sole provided argument is an Array whose members are ALL of Number type,
    *   3. Any provided argument is an Array whose members are
@@ -962,27 +960,27 @@ class Foft {
    *      B. nested Arrays whose submembers are all number types or Arrays
    *      and ALL other arguments are Number type or Array with ALL members of Number type,
    *
-   * @see ARECALCULABLES
+   * @see areCalculables
    *
    * @params {} [arguments] figure out whether the arguments are numbers or
    *  an Array thereof
    * @return {boolean}
    * @static
    */
-  static ARENUMBERS () {
+  static areNums () {
     if (arguments.length === 0) {
       return false
     } else {
       return [...arguments].every(v => {
-        return Foft.ISARRAYLIKE(v)
-          ? Foft.ARENUMBERS(...v)
-          : Foft.ISNUMBER(v)
+        return Foft.isArrayLike(v)
+          ? Foft.areNums(...v)
+          : Foft.isNum(v)
       })
     }
   };
 
   /**
-   * ARECALCULABLES return true IFF one of these conditions are met
+   * areCalculables return true IFF one of these conditions are met
    *   1. The provided arguments are ALL of Number type,
    *   2. The sole provided argument is an Array whose members are ALL of Number type,
    *   3. Any provided argument is an Array whose members are
@@ -991,21 +989,21 @@ class Foft {
    *   and ALL other arguments are Number type or Array with ALL members of Number type, and
    *   4. All arguments of number type are neither NaN nor -/+Infinity
    *
-   * @see ARENUMBERS
+   * @see areNums
    *
    * @params {} [arguments] figure out whether the arguments are numbers or
    *  an Array thereof
    * @return {boolean}
    * @static
    */
-  static ARECALCULABLES () {
+  static areCalculables () {
     if (arguments.length === 0) {
       return false
     } else {
       return [...arguments].every(v => {
-        return Foft.ISARRAYLIKE(v)
-          ? Foft.ARECALCULABLES(...v)
-          : Foft.ISCALCULABLE(v)
+        return Foft.isArrayLike(v)
+          ? Foft.areCalculables(...v)
+          : Foft.isCalculable(v)
       })
     }
   };
@@ -1013,7 +1011,7 @@ class Foft {
   /**
    * determine whether a given number n falls
    * within any of the follwoing inclusive ranges
-   *    0. [ Foft.DEFAULT_RANGE[0], Foft.DEFAULT_RANGE[1] ]
+   *    0. [ Foft.sweep[0], Foft.sweep[1] ]
    *    1. [0, m],
    *    2. [0, m[0]], (when provided unit-length array)
    *    3. [m[0], m[m.length-1]]
@@ -1027,7 +1025,7 @@ class Foft {
    * @return {boolean}
    * @static
    */
-  static INRANGE (n, m, mm) {
+  static inRange (n, m, mm) {
     let test = (a, b, c) => {
       // console.log(a,b,c)
       return (a > b)
@@ -1036,20 +1034,20 @@ class Foft {
           ? a >= c
           : true // a === b
     }
-    if (!(Foft.ARENUMBERS(...arguments) &amp;&amp; Foft.ISNUMBER(n))) {
+    if (!(Foft.areNums(...arguments) &amp;&amp; Foft.isNum(n))) {
       return false
     } else {
       if (arguments.length === 1) {
-        return Foft.INRANGE(n, Foft.DEFAULT_RANGE)
-      } else if (Foft.ISARRAYLIKE(m)) {
+        return Foft.inRange(n, Foft.sweep)
+      } else if (Foft.isArrayLike(m)) {
         // console.log(n,m)
         return (m.length === 1)
           ? test(n, 0, m[0])
           : test(n, m[0], m[m.length - 1])
-      } else if (Foft.ISNUMBER(m)) {
-        if (!Foft.ISNUMBER(mm)) {
+      } else if (Foft.isNum(m)) {
+        if (!Foft.isNum(mm)) {
           return test(n, 0, m)
-        } else if (Foft.ISNUMBER(mm)) {
+        } else if (Foft.isNum(mm)) {
           return test(n, m, mm)
         }
       }
@@ -1057,7 +1055,7 @@ class Foft {
   }
 
   /**
-   * given a Number t, amd a ramge TT, return a normalized (to an optional range NN or Foft.DEFAULT_RANGE)
+   * given a Number t, amd a ramge TT, return a normalized (to an optional range NN or Foft.sweep)
    * representation of the ratio between the two deltas A and B where
    *   1. A is the difference betewen t and TT[first]
    *   2. B is the difference between TT[last] and TT[first]
@@ -1070,19 +1068,19 @@ class Foft {
    *
    *
    * @param  {number} [t=0] the t to evaluate
-   * @param  {Array&lt;number>} [TT=DEFAULT_RANGE] the range in which to test for TT
-   * @param  {Array&lt;number>} [NN=DEFAULT_RANGE] the target normalization range * @return {number}
+   * @param  {Array&lt;number>} [TT=sweep] the range in which to test for TT
+   * @param  {Array&lt;number>} [NN=sweep] the target normalization range * @return {number}
    * @static
    */
-  static NORMALIZETORANGE (t, TT, NN) {
-    if (!Foft.ISNUMBER(t)) {
+  static normToRange (t, TT, NN) {
+    if (!Foft.isNum(t)) {
       t = 0
     }
-    if (!Foft.ARENUMBERS(NN)) {
-      NN = Foft.DEFAULT_RANGE
+    if (!Foft.areNums(NN)) {
+      NN = Foft.sweep
     }
-    if (!Foft.ARENUMBERS(TT)) {
-      TT = Foft.DEFAULT_RANGE
+    if (!Foft.areNums(TT)) {
+      TT = Foft.sweep
     }
     let [normA, normB] = NN
     let minNorm = (normA &lt; normB)
@@ -1094,7 +1092,7 @@ class Foft {
     let res = (t - TT[0]) / (TT[1] - TT[0]) // [0-1]
     res = normA + (normB - normA) * res // [normA, normB]
 
-    if (!Foft.INRANGE(res, normA, normB)) {
+    if (!Foft.inRange(res, normA, normB)) {
       res = (res &lt; minNorm)
         ? -Infinity
         : Infinity
@@ -1104,7 +1102,7 @@ class Foft {
   }
 
   /**
-   * given a Number t, amd a ramge TT, return a normalized (to Foft.DEFAULT_RANGE)
+   * given a Number t, amd a ramge TT, return a normalized (to Foft.sweep)
    * representation of the ratio between the two deltas A and B where
    *   1. A is the difference betewen t and TT[last]
    *   2. B is the difference between TT[last] and TT[first]
@@ -1114,23 +1112,23 @@ class Foft {
    *   1. +Infinity corresponding to beyond the bound of TT[first], and
    *   2. -Infinity corresponding to beyond the bound of TT[last]
    *
-   * @see NORMALIZETORANGE
+   * @see normToRange
    * @param  {number} [t=0] the t to evaluate
-   * @param  {Array&lt;number>} [TT=DEFAULT_RANGE] the range in which to test for TT
+   * @param  {Array&lt;number>} [TT=sweep] the range in which to test for TT
    * @return {number}
    * @static
    */
-  static ANTINORMALIZETORANGE (t, TT, NN) {
-    if (!Foft.ISNUMBER(t)) {
+  static antiNormToRange (t, TT, NN) {
+    if (!Foft.isNum(t)) {
       t = 0
     }
-    if (!Foft.ARENUMBERS(TT)) {
-      TT = Foft.DEFAULT_RANGE
+    if (!Foft.areNums(TT)) {
+      TT = Foft.sweep
     }
-    if (!Foft.ARENUMBERS(NN)) {
-      NN = Foft.DEFAULT_RANGE
+    if (!Foft.areNums(NN)) {
+      NN = Foft.sweep
     }
-    let res = Foft.NORMALIZETORANGE(t, TT, NN)
+    let res = Foft.normToRange(t, TT, NN)
     return (Math.abs(res) === Infinity)
       ? -res
       : NN[NN.length - 1] - res
@@ -1147,11 +1145,11 @@ class Foft {
    * @return {null|number}
    * @static
    */
-  static IINRANGE (t, TT, d) {
-    d = (Foft.ISNUMBER(d))
+  static iInRange (t, TT, d) {
+    d = (Foft.isNum(d))
       ? Math.floor(d)
-      : Math.floor(Foft.DEFAULT_SEGMENT_DIVISOR)
-    let res = Foft.NORMALIZETORANGE(t, TT, [0, 1])
+      : Math.floor(Foft.divisor)
+    let res = Foft.normToRange(t, TT, [0, 1])
     return (res === Infinity)
       ? null
       : (res === -Infinity)
@@ -1166,17 +1164,17 @@ class Foft {
    * @return {Array}
    * @static
    */
-  static DIMENSIONS (x) {
+  static dimensions (x) {
     let dim = Promise.resolve([])
-    if (Foft.ISNUMBER(x)) {
+    if (Foft.isNum(x)) {
       return dim.then(dimarr => dimarr.concat(0))
-    } else if (Foft.ISARRAYLIKE(x)) {
+    } else if (Foft.isArrayLike(x)) {
       if (x.length === 0) {
         return dim.then(dimarr => dimarr.concat(0))
       } else {
         let subarrayIndices = []
         let isNotSubarrayTest = (acc, v, i) => {
-          if (!Foft.ISARRAYLIKE(v)) {
+          if (!Foft.isArrayLike(v)) {
             return acc &amp;&amp; true
           } else {
             subarrayIndices.push(i)
@@ -1190,16 +1188,16 @@ class Foft {
             return Promise.all(subarrayIndices.map((v) => {
               let xSubArr = x[v]
               // console.log(xSubArr)
-              return Foft.DIMENSIONS(xSubArr)
+              return Foft.dimensions(xSubArr)
             })).then(subdims => {
               // console.log(subdims, x.length)
-              let flatsubdims = Foft.OPS['...'](subdims)
+              let flatsubdims = Foft.ops['...'](subdims)
               // console.log(flatsubdims, x.length)
               let mag
-              if (Foft.EQUAL(flatsubdims.length, subdims.length, x.length)) {
-                mag = Foft.OPS.magest(...flatsubdims)
+              if (Foft.equiv(flatsubdims.length, subdims.length, x.length)) {
+                mag = Foft.ops.magest(...flatsubdims)
               } else {
-                mag = Foft.OPS.magest(...subdims)
+                mag = Foft.ops.magest(...subdims)
               }
               // mag = (Number.isNaN(mag) || mag === 0)
               //   ? []
@@ -1226,7 +1224,7 @@ class Foft {
    * @return {boolean}
    * @static
    */
-  static EQUAL () {
+  static equiv () {
     if (arguments.length === 0) {
       return false
     }
@@ -1234,20 +1232,20 @@ class Foft {
       return !Number.isNaN(arguments[0])
     }
     const a0 = arguments[0]
-    const a0type = Foft.MATHTYPEOF(a0)
+    const a0type = Foft.mathTypeOf(a0)
     let res = true
-    // const dim = Foft.DIMENSIONS(arguments[0]);
+    // const dim = Foft.dimensions(arguments[0]);
     for (let i = 1; i &lt; arguments.length; i++) {
       let a = arguments[i]
-      if (Foft.MATHTYPEOF(a) !== a0type) return false
+      if (Foft.mathTypeOf(a) !== a0type) return false
       switch (a0type) {
-        case Foft.MATHTYPES.arraylike:
+        case Foft.mathTypes.arraylike:
           if (a.length !== a0.length) return false
           for (let ai = 0; ai &lt; a0.length; ai++) {
-            if (!Foft.EQUAL(a0[ai], a[ai])) return false
+            if (!Foft.equiv(a0[ai], a[ai])) return false
           }
           break
-        case Foft.MATHTYPES.numberlike:
+        case Foft.mathTypes.numberlike:
           res = res &amp;&amp; (a === a0)
           break
         default:
@@ -1265,18 +1263,18 @@ class Foft {
    * @return {(Symbol|null)}
    * @static
    */
-  static MATHTYPEOF (a) {
-    return Foft.ISARRAYLIKE(a)
-      ? Foft.MATHTYPES.arraylike
-      : Foft.ISNUMBER(a)
-        ? Foft.MATHTYPES.numberlike
+  static mathTypeOf (a) {
+    return Foft.isArrayLike(a)
+      ? Foft.mathTypes.arraylike
+      : Foft.isNum(a)
+        ? Foft.mathTypes.numberlike
         : null
   }
 
   /**
    * given a t and a Foft instance, produces an object with some keys for inter-instance communication corresponding to:
-   * 1 the result of evaluating certain methods of the calling instance for t @see FUNCKEYS
-   * 2 certain members of the calling instance @see MEMBERKEYS
+   * 1 the result of evaluating certain methods of the calling instance for t @see funcKeys
+   * 2 certain members of the calling instance @see membKeys
    *
    * @see oft
    * @param  {Number} t the t of the instance communicatiing
@@ -1284,11 +1282,11 @@ class Foft {
    * @return {object|Array&lt;string>} communication object, or array of communication keys
    * @static
    */
-  static TTHIS_TEMPLATE (t, foft) {
-    let o = (Foft.ISCALCULABLE(t))
+  static tThis (t, foft) {
+    let o = (Foft.isCalculable(t))
       ? { t }
       : { }
-    let populateFunc = (foft instanceof Foft) &amp;&amp; (Foft.ISCALCULABLE(t))
+    let populateFunc = (foft instanceof Foft) &amp;&amp; (Foft.isCalculable(t))
       ? (key) => {
         o[key] = foft[key](t)
       }
@@ -1298,10 +1296,10 @@ class Foft {
         o[key] = foft[key]
       }
       : () => null
-    Foft.FUNCKEYS.map(fkey => populateFunc(fkey))
-    Foft.MEMBERKEYS.map(mkey => populateMemb(mkey))
+    Foft.funcKeys.map(fkey => populateFunc(fkey))
+    Foft.membKeys.map(mkey => populateMemb(mkey))
     if (Object.keys(o).length === 0) {
-      return Foft.FUNCKEYS.concat(Foft.MEMBERKEYS)
+      return Foft.funcKeys.concat(Foft.membKeys)
     } else {
       return o
     }
@@ -1309,40 +1307,40 @@ class Foft {
 
   /**
    * given a string codeToParse, return true when code is found
-   *  in Foft.OPDICT
-   * @see Foft.OPDICT
+   *  in Foft.opDict
+   * @see Foft.opDict
    * @param  {string} codeToParse
    * @return {boolean}
    * @static
    */
-  static ISOP (codeToParse) {
-    return Foft.OPDICT.includes(codeToParse)
+  static isOp (codeToParse) {
+    return Foft.opDict.includes(codeToParse)
   }
 
   /**
    * given a string codeToParse, return
-   * the corresponding operation function from Foft.OPS
+   * the corresponding operation function from Foft.ops
    *
-   * @see Foft.OPS
+   * @see Foft.ops
    * @param  {string} codeToParse
-   * @return {function} Foft.OPS function corresponding to op
+   * @return {function} Foft.ops function corresponding to op
    * @static
    */
-  static OPPARSE (codeToParse) {
-    return (Foft.ISOP(codeToParse))
-      ? Foft.OPS[codeToParse]
-      : Foft.OPS[null]
+  static opParse (codeToParse) {
+    return (Foft.isOp(codeToParse))
+      ? Foft.ops[codeToParse]
+      : Foft.ops[null]
   }
 }
 
 Object.defineProperties(Foft, {
   /**
    * valid types that Foft can do math on
-   * @see Foft.MATHTYPEOF
+   * @see Foft.mathTypeOf
    * @memberof Foft
    * @static
    */
-  'MATHTYPES': {
+  'mathTypes': {
     value: (() => {
       let o = {};
       [
@@ -1359,34 +1357,34 @@ Object.defineProperties(Foft, {
   },
   /**
    * an array of valid op keys
-   * @see Foft.OPS
+   * @see Foft.ops
    * @memberof Foft
    * @static
    */
-  'OPDICT': {
+  'opDict': {
     value: [null, '+', '-', '*', '/', '**', '...', 'magest', 'magesti'],
     enumerable: true,
     configurable: false,
     writable: false
   },
   /**
-   * OPS an object containing operations, or ops, that
+   * ops an object containing operations, or ops, that
    * perform mathematical functions corresponding to their keys
-   * @see Foft.ISOP
-   * @see Foft.OPDICT
-   * @see Foft.OPPARSE
-   * @see Foft.ARENUMBERS
+   * @see Foft.isOp
+   * @see Foft.opDict
+   * @see Foft.opParse
+   * @see Foft.areNums
    * @memberof Foft
    * @static
    */
-  'OPS': {
+  'ops': {
     value: Object.defineProperties({}, {
       'opfunc': {
         value: (code, f) => {
           if (typeof code !== 'string') {
-            throw new TypeError('Foft.OPS.opfunc takes one string')
-          } else if (!Foft.OPDICT.includes(code)) {
-            throw new RangeError('Foft.OPS.opfunc takes one string in Foft.OPDICT')
+            throw new TypeError('Foft.ops.opfunc takes one string')
+          } else if (!Foft.opDict.includes(code)) {
+            throw new RangeError('Foft.ops.opfunc takes one string in Foft.opDict')
           }
           return (args) => [...args].reduce((acc, c, i) => f(acc, c))
         },
@@ -1396,18 +1394,18 @@ Object.defineProperties(Foft, {
       },
       'resfunc': {
         value: (code, f, base, args) => {
-          if (!Foft.ISCALCULABLE(base)) {
-            throw new TypeError('Foft.OPS.resfunc requires a calculable base parameter')
+          if (!Foft.isCalculable(base)) {
+            throw new TypeError('Foft.ops.resfunc requires a calculable base parameter')
           }
-          if (!Foft.ISARRAYLIKE(args)) {
-            throw new TypeError('Foft.OPS.resfunc requires an iterable, Array or ArrayBuffer view args parameter')
+          if (!Foft.isArrayLike(args)) {
+            throw new TypeError('Foft.ops.resfunc requires an iterable, Array or ArrayBuffer view args parameter')
           }
-          if (Foft.ARENUMBERS(...args)) {
-            return Foft.OPS.opfunc(code, f)(args)
+          if (Foft.areNums(...args)) {
+            return Foft.ops.opfunc(code, f)(args)
           }
           let nullsReplaced = [...args].map(v => (v === null) ? base : v)
-          if (Foft.ARENUMBERS(nullsReplaced)) {
-            return Foft.OPS.opfunc(code, f)(nullsReplaced)
+          if (Foft.areNums(nullsReplaced)) {
+            return Foft.ops.opfunc(code, f)(nullsReplaced)
           }
           return NaN
         },
@@ -1443,7 +1441,7 @@ Object.defineProperties(Foft, {
           let desc = 'summation'
           return Object.assign(
             function () {
-              return Foft.OPS.resfunc(code, (a, b) => a + b, base, arguments)
+              return Foft.ops.resfunc(code, (a, b) => a + b, base, arguments)
             }, {
               code,
               base,
@@ -1462,7 +1460,7 @@ Object.defineProperties(Foft, {
           let desc = 'subtraction'
           return Object.assign(
             function () {
-              return Foft.OPS.resfunc(code, (a, b) => a - b, base, arguments)
+              return Foft.ops.resfunc(code, (a, b) => a - b, base, arguments)
             },
             {
               code,
@@ -1482,7 +1480,7 @@ Object.defineProperties(Foft, {
           let desc = 'multiplication'
           return Object.assign(
             function () {
-              return Foft.OPS.resfunc(code, (a, b) => a * b, base, arguments)
+              return Foft.ops.resfunc(code, (a, b) => a * b, base, arguments)
             },
             {
               code,
@@ -1502,7 +1500,7 @@ Object.defineProperties(Foft, {
           let desc = 'division'
           return Object.assign(
             function () {
-              return Foft.OPS.resfunc(code, (a, b) => a / b, base, arguments)
+              return Foft.ops.resfunc(code, (a, b) => a / b, base, arguments)
             },
             {
               code,
@@ -1522,7 +1520,7 @@ Object.defineProperties(Foft, {
           let desc = 'exponentiation'
           return Object.assign(
             function () {
-              return Foft.OPS.resfunc(code, (a, b) => a ** b, base, arguments)
+              return Foft.ops.resfunc(code, (a, b) => a ** b, base, arguments)
             },
             {
               code,
@@ -1538,7 +1536,7 @@ Object.defineProperties(Foft, {
        * ... recursive arraylike flatten. given parameter arr, return
        * - if arr is arraylike, a 1-d  Array containing the elements of arr with their order preserved, or
        * - if arr isn't arraylike, arr
-       * @memberof Foft#OPS
+       * @memberof Foft#ops
        * @param {arraylike} arr
        * @return {arraylike|?}
        */
@@ -1550,11 +1548,11 @@ Object.defineProperties(Foft, {
           let desc = 'flatten'
           return Object.assign(
             function flatten (arr) {
-              if (!Foft.ISARRAYLIKE(arr)) {
+              if (!Foft.isArrayLike(arr)) {
                 return arr
               } else {
                 return arr.reduce((acc, v) => {
-                  return (Foft.ISARRAYLIKE(v))
+                  return (Foft.isArrayLike(v))
                     ? acc.concat(flatten(v))
                     : acc.concat(v)
                 }, base)
@@ -1575,7 +1573,7 @@ Object.defineProperties(Foft, {
        * - calculable values, return the one with the greatest MAGNITUDE
        * - arraylike values, return the one with the greatest MAGEST
        *
-       * @memberof OPS
+       * @memberof ops
        * @params {(number|Array&lt;number>)} arguments
        * @return {(number|Array&lt;number>)}
        */
@@ -1588,11 +1586,11 @@ Object.defineProperties(Foft, {
           return Object.assign(
             function (...args) {
               let max = base
-              if ([...arguments].every(Foft.ISARRAYLIKE) &amp;&amp; (arguments.length > 1)) {
+              if ([...arguments].every(Foft.isArrayLike) &amp;&amp; (arguments.length > 1)) {
                 let maxmagest = base
                 let magesti = base
                 for (let i = 0; i &lt; arguments.length; i++) {
-                  let cur = Foft.OPS['magest'](...arguments[i])
+                  let cur = Foft.ops['magest'](...arguments[i])
                   // console.log(cur)
                   if (cur > maxmagest) {
                     maxmagest = cur
@@ -1600,7 +1598,7 @@ Object.defineProperties(Foft, {
                   }
                 }
                 return arguments[magesti]
-              } else if (Foft.ARECALCULABLES(...arguments)) {
+              } else if (Foft.areCalculables(...arguments)) {
                 for (var i = 0; i &lt; arguments.length; i++) {
                   let cur = Math.abs(arguments[i])
                   max = (cur > max)
@@ -1625,7 +1623,7 @@ Object.defineProperties(Foft, {
       /**
        * @name magesti - given some values, return the first INDEX of the one with the greatest MAGEST
        *
-       * @memberof OPS
+       * @memberof ops
        * @params {(number|Array&lt;number>)}
        * @return {number}
        */
@@ -1640,15 +1638,15 @@ Object.defineProperties(Foft, {
               let magests = Array(arguments.length)
               for (let i = 0; i &lt; arguments.length; i++) {
                 let a = arguments[i]
-                magests[i] = (Foft.ISARRAYLIKE(a))
-                  ? Foft.OPS['magest'](...a)
-                  : Foft.OPS['magest'](a)
+                magests[i] = (Foft.isArrayLike(a))
+                  ? Foft.ops['magest'](...a)
+                  : Foft.ops['magest'](a)
               }
               let index = magests.findIndex((v) => {
                 // console.log(v)
-                return Foft.EQUAL(
+                return Foft.equiv(
                   v,
-                  Foft.OPS['magest'](...magests)
+                  Foft.ops['magest'](...magests)
                 )
               })
               return index
@@ -1682,11 +1680,11 @@ Object.defineProperties(Foft, {
   },
   /**
    * methods for inter-instance communication
-   * @see TTHIS_TEMPLATE
+   * @see tThis
    * @memberof Foft
    * @static
    */
-  'FUNCKEYS': {
+  'funcKeys': {
     value: [
       'normalizeT',
       'antinormalizeT',
@@ -1698,11 +1696,11 @@ Object.defineProperties(Foft, {
   },
   /**
    * members for inter-instance communication
-   * @see TTHIS_TEMPLATE
+   * @see tThis
    * @memberof Foft
    * @static
    */
-  'MEMBERKEYS': {
+  'membKeys': {
     value: [
       'range',
       'drange',
@@ -1714,39 +1712,39 @@ Object.defineProperties(Foft, {
     writable: false
   },
   /**
-   * DEFAULT_SEGMENT_DIVISOR By default, Foft instances divide into
+   * divisor By default, Foft instances divide into
    * this many segments
    * @type {Number}
    * @memberof Foft
    * @default 10
    * @static
    */
-  'DEFAULT_SEGMENT_DIVISOR': {
+  'divisor': {
     value: 10,
     enumerable: true,
     configurable: false,
     writable: false
   },
   /**
-   * MAX_SAFE_DIVISOR the maximum safe to use divisor
-   * @borrows Foft.CALC_PRECISION_WARN
+   * maxSafeDivisor the maximum safe to use divisor
+   * @borrows Foft.precision
    * @memberof Foft
    * @static
    */
-  'MAX_SAFE_DIVISOR': {
-    value: Foft.CALC_PRECISION_WARN(),
+  'maxSafeDivisor': {
+    value: Foft.precision(),
     enumerable: true,
     configurable: false,
     writable: false
   },
   /**
-   * DEFAULT_RANGE By default, Foft instances evaluate functions over this range
+   * sweep By default, Foft instances evaluate functions over this range
    * @type {Array.&lt;Number>}
    * @default [-1,1]
    * @memberof Foft
    * @static
    */
-  'DEFAULT_RANGE': {
+  'sweep': {
     value: [-1, 1],
     enumerable: true,
     configurable: false,
@@ -1800,7 +1798,7 @@ export { Foft }
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on  2019 0602 2240+0000
+		on  2019 0608 0034+0000
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
